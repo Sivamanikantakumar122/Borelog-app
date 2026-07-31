@@ -79,6 +79,10 @@
                 <rect width="10" height="10" fill="#92400e" />
                 <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="1.0" />
             </pattern>
+            <pattern id="hatch-ROCK" width="10" height="10" patternUnits="userSpaceOnUse">
+                <rect width="10" height="10" fill="#92400e" />
+                <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="1.0" />
+            </pattern>
 
             <!-- GRAVEL: Light Pebbles -->
             <pattern id="hatch-GRAVEL" width="14" height="14" patternUnits="userSpaceOnUse">
@@ -178,10 +182,10 @@
                     </div>
                     <div>
                         <label class="block text-slate-400 mb-1 flex items-center justify-between">
-                            <span>CD Level (Optional)</span>
-                            <input type="checkbox" id="toggle-cd-level" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                            <span>CD Level Datum (m)</span>
+                            <input type="checkbox" id="toggle-cd-level" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
                         </label>
-                        <input type="text" id="meta-cd-level" value="+14.50 m MSL" oninput="updateAll()" class="w-full bg-slate-900 border border-slate-700 rounded-md p-2 text-slate-100 focus:border-blue-500 outline-none">
+                        <input type="text" id="meta-cd-level" value="-9.20" oninput="autoCalcCD(); updateAll()" class="w-full bg-slate-900 border border-slate-700 rounded-md p-2 text-slate-100 focus:border-blue-500 outline-none" placeholder="e.g. -9.20">
                     </div>
                     <div>
                         <label class="block text-slate-400 mb-1">Proposed Coordinates</label>
@@ -234,19 +238,19 @@
                     <div class="grid grid-cols-4 gap-2">
                         <div>
                             <label class="block text-slate-400 mb-0.5">Depth From (m)</label>
-                            <input type="number" step="0.05" id="input-depth-from" required value="0.0" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                            <input type="number" step="0.05" id="input-depth-from" required value="0.0" oninput="autoCalcCD()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                         </div>
                         <div>
                             <label class="block text-slate-400 mb-0.5">Depth To (m)</label>
-                            <input type="number" step="0.05" id="input-depth-to" required value="2.5" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                            <input type="number" step="0.05" id="input-depth-to" required value="0.45" oninput="autoCalcCD()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                         </div>
                         <div>
                             <label class="block text-slate-400 mb-0.5">CD From (m)</label>
-                            <input type="text" id="input-cd-from" value="+14.50" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200">
+                            <input type="text" id="input-cd-from" value="-9.20" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 mb-0.5">CD To (m)</label>
-                            <input type="text" id="input-cd-to" value="+12.00" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200">
+                            <input type="text" id="input-cd-to" value="-9.65" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 font-mono">
                         </div>
                     </div>
 
@@ -437,39 +441,50 @@
         let currentMode = 'field';
         let records = [
             {
-                id: '1', depthFrom: 0.0, depthTo: 2.5, cdFrom: '+14.50', cdTo: '+12.00',
+                id: '1', depthFrom: 0.0, depthTo: 0.45, cdFrom: '-9.20', cdTo: '-9.65',
                 sampleType: 'SPT', sampleNo: 1, recoveredLength: 0.45,
-                n1: 2, n2: 4, n3: 6, nVal: 10, hatchType: 'CLAY', unitWeight: 18.0,
-                description: 'Soft brown silty CLAY.', coreRec: 0, solidCore: 0, rockPieces: ''
-            },
-            {
-                id: '2', depthFrom: 2.5, depthTo: 6.0, cdFrom: '+12.00', cdTo: '+8.50',
-                sampleType: 'SPT', sampleNo: 2, recoveredLength: 0.45,
-                n1: 8, n2: 15, n3: 20, nVal: 35, hatchType: 'SAND', unitWeight: 19.5,
+                n1: 2, n2: 4, n3: 6, nVal: 10, hatchType: 'SAND', unitWeight: 18.0,
                 description: 'Medium dense yellow coarse SAND.', coreRec: 0, solidCore: 0, rockPieces: ''
             },
             {
-                id: '3', depthFrom: 6.0, depthTo: 10.0, cdFrom: '+8.50', cdTo: '+4.50',
-                sampleType: 'SPT', sampleNo: 3, recoveredLength: 0.45,
-                n1: 18, n2: 38, n3: 47, nVal: 85, hatchType: 'GRAVEL', unitWeight: 20.5,
-                description: 'Very dense sandy GRAVEL.', coreRec: 0, solidCore: 0, rockPieces: ''
+                id: '2', depthFrom: 0.45, depthTo: 2.50, cdFrom: '-9.65', cdTo: '-11.70',
+                sampleType: 'SPT', sampleNo: 2, recoveredLength: 0.45,
+                n1: 4, n2: 8, n3: 12, nVal: 20, hatchType: 'CLAY', unitWeight: 18.5,
+                description: 'Soft to stiff brown silty CLAY.', coreRec: 0, solidCore: 0, rockPieces: ''
             },
             {
-                id: '4', depthFrom: 10.0, depthTo: 14.0, cdFrom: '+4.50', cdTo: '+0.50',
+                id: '3', depthFrom: 2.50, depthTo: 6.00, cdFrom: '-11.70', cdTo: '-15.20',
+                sampleType: 'SPT', sampleNo: 3, recoveredLength: 0.45,
+                n1: 8, n2: 15, n3: 20, nVal: 35, hatchType: 'SILT', unitWeight: 19.5,
+                description: 'Dense grey SILT stratum.', coreRec: 0, solidCore: 0, rockPieces: ''
+            },
+            {
+                id: '4', depthFrom: 6.00, depthTo: 10.00, cdFrom: '-15.20', cdTo: '-19.20',
                 sampleType: 'CR', sampleNo: 4, recoveredLength: 3.80,
                 n1: 20, n2: 45, n3: 55, nVal: 100, hatchType: 'SOLID_ROCK', unitWeight: 23.0,
-                description: 'Fresh grey BASALT bedrock run.',
+                description: 'Fresh grey BASALT bedrock core run.',
                 coreRec: 3.80, solidCore: 3.20, rockPieces: '0.15, 0.22, 0.35, 0.40, 0.18, 0.25'
             }
         ];
 
+        // Automatic CD Calculation based on Surface Datum Level
+        function autoCalcCD() {
+            const datumStr = document.getElementById('meta-cd-level').value;
+            const datumVal = parseFloat(datumStr);
+            const dFrom = parseFloat(document.getElementById('input-depth-from').value) || 0;
+            const dTo = parseFloat(document.getElementById('input-depth-to').value) || 0;
+
+            if (!isNaN(datumVal)) {
+                const cdFromVal = datumVal - dFrom;
+                const cdToVal = datumVal - dTo;
+                document.getElementById('input-cd-from').value = cdFromVal >= 0 ? `+${cdFromVal.toFixed(2)}` : cdFromVal.toFixed(2);
+                document.getElementById('input-cd-to').value = cdToVal >= 0 ? `+${cdToVal.toFixed(2)}` : cdToVal.toFixed(2);
+            }
+        }
+
         function safeInitIcons() {
-            try {
-                if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                    lucide.createIcons();
-                }
-            } catch (err) {
-                console.warn("Lucide icons warning:", err);
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                try { window.lucide.createIcons(); } catch(e) { console.warn("Lucide icon initialization skipped:", e); }
             }
         }
 
@@ -619,6 +634,38 @@
             updateAll();
         }
 
+        function editRecord(id) {
+            const r = records.find(rec => rec.id === id);
+            if (!r) return;
+
+            document.getElementById('edit-id').value = r.id;
+            document.getElementById('input-depth-from').value = r.depthFrom;
+            document.getElementById('input-depth-to').value = r.depthTo;
+            document.getElementById('input-cd-from').value = r.cdFrom || '';
+            document.getElementById('input-cd-to').value = r.cdTo || '';
+            document.getElementById('input-sample-type').value = r.sampleType;
+            document.getElementById('input-sample-no').value = r.sampleNo;
+            document.getElementById('input-recovered-length').value = r.recoveredLength;
+            document.getElementById('input-n1').value = r.n1;
+            document.getElementById('input-n2').value = r.n2;
+            document.getElementById('input-n3').value = r.n3;
+            document.getElementById('input-n-val').value = r.nVal;
+            document.getElementById('input-hatch-type').value = r.hatchType || 'CLAY';
+            document.getElementById('input-unit-weight').value = r.unitWeight || 18.0;
+            document.getElementById('input-description').value = r.description || '';
+
+            document.getElementById('input-core-rec').value = r.coreRec || 0;
+            document.getElementById('input-solid-core').value = r.solidCore || 0;
+            document.getElementById('input-rock-pieces').value = r.rockPieces || '';
+
+            toggleRockFields();
+        }
+
+        function deleteRecord(id) {
+            records = records.filter(r => r.id !== id);
+            updateAll();
+        }
+
         function updateAll() {
             renderHeaderOutputs();
             renderBorelogTable();
@@ -667,11 +714,12 @@
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery (%)</div></th>
                         <th colspan="4" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                        <th class="p-1 border border-slate-900 text-slate-900 w-12">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-14">Soil Log</th>
                         <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900 no-print">Action</th>
                     </tr>
                     <tr class="bg-slate-200 text-[8.5px] text-slate-900 font-bold">
                         <th class="p-0.5 border border-slate-900 text-slate-900">From</th><th class="p-0.5 border border-slate-900 text-slate-900">To</th>
@@ -681,6 +729,7 @@
                         <th class="p-0.5 border border-slate-900 text-slate-900">N1</th><th class="p-0.5 border border-slate-900 text-slate-900">N2</th><th class="p-0.5 border border-slate-900 text-slate-900">N3</th><th class="p-0.5 border border-slate-900 font-bold text-slate-900">N</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">Hatch</th><th class="p-0.5 border border-slate-900 text-slate-900">Description</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">TCR</th><th class="p-0.5 border border-slate-900 text-slate-900">SCR</th><th class="p-0.5 border border-slate-900 text-slate-900">RQD</th>
+                        <th class="p-0.5 border border-slate-900 text-slate-900 no-print">Edit/Del</th>
                     </tr>
                 `;
             } else {
@@ -692,11 +741,12 @@
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery (%)</div></th>
                         <th colspan="5" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                        <th class="p-1 border border-slate-900 text-slate-900 w-12">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-14">Soil Log</th>
                         <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900 no-print">Action</th>
                     </tr>
                     <tr class="bg-slate-200 text-[8.5px] text-slate-900 font-bold">
                         <th class="p-0.5 border border-slate-900 text-slate-900">From</th><th class="p-0.5 border border-slate-900 text-slate-900">To</th>
@@ -706,19 +756,35 @@
                         <th class="p-0.5 border border-slate-900 text-slate-900">N1</th><th class="p-0.5 border border-slate-900 text-slate-900">N2</th><th class="p-0.5 border border-slate-900 text-slate-900">N3</th><th class="p-0.5 border border-slate-900 font-bold text-slate-900">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 text-slate-900">N60</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">Hatch</th><th class="p-0.5 border border-slate-900 text-slate-900">Description</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">TCR</th><th class="p-0.5 border border-slate-900 text-slate-900">SCR</th><th class="p-0.5 border border-slate-900 text-slate-900">RQD</th>
+                        <th class="p-0.5 border border-slate-900 text-slate-900 no-print">Edit/Del</th>
                     </tr>
                 `;
             }
 
-            tbody.innerHTML = records.map(r => {
-                const calc = computeCalculatedFields(r, gwt, er);
-                const cdCell = showCD ? `<td class="p-0.5 border border-slate-800 text-[8.5px] text-slate-900">${r.cdFrom || '-'}</td><td class="p-0.5 border border-slate-800 text-[8.5px] text-slate-900">${r.cdTo || '-'}</td>` : '';
+            if (records.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="18" class="p-3 text-slate-500 italic">No strata records added yet.</td></tr>`;
+                return;
+            }
 
-                // Continuous Hatch SVG block
+            const rowsHtml = records.map(r => {
+                const calc = computeCalculatedFields(r, gwt, er);
+                const cdCell = showCD ? `<td class="p-0.5 border border-slate-800 text-[8.5px] text-slate-900 font-mono">${r.cdFrom || '-'}</td><td class="p-0.5 border border-slate-800 text-[8.5px] text-slate-900 font-mono">${r.cdTo || '-'}</td>` : '';
+
+                // Normalized Hatch Symbol Mapping
+                let hType = (r.hatchType || 'CLAY').toUpperCase();
+                if (hType === 'ROCK') hType = 'SOLID_ROCK';
+
                 const hatchSvg = `
-                    <div class="cell-soil-log w-full h-full min-h-[32px] flex items-center justify-center">
-                        <svg width="100%" height="32" class="block border-0"><rect width="100%" height="100%" fill="url(#hatch-${r.hatchType})" /></svg>
+                    <div class="cell-soil-log w-full h-full min-h-[36px] flex items-center justify-center p-0 m-0">
+                        <svg width="100%" height="36" class="block border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-${hType})" /></svg>
                     </div>
+                `;
+
+                const actionCell = `
+                    <td class="p-0.5 border border-slate-800 text-center no-print whitespace-nowrap">
+                        <button onclick="editRecord('${r.id}')" class="text-blue-600 hover:text-blue-800 font-bold px-1 py-0.5 border border-blue-300 rounded bg-blue-50 text-[10px] mr-1">Edit</button>
+                        <button onclick="deleteRecord('${r.id}')" class="text-rose-600 hover:text-rose-800 font-bold px-1 py-0.5 border border-rose-300 rounded bg-rose-50 text-[10px]">Del</button>
+                    </td>
                 `;
 
                 if (currentMode === 'field') {
@@ -734,11 +800,12 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-12">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8.5px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd + '%' : '-'}</td>
+                            ${actionCell}
                         </tr>
                     `;
                 } else {
@@ -755,130 +822,188 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-12">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8.5px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd + '%' : '-'}</td>
+                            ${actionCell}
                         </tr>
                     `;
                 }
             }).join('');
+
+            // Termination Sentence Row at the end of the Borehole
+            const maxDepth = Math.max(...records.map(r => r.depthTo));
+            const totalCols = (currentMode === 'field' ? 14 : 15) + (showCD ? 2 : 0) + 1;
+
+            const terminationHtml = `
+                <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
+                    <td colspan="${totalCols}" class="p-1.5 text-center text-[9.5px] uppercase tracking-wider text-slate-900 bg-slate-200/80">
+                        *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
+                    </td>
+                </tr>
+            `;
+
+            tbody.innerHTML = rowsHtml + terminationHtml;
         }
 
+        // Render Canvas Plot matching reference image
         function renderSptCanvasGraph() {
             const canvas = document.getElementById('sptCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            const w = canvas.width;
-            const h = canvas.height;
+            const W = canvas.width;
+            const H = canvas.height;
 
-            ctx.clearRect(0, 0, w, h);
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, w, h);
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, W, H);
 
-            const padLeft = 45, padRight = 20, padTop = 35, padBottom = 35;
-            const plotW = w - padLeft - padRight;
-            const plotH = h - padTop - padBottom;
+            const marginLeft = 60;
+            const marginTop = 40;
+            const marginRight = 30;
+            const marginBottom = 30;
 
-            // Axes Box
-            ctx.strokeStyle = "#000000";
-            ctx.lineWidth = 1.2;
-            ctx.strokeRect(padLeft, padTop, plotW, plotH);
+            const graphW = W - marginLeft - marginRight;
+            const graphH = H - marginTop - marginBottom;
 
-            // Light Grid
-            ctx.strokeStyle = "#e2e8f0";
+            const maxN = 120;
+            const maxDepth = 30;
+
+            // Draw Dashed Grid
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
             ctx.setLineDash([3, 3]);
-            for (let xVal = 0; xVal <= 120; xVal += 20) {
-                const x = padLeft + (xVal / 120) * plotW;
-                ctx.beginPath(); ctx.moveTo(x, padTop); ctx.lineTo(x, padTop + plotH); ctx.stroke();
-                ctx.fillStyle = "#000000"; ctx.font = "9px Georgia"; ctx.textAlign = "center";
-                ctx.fillText(xVal.toString(), x, padTop - 8);
-            }
-            ctx.fillText("SPT 'N' Value", padLeft + plotW / 2, padTop - 22);
 
-            for (let dVal = 0; dVal <= 30; dVal += 5) {
-                const y = padTop + (dVal / 30) * plotH;
-                ctx.beginPath(); ctx.moveTo(padLeft, y); ctx.lineTo(padLeft + plotW, y); ctx.stroke();
-                ctx.fillStyle = "#000000"; ctx.font = "9px Georgia"; ctx.textAlign = "right";
-                ctx.fillText(dVal.toString(), padLeft - 6, y + 3);
+            for (let n = 0; n <= maxN; n += 20) {
+                const x = marginLeft + (n / maxN) * graphW;
+                ctx.beginPath();
+                ctx.moveTo(x, marginTop);
+                ctx.lineTo(x, marginTop + graphH);
+                ctx.stroke();
+
+                ctx.fillStyle = '#0f172a';
+                ctx.font = '10px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(n.toString(), x, marginTop - 8);
             }
+
             ctx.setLineDash([]);
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 10px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText("SPT 'N' Value", marginLeft + graphW / 2, 14);
 
-            // Y-Axis Title
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.setLineDash([3, 3]);
+            for (let d = 0; d <= maxDepth; d += 5) {
+                const y = marginTop + (d / maxDepth) * graphH;
+                ctx.beginPath();
+                ctx.moveTo(marginLeft, y);
+                ctx.lineTo(marginLeft + graphW, y);
+                ctx.stroke();
+
+                ctx.fillStyle = '#0f172a';
+                ctx.font = '10px Inter, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(d.toString(), marginLeft - 8, y + 3);
+            }
+
             ctx.save();
-            ctx.translate(14, padTop + plotH / 2);
+            ctx.translate(15, marginTop + graphH / 2);
             ctx.rotate(-Math.PI / 2);
-            ctx.textAlign = "center";
-            ctx.font = "10px Georgia";
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 10px Inter, sans-serif';
+            ctx.textAlign = 'center';
             ctx.fillText("Depth below Seabed, m", 0, 0);
             ctx.restore();
 
-            // Compute Points
-            const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]);
+            ctx.strokeRect(marginLeft, marginTop, graphW, graphH);
+
+            const sptRecords = records.filter(r => r.sampleType === 'SPT');
+            if (sptRecords.length === 0) return;
+
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
+            const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
 
-            const ptsField = [];
-            const ptsCorr = [];
+            const fieldPts = [];
+            const corrPts = [];
 
-            records.forEach(r => {
-                if (r.sampleType === 'SPT') {
-                    const midD = (r.depthFrom + r.depthTo) / 2.0;
-                    const calc = computeCalculatedFields(r, gwt, er);
-                    const xF = padLeft + (Math.min(120, calc.nVal) / 120.0) * plotW;
-                    const xC = padLeft + (Math.min(120, calc.N1_final) / 120.0) * plotW;
-                    const y = padTop + (Math.min(30, midD) / 30.0) * plotH;
+            sptRecords.forEach(r => {
+                const midD = (r.depthFrom + r.depthTo) / 2.0;
+                const calc = computeCalculatedFields(r, gwt, er);
 
-                    ptsField.push({ x: xF, y });
-                    ptsCorr.push({ x: xC, y });
-                }
+                const xField = marginLeft + (Math.min(r.nVal, maxN) / maxN) * graphW;
+                const xCorr = marginLeft + (Math.min(calc.N1_final, maxN) / maxN) * graphW;
+                const y = marginTop + (Math.min(midD, maxDepth) / maxDepth) * graphH;
+
+                fieldPts.push({ x: xField, y: y });
+                corrPts.push({ x: xCorr, y: y });
             });
 
-            // Draw Lines & Circles
-            function drawCurve(pts, color) {
-                if (pts.length === 0) return;
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 2.0;
+            // Draw N Field Line (Blue)
+            if (fieldPts.length > 0) {
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(pts[0].x, pts[0].y);
-                for (let i = 1; i < pts.length; i++) {
-                    ctx.lineTo(pts[i].x, pts[i].y);
-                }
+                ctx.moveTo(fieldPts[0].x, fieldPts[0].y);
+                for (let i = 1; i < fieldPts.length; i++) { ctx.lineTo(fieldPts[i].x, fieldPts[i].y); }
                 ctx.stroke();
 
-                pts.forEach(p => {
-                    ctx.fillStyle = color;
+                fieldPts.forEach(p => {
+                    ctx.fillStyle = '#2563eb';
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
                     ctx.fill();
                 });
             }
 
-            drawCurve(ptsField, "#4A90E2");
-            drawCurve(ptsCorr, "#E67E22");
+            // Draw N Corrected Line (Orange)
+            if (corrPts.length > 0) {
+                ctx.strokeStyle = '#d97706';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(corrPts[0].x, corrPts[0].y);
+                for (let i = 1; i < corrPts.length; i++) { ctx.lineTo(corrPts[i].x, corrPts[i].y); }
+                ctx.stroke();
 
-            // Legend Top Right inside Plot
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(padLeft + plotW - 125, padTop + 8, 120, 36);
-            ctx.strokeStyle = "#cbd5e1";
-            ctx.strokeRect(padLeft + plotW - 125, padTop + 8, 120, 36);
+                corrPts.forEach(p => {
+                    ctx.fillStyle = '#d97706';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
 
-            ctx.fillStyle = "#4A90E2";
-            ctx.beginPath(); ctx.arc(padLeft + plotW - 112, padTop + 20, 3.5, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "#000000"; ctx.font = "8.5px Georgia"; ctx.textAlign = "left";
-            ctx.fillText("SPT (N field)", padLeft + plotW - 102, padTop + 23);
+            // Legend
+            const legX = marginLeft + graphW - 140;
+            const legY = marginTop + 12;
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.fillRect(legX, legY, 130, 42);
+            ctx.strokeRect(legX, legY, 130, 42);
 
-            ctx.fillStyle = "#E67E22";
-            ctx.beginPath(); ctx.arc(padLeft + plotW - 112, padTop + 32, 3.5, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "#000000";
-            ctx.fillText("SPT (N Corrected)", padLeft + plotW - 102, padTop + 35);
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath(); ctx.arc(legX + 15, legY + 14, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '9px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("SPT (N field)", legX + 26, legY + 17);
 
-            // Borehole ID Callout Bottom Left
+            ctx.fillStyle = '#d97706';
+            ctx.beginPath(); ctx.arc(legX + 15, legY + 30, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '9px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("SPT (N Corrected)", legX + 26, legY + 33);
+
+            // Borehole ID Label at Bottom Left inside Plot
             const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
-            ctx.font = "bold 13px Georgia";
-            ctx.fillStyle = "#000000";
-            ctx.textAlign = "left";
-            ctx.fillText(`Borehole: ${bhNo}`, padLeft + 15, padTop + plotH - 20);
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Borehole: ${bhNo}`, marginLeft + 15, marginTop + graphH - 15);
         }
     </script>
 </body>
