@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Edition</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v5.2</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -102,7 +102,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.0 Portrait Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.2 Portrait Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Advanced Field & Final Subsurface Engineering Engine</p>
                 </div>
@@ -193,8 +193,7 @@
                     </div>
                     <div>
                         <label class="block text-slate-400 mb-1">Type of Rig</label>
-                        <!-- Left blank or user-entered manually as requested -->
-                        <input type="text" id="meta-rig-type" value="Auto Trip Rig" oninput="updateAll()" placeholder="Enter rig type manually" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-blue-500 outline-none">
+                        <input type="text" id="meta-rig-type" value="" oninput="updateAll()" placeholder="Enter rig type manually" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-blue-500 outline-none">
                     </div>
                     <div>
                         <label class="block text-slate-400 mb-1">Boring Diameter (mm)</label>
@@ -265,22 +264,22 @@
                         </div>
                     </div>
 
-                    <!-- SPT Blow Counts (15cm, 30cm, 45cm) -->
+                    <!-- SPT Blow Counts -->
                     <div class="grid grid-cols-4 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
                         <div>
-                            <label class="block text-slate-400 mb-0.5 text-[11px]">15cm (N1)</label>
+                            <label class="block text-slate-400 mb-0.5 text-[11px]">15cm</label>
                             <input type="number" id="input-n1" value="2" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-0.5 text-[11px]">30cm (N2)</label>
+                            <label class="block text-slate-400 mb-0.5 text-[11px]">30cm</label>
                             <input type="number" id="input-n2" value="4" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-0.5 text-[11px]">45cm (N3)</label>
+                            <label class="block text-slate-400 mb-0.5 text-[11px]">45cm</label>
                             <input type="number" id="input-n3" value="6" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                         </div>
                         <div>
-                            <label class="block text-blue-400 font-bold mb-0.5 text-[11px]">N (N2+N3)</label>
+                            <label class="block text-blue-400 font-bold mb-0.5 text-[11px]">N</label>
                             <input type="number" id="input-n-val" readonly value="10" class="w-full bg-slate-950 border border-blue-500/50 rounded-lg p-2 text-blue-300 font-bold">
                         </div>
                     </div>
@@ -401,7 +400,19 @@
                     </div>
                 </div>
 
-                <!-- Sub-Soil Legend Bar Placed at Top of Logged Table -->
+                <!-- Dynamic Borelog Data Table -->
+                <div class="overflow-x-auto">
+                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[8.5px] text-slate-900">
+                        <thead id="borelog-thead" class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
+                            <!-- Dynamic 2-Tier Header inserted by JS matching requested exact format -->
+                        </thead>
+                        <tbody id="borelog-tbody" class="divide-y divide-slate-400">
+                            <!-- Dynamic Rows inserted by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sub-Soil Legend Bar Placed Below Borelog Table & Above Signatures -->
                 <div class="p-1.5 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[8.5px] font-bold text-slate-800">
                     <span class="text-slate-600">Sub-soil Legend:</span>
                     <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
@@ -410,29 +421,15 @@
                     <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
                 </div>
 
-                <!-- Dynamic Borelog Data Table -->
-                <div class="overflow-x-auto">
-                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[8.5px] text-slate-900">
-                        <thead id="borelog-thead" class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
-                            <!-- Dynamic 2-Tier Header inserted by JS -->
-                        </thead>
-                        <tbody id="borelog-tbody" class="divide-y divide-slate-400">
-                            <!-- Dynamic Rows inserted by JS -->
-                        </tbody>
-                    </table>
-                </div>
-
                 <!-- Footer Signatures & Personnel (Logged By & Checked By) Placed at the bottom of the page -->
                 <div class="border-2 border-slate-900 p-2 text-[9px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
                     <div class="space-y-4">
                         <p><strong>Logged By:</strong> <span id="out-logged-by">Er. J. Smith</span></p>
                         <div class="border-b border-slate-400 w-36 mt-4"></div>
-                        <p class="text-[8px] text-slate-500">Field Geotechnical Engineer</p>
                     </div>
                     <div class="space-y-4 text-right">
                         <p><strong>Checked By:</strong> <span id="out-checked-by">Er. R. Sharma</span></p>
                         <div class="border-b border-slate-400 w-36 ml-auto mt-4"></div>
-                        <p class="text-[8px] text-slate-500">Principal Geotechnical Reviewer</p>
                     </div>
                 </div>
 
@@ -820,7 +817,6 @@
 
         function computeCalculatedFields(r, gwt, er) {
             const interval = Math.max(0.01, r.depthTo - r.depthFrom);
-            // Sample recovery as whole number (e.g. 100, 90) without '%' symbol
             const sampleRecPct = Math.round(Math.min(100, (r.recoveredLength / interval) * 100));
             const nVal = r.sampleType === 'SPT' ? (r.n2 + r.n3) : (r.nVal || 0);
 
@@ -1026,52 +1022,53 @@
             const cdHeader = showCD ? `<th colspan="2" class="p-1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
             const cdSubHeader = showCD ? `<th class="p-0.5 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.5 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
 
+            // Exact requested headers matching your images
             if (currentMode === 'field') {
                 thead.innerHTML = `
                     <tr class="text-slate-900 font-bold">
-                        <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Depth (m)</th>
+                        <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                         ${cdHeader}
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Type</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">No</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Rec.</div></th>
-                        <th colspan="4" class="p-1 border border-slate-900 text-slate-900">SPT Blow Counts</th>
-                        <th class="p-1 border border-slate-900 text-slate-900 w-10">Soil Log</th>
-                        <th class="p-1 border border-slate-900 text-slate-900">Description</th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
+                        <th colspan="4" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
                     </tr>
                     <tr class="bg-slate-200 text-[8px] text-slate-900 font-bold">
                         <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
                         ${cdSubHeader}
-                        <th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th>
+                        <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
                         <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold">N</th>
-                        <th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th>
-                        <th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th>
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                     </tr>
                 `;
             } else {
                 thead.innerHTML = `
                     <tr class="text-slate-900 font-bold">
-                        <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Depth (m)</th>
+                        <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                         ${cdHeader}
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Type</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">No</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Rec.</div></th>
-                        <th colspan="5" class="p-1 border border-slate-900 text-slate-900">SPT Blow Counts</th>
-                        <th class="p-1 border border-slate-900 text-slate-900 w-10">Soil Log</th>
-                        <th class="p-1 border border-slate-900 text-slate-900">Description</th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
+                        <th colspan="5" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
                     </tr>
                     <tr class="bg-slate-200 text-[8px] text-slate-900 font-bold">
                         <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
                         ${cdSubHeader}
-                        <th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th>
+                        <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
                         <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100">N60</th>
-                        <th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th>
-                        <th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th><th class="p-0.5 border border-slate-900">-</th>
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                     </tr>
                 `;
             }
@@ -1092,10 +1089,10 @@
                 let hType = (r.hatchType || 'CLAY').toUpperCase();
                 if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
-                // Soil log width decreased & names removed from header blank cells as requested
+                // Soil log cell width optimized to match previous compact design
                 const hatchSvg = `
-                    <div class="cell-soil-log w-full h-full min-h-[28px] min-w-[30px] flex items-center justify-center p-0 m-0">
-                        <svg width="100%" height="28" viewBox="0 0 35 28" preserveAspectRatio="none" class="block border border-slate-900">
+                    <div class="cell-soil-log w-full h-full min-h-[28px] min-w-[42px] flex items-center justify-center p-0 m-0">
+                        <svg width="100%" height="28" viewBox="0 0 45 28" preserveAspectRatio="none" class="block border border-slate-900">
                             <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
                         </svg>
                     </div>
@@ -1114,7 +1111,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-10">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1135,7 +1132,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-10">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
