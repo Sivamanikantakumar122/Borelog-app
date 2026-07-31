@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v5.4</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v5.5</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -129,7 +129,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.4 Strict Single-Page</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.5 Portrait Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Professional A4 Portrait Geotechnical Report Engine</p>
                 </div>
@@ -229,17 +229,13 @@
                 </div>
 
                 <!-- Final Borelog Settings -->
-                <div id="final-borelog-settings" class="pt-3 border-t border-slate-800 grid grid-cols-2 gap-2.5 text-xs bg-slate-950/60 p-3 rounded-xl border border-amber-500/20 hidden">
+                <div id="final-borelog-settings" class="pt-3 border-t border-slate-800 grid grid-cols-1 gap-2.5 text-xs bg-slate-950/60 p-3 rounded-xl border border-amber-500/20 hidden">
                     <div>
                         <label class="block text-amber-300 font-medium mb-1 flex items-center justify-between">
                             <span>Energy Efficiency (Er %)</span>
                             <span class="text-[10px] text-amber-400/80">Max 90%</span>
                         </label>
                         <input type="number" id="meta-energy-efficiency" min="10" max="90" value="60" oninput="validateEnergyEfficiency(); updateAll()" class="w-full bg-slate-900 border border-amber-500/40 rounded-lg p-2 text-amber-100 font-bold outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-slate-400 mb-1">Optional Render Backend URL</label>
-                        <input type="text" id="api-url-input" value="https://your-borelog-api.onrender.com" placeholder="https://..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-300 text-[11px]">
                     </div>
                 </div>
             </div>
@@ -396,10 +392,10 @@
         <!-- RIGHT PANEL: Live Printable Portrait Sheet Preview (7 Columns) -->
         <div class="lg:col-span-7 print-area space-y-6">
             
-            <!-- STRECTHED STRICT SINGLE-PAGE A4 PORTRAIT SHEET -->
+            <!-- STRETCHED STRICT SINGLE-PAGE A4 PORTRAIT SHEET -->
             <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
                 
-                <!-- TOP SECTION: Document Header & Metadata -->
+                <!-- TOP SECTION: Document Header & Metadata (Drive Efficiency Removed) -->
                 <div class="border-2 border-slate-900">
                     <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
                         <div class="text-left">
@@ -411,7 +407,7 @@
                         </div>
                     </div>
 
-                    <!-- Metadata Grid -->
+                    <!-- Metadata Grid (3 columns, Drive Efficiency cell removed completely) -->
                     <div class="grid grid-cols-3 gap-0 text-[8.5px] divide-x divide-y divide-slate-800 text-slate-900">
                         <div class="p-1"><strong>Project Title:</strong> <span id="out-project-title">-</span></div>
                         <div class="p-1"><strong>Project Code:</strong> <span id="out-project-code" class="font-mono">-</span></div>
@@ -423,8 +419,7 @@
                         <div class="p-1"><strong>Proposed Coords:</strong> <span id="out-proposed-coords" class="font-mono text-[8px]">-</span></div>
                         <div class="p-1"><strong>Achieved Coords:</strong> <span id="out-achieved-coords" class="font-mono text-[8px]">-</span></div>
                         <div class="p-1"><strong>Type of Rig:</strong> <span id="out-rig-type">-</span></div>
-                        <div class="p-1"><strong>Boring Diameter:</strong> <span id="out-boring-dia">-</span></div>
-                        <div class="p-1 bg-amber-50" id="out-energy-box"><strong>Drive Efficiency (Er):</strong> <span id="out-energy-eff" class="font-bold text-amber-900">60%</span></div>
+                        <div class="p-1" colspan="2"><strong>Boring Diameter:</strong> <span id="out-boring-dia">-</span></div>
                     </div>
                 </div>
 
@@ -440,7 +435,7 @@
                     </table>
                 </div>
 
-                <!-- BOTTOM SECTION (Strictly pinned at the bottom of the single A4 portrait sheet): Sub-Soil Legend & Signatures -->
+                <!-- BOTTOM SECTION: Sub-Soil Legend & Signatures -->
                 <div class="space-y-1.5 mt-auto">
                     <!-- Sub-Soil Legend Bar -->
                     <div class="p-1 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[8px] font-bold text-slate-800">
@@ -466,7 +461,7 @@
 
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH -->
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Graph Aligned to Top) -->
             <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-4 hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
@@ -475,7 +470,8 @@
                     </div>
                     <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
                 </div>
-                <div class="p-3 border-2 border-slate-900 bg-slate-50 flex items-center justify-center flex-1">
+                <!-- Canvas aligned to top using justify-start and pt-2 -->
+                <div class="p-3 border-2 border-slate-900 bg-slate-50 flex items-start justify-center pt-2">
                     <canvas id="sptCanvas" width="480" height="480" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
                 </div>
             </div>
@@ -788,7 +784,6 @@
             const sheetBadge = document.getElementById('sheet-mode-badge');
             const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
-            const energyBox = document.getElementById('out-energy-box');
             const sptGraphBox = document.getElementById('spt-graph-container');
 
             if (mode === 'field') {
@@ -801,7 +796,6 @@
                 sheetBadge.className = "bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded font-bold";
                 sheetTitle.innerText = "FIELD BORELOG REPORT";
                 finalSettings.classList.add('hidden');
-                energyBox.style.display = "none";
                 sptGraphBox.classList.add('hidden');
             } else {
                 btnFinal.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow";
@@ -813,7 +807,6 @@
                 sheetBadge.className = "bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded font-bold";
                 sheetTitle.innerText = "FINAL BORELOG REPORT";
                 finalSettings.classList.remove('hidden');
-                energyBox.style.display = "block";
                 sptGraphBox.classList.remove('hidden');
             }
 
@@ -1030,7 +1023,6 @@
             setTxt('out-achieved-coords', getVal('meta-achieved-coords'));
             setTxt('out-rig-type', getVal('meta-rig-type'));
             setTxt('out-boring-dia', getVal('meta-boring-dia'));
-            setTxt('out-energy-eff', `${getVal('meta-energy-efficiency')}%`);
 
             setTxt('out-logged-by', getVal('meta-logged-by'));
             setTxt('out-checked-by', getVal('meta-checked-by'));
@@ -1133,7 +1125,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1154,7 +1146,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
