@@ -336,10 +336,30 @@
                         <textarea id="input-description" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white text-xs" placeholder="e.g. Soft brown silty CLAY."></textarea>
                     </div>
 
-                    <button type="submit" id="btn-submit-sample" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg shadow transition flex items-center justify-center gap-1.5 text-xs">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Add Record Row
-                    </button>
+                    <div class="flex items-center gap-2 pt-1">
+                        <button type="submit" id="btn-submit-sample" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg shadow transition flex items-center justify-center gap-1.5 text-xs">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Add Record Row
+                        </button>
+                        <button type="button" onclick="clearSampleForm()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium rounded-lg text-xs">
+                            Reset Form
+                        </button>
+                    </div>
                 </form>
+            </div>
+
+            <!-- Record List & Quick Delete Controls in Left Panel -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 shadow-sm space-y-2">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                        <i data-lucide="list" class="w-4 h-4 text-blue-400"></i> Recorded Strata Entries (<span id="record-count">0</span>)
+                    </h3>
+                    <button type="button" onclick="clearAllRecords()" class="text-[11px] text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear All
+                    </button>
+                </div>
+                <div id="records-list" class="space-y-1.5 max-h-56 overflow-y-auto pr-1 text-xs">
+                    <!-- Dynamic List items inserted by JS -->
+                </div>
             </div>
 
             <!-- Logger Footer Form -->
@@ -666,33 +686,106 @@
             updateAll();
         }
 
+        function clearAllRecords() {
+            if (confirm("Are you sure you want to remove all sample records?")) {
+                records = [];
+                document.getElementById('input-depth-from').value = '0.0';
+                document.getElementById('input-depth-to').value = '1.5';
+                document.getElementById('input-sample-no').value = '1';
+                autoCalcCD();
+                updateAll();
+            }
+        }
+
+        function clearSampleForm() {
+            document.getElementById('edit-id').value = '';
+            document.getElementById('btn-submit-sample').innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i> Add Record Row';
+            
+            const lastTo = records.length > 0 ? records[records.length - 1].depthTo : 0.0;
+            document.getElementById('input-depth-from').value = lastTo.toFixed(2);
+            document.getElementById('input-depth-to').value = (lastTo + 1.5).toFixed(2);
+            document.getElementById('input-sample-no').value = records.length + 1;
+            autoCalcCD();
+            safeInitIcons();
+        }
+
         function updateAll() {
             renderHeaderOutputs();
+            renderRecordList();
             renderBorelogTable();
             if (currentMode === 'final') { renderSptCanvasGraph(); }
             safeInitIcons();
         }
 
+        function renderRecordList() {
+            const listEl = document.getElementById('records-list');
+            const countEl = document.getElementById('record-count');
+            if (countEl) countEl.innerText = records.length;
+
+            if (!listEl) return;
+
+            if (records.length === 0) {
+                listEl.innerHTML = `<div class="p-3 text-center text-slate-500 italic">No strata records added yet. Use the form above to add samples.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = records.map(r => `
+                <div class="p-2 bg-slate-900 border border-slate-700/80 rounded-lg flex items-center justify-between text-xs">
+                    <div class="space-y-0.5">
+                        <div class="font-bold text-slate-200 flex items-center gap-2">
+                            <span>${r.depthFrom.toFixed(2)}m - ${r.depthTo.toFixed(2)}m</span>
+                            <span class="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-1.5 py-0.2 rounded text-[10px]">${r.sampleType} #${r.sampleNo}</span>
+                            <span class="text-slate-400 text-[10px] font-mono">(CD: ${r.cdFrom} to ${r.cdTo})</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 truncate max-w-[240px]">${r.description || 'No description'}</p>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button type="button" onclick="editRecord('${r.id}')" class="p-1 hover:bg-slate-800 text-blue-400 rounded transition" title="Edit Record"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                        <button type="button" onclick="deleteRecord('${r.id}')" class="p-1 hover:bg-slate-800 text-rose-400 rounded transition" title="Delete Record"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                    </div>
+                </div>
+            `).join('');
+
+            safeInitIcons();
+        }
+
         function renderHeaderOutputs() {
-            document.getElementById('out-project-title').innerText = document.getElementById('meta-project-title').value || '-';
-            document.getElementById('out-project-code').innerText = document.getElementById('meta-project-code').value || '-';
-            document.getElementById('out-location').innerText = document.getElementById('meta-location').value || '-';
-            document.getElementById('out-bh-no').innerText = document.getElementById('meta-bh-no').value || '-';
-            
-            const pFrom = document.getElementById('meta-period-from').value;
-            const pTo = document.getElementById('meta-period-to').value;
-            document.getElementById('out-period').innerText = (pFrom && pTo) ? `${pFrom} to ${pTo}` : '-';
+            if (editId) {
+                const idx = records.findIndex(r => r.id === editId);
+                if (idx !== -1) records[idx] = recordData;
+            } else { records.push(recordData); }
 
-            document.getElementById('out-gwt').innerText = (document.getElementById('meta-gwt').value || '-') + ' m';
-            document.getElementById('out-cd-level').innerText = document.getElementById('meta-cd-level').value || '-';
-            document.getElementById('out-proposed-coords').innerText = document.getElementById('meta-proposed-coords').value || '-';
-            document.getElementById('out-achieved-coords').innerText = document.getElementById('meta-achieved-coords').value || '-';
-            document.getElementById('out-rig-type').innerText = document.getElementById('meta-rig-type').value || '-';
-            document.getElementById('out-boring-dia').innerText = document.getElementById('meta-boring-dia').value || '-';
-            document.getElementById('out-energy-eff').innerText = (document.getElementById('meta-energy-efficiency').value || '60') + '%';
+            records.sort((a, b) => a.depthFrom - b.depthFrom);
+            clearSampleForm();
+            updateAll();
+        }
 
-            document.getElementById('out-logger-name').innerText = document.getElementById('meta-logger-name').value || '-';
-            document.getElementById('out-logger-date').innerText = document.getElementById('meta-logger-date').value || '-';
+        function editRecord(id) {
+            const r = records.find(rec => rec.id === id);
+            if (!r) return;
+
+            document.getElementById('edit-id').value = r.id;
+            document.getElementById('btn-submit-sample').innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Update Record Row';
+            document.getElementById('input-depth-from').value = r.depthFrom;
+            document.getElementById('input-depth-to').value = r.depthTo;
+            document.getElementById('input-cd-from').value = r.cdFrom || '';
+            document.getElementById('input-cd-to').value = r.cdTo || '';
+            document.getElementById('input-sample-type').value = r.sampleType;
+            document.getElementById('input-sample-no').value = r.sampleNo;
+            document.getElementById('input-recovered-length').value = r.recoveredLength;
+            document.getElementById('input-n1').value = r.n1;
+            document.getElementById('input-n2').value = r.n2;
+            document.getElementById('input-n3').value = r.n3;
+            document.getElementById('input-n-val').value = r.nVal;
+            document.getElementById('input-hatch-type').value = r.hatchType || 'CLAY';
+            document.getElementById('input-unit-weight').value = r.unitWeight || 18.0;
+            document.getElementById('input-description').value = r.description || '';
+
+            document.getElementById('input-core-rec').value = r.coreRec || 0;
+            document.getElementById('input-solid-core').value = r.solidCore || 0;
+            document.getElementById('input-rock-pieces').value = r.rockPieces || '';
+
+            toggleRockFields();
         }
 
         function renderBorelogTable() {
