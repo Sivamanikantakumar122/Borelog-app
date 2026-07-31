@@ -649,8 +649,7 @@
             } else { records.push(recordData); }
 
             records.sort((a, b) => a.depthFrom - b.depthFrom);
-            document.getElementById('edit-id').value = '';
-            document.getElementById('input-sample-no').value = records.length + 1;
+            clearSampleForm();
             updateAll();
         }
 
@@ -659,6 +658,7 @@
             if (!r) return;
 
             document.getElementById('edit-id').value = r.id;
+            document.getElementById('btn-submit-sample').innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Update Record Row';
             document.getElementById('input-depth-from').value = r.depthFrom;
             document.getElementById('input-depth-to').value = r.depthTo;
             document.getElementById('input-cd-from').value = r.cdFrom || '';
@@ -679,20 +679,19 @@
             document.getElementById('input-rock-pieces').value = r.rockPieces || '';
 
             toggleRockFields();
+            safeInitIcons();
         }
 
         function deleteRecord(id) {
             records = records.filter(r => r.id !== id);
+            clearSampleForm();
             updateAll();
         }
 
         function clearAllRecords() {
             if (confirm("Are you sure you want to remove all sample records?")) {
                 records = [];
-                document.getElementById('input-depth-from').value = '0.0';
-                document.getElementById('input-depth-to').value = '1.5';
-                document.getElementById('input-sample-no').value = '1';
-                autoCalcCD();
+                clearSampleForm();
                 updateAll();
             }
         }
@@ -750,42 +749,28 @@
         }
 
         function renderHeaderOutputs() {
-            if (editId) {
-                const idx = records.findIndex(r => r.id === editId);
-                if (idx !== -1) records[idx] = recordData;
-            } else { records.push(recordData); }
+            const getVal = id => document.getElementById(id)?.value || '-';
+            const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
 
-            records.sort((a, b) => a.depthFrom - b.depthFrom);
-            clearSampleForm();
-            updateAll();
-        }
+            setTxt('out-project-title', getVal('meta-project-title'));
+            setTxt('out-project-code', getVal('meta-project-code'));
+            setTxt('out-location', getVal('meta-location'));
+            setTxt('out-bh-no', getVal('meta-bh-no'));
 
-        function editRecord(id) {
-            const r = records.find(rec => rec.id === id);
-            if (!r) return;
+            const pFrom = getVal('meta-period-from');
+            const pTo = getVal('meta-period-to');
+            setTxt('out-period', (pFrom !== '-' && pTo !== '-') ? `${pFrom} to ${pTo}` : '-');
 
-            document.getElementById('edit-id').value = r.id;
-            document.getElementById('btn-submit-sample').innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Update Record Row';
-            document.getElementById('input-depth-from').value = r.depthFrom;
-            document.getElementById('input-depth-to').value = r.depthTo;
-            document.getElementById('input-cd-from').value = r.cdFrom || '';
-            document.getElementById('input-cd-to').value = r.cdTo || '';
-            document.getElementById('input-sample-type').value = r.sampleType;
-            document.getElementById('input-sample-no').value = r.sampleNo;
-            document.getElementById('input-recovered-length').value = r.recoveredLength;
-            document.getElementById('input-n1').value = r.n1;
-            document.getElementById('input-n2').value = r.n2;
-            document.getElementById('input-n3').value = r.n3;
-            document.getElementById('input-n-val').value = r.nVal;
-            document.getElementById('input-hatch-type').value = r.hatchType || 'CLAY';
-            document.getElementById('input-unit-weight').value = r.unitWeight || 18.0;
-            document.getElementById('input-description').value = r.description || '';
+            setTxt('out-gwt', `${getVal('meta-gwt')} m`);
+            setTxt('out-cd-level', getVal('meta-cd-level'));
+            setTxt('out-proposed-coords', getVal('meta-proposed-coords'));
+            setTxt('out-achieved-coords', getVal('meta-achieved-coords'));
+            setTxt('out-rig-type', getVal('meta-rig-type'));
+            setTxt('out-boring-dia', getVal('meta-boring-dia'));
+            setTxt('out-energy-eff', `${getVal('meta-energy-efficiency')}%`);
 
-            document.getElementById('input-core-rec').value = r.coreRec || 0;
-            document.getElementById('input-solid-core').value = r.solidCore || 0;
-            document.getElementById('input-rock-pieces').value = r.rockPieces || '';
-
-            toggleRockFields();
+            setTxt('out-logger-name', getVal('meta-logger-name'));
+            setTxt('out-logger-date', getVal('meta-logger-date'));
         }
 
         function renderBorelogTable() {
