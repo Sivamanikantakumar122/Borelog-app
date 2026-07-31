@@ -63,87 +63,108 @@ class CalculatedRecordResponse(BaseModel):
     scrPct: float
     rqdPct: float
     effectiveOverburdenStress: float
-    Cn: float
-    N1_E: float
-    N1_final_dilatancy: float
+    Cn: Optional[float] = None
+    N1_E: Optional[float] = None
+    N1_final_dilatancy: Optional[float] = None
 
 @app.post("/api/calculate", response_model=List[CalculatedRecordResponse])
 def calculate_borelog(request: BorelogCalculationRequest):
     """
-    Computes all geotechnical parameters:
-    - Sample Recovery (%) = (Recovered / Interval) * 100
-    - N = N2 + N3
-    - TCR (%), SCR (%) [with SCR <= TCR validation], RQD (%)
-    - N60 = (Er / 60) * N  [Er restricted to <= 90%]
-    - CN = 0.77 * log10(20 * Pa / sigma_v')  [0.40 <= CN <= 2.00, Pa = 101.30269 kPa]
-    - (N1)E = CN * N60
-    - Dilatancy Correction N1'' = 15 + 0.5 * ((N1)E - 15) for (N1)E > 15
+    Computes all geotechnical parameters with cumulative overburden stress:
+    - Cumulative effective overburden stress sigma_v' summed down through all preceding strata layers.
+    - SPT Corrections (N60, Cn, N1_E, Dilatancy N1'') applied ONLY to SPT samples.
+    - Non-SPT samples (DS, UDS, CR) contribute to overburden stress accumulation but ignore SPT corrections.
     """
-    # Enforce Drive Energy Limit <= 90%
     Er = min(request.energyEfficiency, 90.0)
     Pa = 101.30269  # Atmospheric Pressure in kPa
     gwt = request.waterTableDepth
 
-    results = []
-    
-    for r in request.records:
+    # Sort records by depthFrom to ensure sequential stress accumulation from top to bottom
+    sorted_records = sorted(request.records, key=lambda x: x.depthFrom)
+
+    current_depth = 0.0
+    current_sigma_v_top = 0.0
+
+    calc_map = {}
+
+    for r in sorted_records:
         interval = max(0.01, r.depthTo - r.depthFrom)
         
-        # 1. Sample Recovery
+        # 1. Fill gap if depthFrom > current_depth
+        if r.depthFrom > current_depth:
+            gap = r.depthFrom - current_depth
+            gap_mid = current_depth + gap / 2.0
+            gap_gamma = (r.unitWeight - 9.81) if gap_mid > gwt else r.unitWeight
+            current_sigma_v_top += max(0.1, gap_gamma) * gap
+            current_depth = r.depthFrom
+
+        # 2. Cumulative Effective Overburden Stress at Midpoint & Bottom of current layer
+        half_interval = interval / 2.0
+        mid_depth = r.depthFrom + half_interval
+
+        if mid_depth > gwt:
+            eff_gamma = max(0.1, r.unitWeight - 9.81)
+        else:
+            eff_gamma = r.unitWeight
+
+        sigma_v_prime_mid = current_sigma_v_top + eff_gamma * half_interval
+        sigma_v_prime_bottom = current_sigma_v_top + eff_gamma * interval
+
+        # Advance top stress for next layer
+        current_sigma_v_top = sigma_v_prime_bottom
+        current_depth = r.depthTo
+
+        # Ensure positive stress for log calculation
+        sigma_v_prime = max(1.0, sigma_v_prime_mid)
+
+        # 3. Sample Recovery
         sample_rec_pct = min(100.0, (r.recoveredLength / interval) * 100.0)
-        
-        # 2. N Value Calculation
-        n_val = r.n2 + r.n3 if r.sampleType == 'SPT' else r.nVal
-        
-        # 3. Rock Core Recoveries
+
+        # 4. Rock Core Recoveries
         tcr_pct = 0.0
         scr_pct = 0.0
         rqd_pct = 0.0
         if r.sampleType == 'CR':
             tcr_pct = min(100.0, (r.coreRec / interval) * 100.0)
-            # Validation: SCR <= TCR
             raw_scr = (r.solidCore / interval) * 100.0
             scr_pct = min(tcr_pct, raw_scr)
-            
-            # RQD = (Sum of pieces >= 0.10m / interval) * 100
+
             sum_pieces = 0.0
             if r.rockPieces:
                 for piece in r.rockPieces.split(','):
                     try:
                         val = float(piece.strip())
-                        if val >= 0.10:  # Sound rock piece >= 10 cm
+                        if val >= 0.10:
                             sum_pieces += val
                     except ValueError:
                         pass
             rqd_pct = min(100.0, (sum_pieces / interval) * 100.0)
-        
-        # 4. Energy Efficiency Correction (N60)
-        n60 = round((Er / 60.0) * n_val) if r.sampleType == 'SPT' else None
-        
-        # 5. Overburden Correction (CN & (N1)E)
-        mid_depth = (r.depthFrom + r.depthTo) / 2.0
-        
-        # Effective unit weight adjustment for Water Table
-        if mid_depth > gwt:
-            effective_gamma = max(0.1, r.unitWeight - 9.81)
-        else:
-            effective_gamma = r.unitWeight
-            
-        sigma_v_prime = max(1.0, effective_gamma * mid_depth)
-        
-        Cn = 0.77 * math.log10((20.0 * Pa) / sigma_v_prime)
-        # Restriction: 0.40 <= CN <= 2.00
-        Cn = max(0.40, min(2.00, Cn))
-        
-        N1_E = Cn * (n60 if n60 is not None else n_val)
-        
-        # 6. Dilatancy Correction (N1'')
-        if N1_E <= 15.0:
-            N1_final = N1_E
-        else:
-            N1_final = 15.0 + 0.5 * (N1_E - 15.0)
 
-        results.append(CalculatedRecordResponse(
+        # 5. SPT Corrections (ONLY for SPT samples)
+        n_val = 0
+        n60 = None
+        Cn = None
+        N1_E = None
+        N1_final = None
+
+        if r.sampleType == 'SPT':
+            n_val = r.n2 + r.n3 if (r.n2 is not None and r.n3 is not None) else (r.nVal or 0)
+            n60 = round((Er / 60.0) * n_val)
+
+            Cn_raw = 0.77 * math.log10((20.0 * Pa) / sigma_v_prime)
+            Cn = max(0.40, min(2.00, Cn_raw))
+
+            N1_E_raw = Cn * n60
+            N1_E = round(N1_E_raw, 1)
+
+            if N1_E_raw <= 15.0:
+                N1_final_raw = N1_E_raw
+            else:
+                N1_final_raw = 15.0 + 0.5 * (N1_E_raw - 15.0)
+
+            N1_final = round(N1_final_raw, 1)
+
+        calc_map[r.id] = CalculatedRecordResponse(
             id=r.id,
             sampleDepthInterval=round(interval, 2),
             sampleRecoveryPct=round(sample_rec_pct, 1),
@@ -153,12 +174,13 @@ def calculate_borelog(request: BorelogCalculationRequest):
             scrPct=round(scr_pct, 1),
             rqdPct=round(rqd_pct, 1),
             effectiveOverburdenStress=round(sigma_v_prime, 2),
-            Cn=round(Cn, 3),
-            N1_E=round(N1_E, 1),
-            N1_final_dilatancy=round(N1_final, 1)
-        ))
+            Cn=round(Cn, 3) if Cn is not None else None,
+            N1_E=N1_E,
+            N1_final_dilatancy=N1_final
+        )
 
-    return results
+    # Return results in the original request order
+    return [calc_map[r.id] for r in request.records]
 
 @app.post("/api/spt-graph")
 def generate_spt_graph(request: BorelogCalculationRequest):
