@@ -11,6 +11,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- SheetJS for Excel (.xlsx, .xls, .csv) Import -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Tesseract.js for Image / Photo Borelog OCR Scanning -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -52,7 +56,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- SVG Standard Sub-Soil Hatch Legend Definitions (Renderable offscreen container for browser url(#hatch) support) -->
+    <!-- SVG Standard Sub-Soil Hatch Legend Definitions -->
     <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
         <defs>
             <!-- SAND: Yellow Background (#facc15) + Fine Black Stipple Dots -->
@@ -108,7 +112,7 @@
                 <div>
                     <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-xs bg-blue-500/20 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded-full font-mono">v3.5 Pro</span>
+                        <span class="text-xs bg-blue-500/20 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded-full font-mono">v4.0 Pro</span>
                     </h1>
                     <p class="text-xs text-slate-400">Developed by <strong class="text-blue-400 font-semibold">Siva Manikanta Kumar</strong> &nbsp;|&nbsp; Field & Final Geotechnical Borelog Report Generator</p>
                 </div>
@@ -125,6 +129,10 @@
             </div>
 
             <div class="flex items-center space-x-2 text-sm">
+                <!-- Excel / Image Scan Import Button -->
+                <button onclick="openImportModal()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-medium rounded-md shadow-sm transition flex items-center gap-1.5 text-xs">
+                    <i data-lucide="file-up" class="w-3.5 h-3.5"></i> Import Excel / Photo
+                </button>
                 <button onclick="window.print()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-md shadow-sm transition flex items-center gap-1.5 text-xs">
                     <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print / Save A4 Sheet
                 </button>
@@ -257,7 +265,7 @@
                     <div class="grid grid-cols-3 gap-2">
                         <div>
                             <label class="block text-slate-400 mb-0.5">Type of Test</label>
-                            <select id="input-sample-type" onchange="toggleRockFields()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-semibold">
+                            <select id="input-sample-type" onchange="toggleRockFields(); autoSuggestSampleNo();" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-semibold">
                                 <option value="SPT">SPT (Standard Penetration)</option>
                                 <option value="DS">DS (Disturbed Sample)</option>
                                 <option value="UDS">UDS (Undisturbed Sample)</option>
@@ -265,7 +273,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-0.5">Sample No (Numbers Only)</label>
+                            <label class="block text-slate-400 mb-0.5">Sample No (Sequential Count)</label>
                             <input type="number" id="input-sample-no" value="1" min="1" step="1" required class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-bold">
                         </div>
                         <div>
@@ -347,7 +355,7 @@
                 </form>
             </div>
 
-            <!-- Record List & Quick Delete Controls in Left Panel -->
+            <!-- Record List & Quick Delete Controls -->
             <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 shadow-sm space-y-2">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
@@ -422,7 +430,7 @@
                     </table>
                 </div>
 
-                <!-- Interactive SPT Canvas Graph (Matching Image Style) -->
+                <!-- Interactive SPT Canvas Graph -->
                 <div id="spt-graph-container" class="mt-3 border-2 border-slate-900 p-2 bg-white hidden">
                     <div class="text-[10px] font-bold text-slate-900 mb-1 flex items-center justify-between">
                         <span>SPT Depth Profile Graph (N Field vs N1'' Corrected)</span>
@@ -443,7 +451,7 @@
                     </div>
                 </div>
 
-                <!-- Sub-Soil Legend Bar (Positioned at the very end) -->
+                <!-- Sub-Soil Legend Bar -->
                 <div class="mt-2 p-1 border border-slate-800 bg-slate-50 flex items-center justify-center gap-4 text-[9px] font-bold">
                     <span>Sub-soil Legend:</span>
                     <span class="flex items-center gap-1"><svg width="22" height="14" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
@@ -456,6 +464,52 @@
         </div>
 
     </main>
+
+    <!-- MODAL WINDOW FOR EXCEL & PHOTO SCAN IMPORT -->
+    <div id="import-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 text-amber-400"></i>
+                    Import Excel Sheet or Photo Borelog
+                </h3>
+                <button onclick="closeImportModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <!-- Excel Section -->
+            <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/80 space-y-2">
+                <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Option 1: Upload Excel File (.xlsx, .xls, .csv)
+                </div>
+                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app will automatically extract depth intervals, test types, blow counts, and descriptions.</p>
+                <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
+            </div>
+
+            <!-- Image / Photo OCR Scan Section -->
+            <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/80 space-y-2">
+                <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <i data-lucide="camera" class="w-4 h-4 text-blue-400"></i> Option 2: Scan Photo of Borelog Sheet (.png, .jpg)
+                </div>
+                <p class="text-[11px] text-slate-400">Upload or snap a photo of a printed/field borelog sheet. Tesseract OCR scanner will extract tabular data directly into your log.</p>
+                <input type="file" id="image-file-input" accept="image/*" onchange="handleImageScan(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+            </div>
+
+            <!-- OCR Progress Bar -->
+            <div id="ocr-status-box" class="hidden bg-slate-950 p-3 rounded-lg border border-blue-500/30 text-xs space-y-1">
+                <div class="flex items-center justify-between text-blue-300 font-medium">
+                    <span id="ocr-status-text">Scanning borelog image...</span>
+                    <span id="ocr-percentage" class="font-mono font-bold">0%</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div id="ocr-progress-bar" class="bg-blue-500 h-1.5 transition-all duration-200" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeImportModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         let currentMode = 'field';
@@ -474,7 +528,7 @@
             },
             {
                 id: '3', depthFrom: 2.50, depthTo: 6.00, cdFrom: '-11.70', cdTo: '-15.20',
-                sampleType: 'SPT', sampleNo: 3, recoveredLength: 0.45,
+                sampleType: 'DS', sampleNo: 3, recoveredLength: 0.45,
                 n1: 8, n2: 15, n3: 20, nVal: 35, hatchType: 'SILT', unitWeight: 19.5,
                 description: 'Dense grey SILT stratum.', coreRec: 0, solidCore: 0, rockPieces: ''
             },
@@ -486,6 +540,25 @@
                 coreRec: 3.80, solidCore: 3.20, rockPieces: '0.15, 0.22, 0.35, 0.40, 0.18, 0.25'
             }
         ];
+
+        function openImportModal() { document.getElementById('import-modal').classList.remove('hidden'); }
+        function closeImportModal() { document.getElementById('import-modal').classList.add('hidden'); }
+
+        // Helper to format sample type counts (DS-1, SPT-1, UDS-1, SPT-2, etc.)
+        function computeTypeTagMap() {
+            const counts = {};
+            const tagMap = {};
+            records.forEach(r => {
+                counts[r.sampleType] = (counts[r.sampleType] || 0) + 1;
+                tagMap[r.id] = `${r.sampleType}-${counts[r.sampleType]}`;
+            });
+            return tagMap;
+        }
+
+        // Auto suggest next sequence number overall
+        function autoSuggestSampleNo() {
+            document.getElementById('input-sample-no').value = records.length + 1;
+        }
 
         // Automatic CD Calculation based on Surface Datum Level
         function autoCalcCD() {
@@ -513,6 +586,217 @@
             toggleRockFields();
             updateAll();
         });
+
+        // Excel Sheet Parsing Handler
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[firstSheetName];
+                    const jsonRows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+                    if (jsonRows.length === 0) {
+                        alert("Excel file appears to be empty!");
+                        return;
+                    }
+
+                    const importedRecords = [];
+                    const datumVal = parseFloat(document.getElementById('meta-cd-level').value);
+
+                    jsonRows.forEach((row, idx) => {
+                        // Flexible key matching for various spreadsheet header names
+                        const findVal = (keys) => {
+                            for (let k of keys) {
+                                for (let rKey in row) {
+                                    if (rKey.toLowerCase().trim().replace(/[^a-z0-9]/g, '').includes(k.toLowerCase())) {
+                                        return row[rKey];
+                                    }
+                                }
+                            }
+                            return "";
+                        };
+
+                        const dFrom = parseFloat(findVal(['depthfrom', 'from', 'startdepth'])) || (idx * 1.5);
+                        const dTo = parseFloat(findVal(['depthto', 'to', 'enddepth'])) || (dFrom + 1.5);
+                        const sTypeRaw = String(findVal(['sampletype', 'type', 'test'])).toUpperCase();
+                        let sType = 'SPT';
+                        if (sTypeRaw.includes('DS') && !sTypeRaw.includes('UDS')) sType = 'DS';
+                        else if (sTypeRaw.includes('UDS')) sType = 'UDS';
+                        else if (sTypeRaw.includes('CR') || sTypeRaw.includes('CORE')) sType = 'CR';
+
+                        const n1 = parseInt(findVal(['n1'])) || 0;
+                        const n2 = parseInt(findVal(['n2'])) || 0;
+                        const n3 = parseInt(findVal(['n3'])) || 0;
+                        const nValRaw = parseInt(findVal(['nval', 'nvalue', 'nfield', 'sptn'])) || (n2 + n3);
+
+                        const desc = String(findVal(['description', 'strata', 'soil', 'lithology'])) || 'Imported strata row';
+                        let hatch = 'CLAY';
+                        const descUpper = desc.toUpperCase();
+                        if (descUpper.includes('SAND')) hatch = 'SAND';
+                        else if (descUpper.includes('SILT')) hatch = 'SILT';
+                        else if (descUpper.includes('ROCK') || descUpper.includes('BASALT')) hatch = 'SOLID_ROCK';
+                        else if (descUpper.includes('GRAVEL')) hatch = 'GRAVEL';
+
+                        let cdFromStr = '', cdToStr = '';
+                        if (!isNaN(datumVal)) {
+                            const cF = datumVal - dFrom;
+                            const cT = datumVal - dTo;
+                            cdFromStr = cF >= 0 ? `+${cF.toFixed(2)}` : cF.toFixed(2);
+                            cdToStr = cT >= 0 ? `+${cT.toFixed(2)}` : cT.toFixed(2);
+                        }
+
+                        importedRecords.push({
+                            id: Date.now().toString() + '_' + idx,
+                            depthFrom: dFrom,
+                            depthTo: dTo,
+                            cdFrom: cdFromStr,
+                            cdTo: cdToStr,
+                            sampleType: sType,
+                            sampleNo: idx + 1,
+                            recoveredLength: (dTo - dFrom),
+                            n1: n1, n2: n2, n3: n3, nVal: nValRaw,
+                            hatchType: hatch,
+                            unitWeight: parseFloat(findVal(['unitweight', 'gamma', 'weight'])) || 18.0,
+                            description: desc,
+                            coreRec: parseFloat(findVal(['corerec', 'tcr'])) || 0,
+                            solidCore: parseFloat(findVal(['solidcore', 'scr'])) || 0,
+                            rockPieces: String(findVal(['rockpieces', 'rqd'])) || ''
+                        });
+                    });
+
+                    if (importedRecords.length > 0) {
+                        records = importedRecords;
+                        records.sort((a, b) => a.depthFrom - b.depthFrom);
+                        updateAll();
+                        closeImportModal();
+                        alert(`Successfully imported ${importedRecords.length} records from Excel!`);
+                    }
+                } catch(err) {
+                    console.error("Excel import failed:", err);
+                    alert("Failed to parse Excel file. Please ensure columns have standard headers like 'Depth From', 'Depth To', 'Type', 'N', 'Description'.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Photo / Image Borelog OCR Scanning Handler
+        function handleImageScan(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusBox = document.getElementById('ocr-status-box');
+            const statusText = document.getElementById('ocr-status-text');
+            const percentageText = document.getElementById('ocr-percentage');
+            const progressBar = document.getElementById('ocr-progress-bar');
+
+            statusBox.classList.remove('hidden');
+
+            Tesseract.recognize(
+                file,
+                'eng',
+                {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.round(m.progress * 100);
+                            statusText.innerText = 'Scanning borelog photo...';
+                            percentageText.innerText = `${pct}%`;
+                            progressBar.style.width = `${pct}%`;
+                        } else {
+                            statusText.innerText = m.status;
+                        }
+                    }
+                }
+            ).then(({ data: { text } }) => {
+                statusBox.classList.add('hidden');
+                parseOCRText(text);
+                closeImportModal();
+            }).catch(err => {
+                statusBox.classList.add('hidden');
+                console.error("OCR Scanning failed:", err);
+                alert("Failed to scan image. Please try uploading a clearer image or use the Excel file upload option.");
+            });
+        }
+
+        // Extract tabular borelog values from raw OCR text output
+        function parseOCRText(rawText) {
+            const lines = rawText.split('\n');
+            const newRecords = [];
+            const datumVal = parseFloat(document.getElementById('meta-cd-level').value);
+
+            let lastDepthTo = 0.0;
+
+            lines.forEach((line, idx) => {
+                // Match depth patterns like "0.0 - 2.5", "2.5 to 5.0", "0.00 1.50"
+                const depthMatch = line.match(/(\d+\.?\d*)\s*(?:-|to|\s+)\s*(\d+\.?\d*)/i);
+                if (depthMatch) {
+                    const dFrom = parseFloat(depthMatch[1]);
+                    const dTo = parseFloat(depthMatch[2]);
+
+                    if (!isNaN(dFrom) && !isNaN(dTo) && dTo > dFrom) {
+                        let sType = 'SPT';
+                        if (/DS/i.test(line) && !/UDS/i.test(line)) sType = 'DS';
+                        else if (/UDS/i.test(line)) sType = 'UDS';
+                        else if (/CR|CORE/i.test(line)) sType = 'CR';
+
+                        // Extract numbers for blow counts N
+                        const numbers = line.match(/\b\d+\b/g) || [];
+                        let n1 = 0, n2 = 0, n3 = 0, nVal = 10;
+                        if (numbers.length >= 3) {
+                            n1 = parseInt(numbers[numbers.length - 3]) || 2;
+                            n2 = parseInt(numbers[numbers.length - 2]) || 4;
+                            n3 = parseInt(numbers[numbers.length - 1]) || 6;
+                            nVal = n2 + n3;
+                        }
+
+                        let hatch = 'CLAY';
+                        if (/SAND/i.test(line)) hatch = 'SAND';
+                        else if (/SILT/i.test(line)) hatch = 'SILT';
+                        else if (/ROCK|BASALT/i.test(line)) hatch = 'SOLID_ROCK';
+                        else if (/GRAVEL/i.test(line)) hatch = 'GRAVEL';
+
+                        let cdFromStr = '', cdToStr = '';
+                        if (!isNaN(datumVal)) {
+                            const cF = datumVal - dFrom;
+                            const cT = datumVal - dTo;
+                            cdFromStr = cF >= 0 ? `+${cF.toFixed(2)}` : cF.toFixed(2);
+                            cdToStr = cT >= 0 ? `+${cT.toFixed(2)}` : cT.toFixed(2);
+                        }
+
+                        newRecords.push({
+                            id: Date.now().toString() + '_' + idx,
+                            depthFrom: dFrom,
+                            depthTo: dTo,
+                            cdFrom: cdFromStr,
+                            cdTo: cdToStr,
+                            sampleType: sType,
+                            sampleNo: newRecords.length + 1,
+                            recoveredLength: (dTo - dFrom),
+                            n1: n1, n2: n2, n3: n3, nVal: nVal,
+                            hatchType: hatch,
+                            unitWeight: 18.0,
+                            description: line.trim() || 'Scanned borehole stratum',
+                            coreRec: 0, solidCore: 0, rockPieces: ''
+                        });
+                        lastDepthTo = dTo;
+                    }
+                }
+            });
+
+            if (newRecords.length > 0) {
+                records = newRecords;
+                records.sort((a, b) => a.depthFrom - b.depthFrom);
+                updateAll();
+                alert(`Successfully scanned photo and extracted ${newRecords.length} strata records!`);
+            } else {
+                alert("Could not automatically detect depth rows from the photo. Try using the Excel import or manual entry form.");
+            }
+        }
 
         function setLogMode(mode) {
             currentMode = mode;
@@ -581,7 +865,7 @@
 
             // TCR%
             const tcr = Math.min(100, (r.coreRec / interval) * 100);
-            // SCR% (Validation: SCR <= TCR)
+            // SCR%
             const rawScr = (r.solidCore / interval) * 100;
             const scr = Math.min(tcr, rawScr);
 
@@ -703,7 +987,7 @@
             const lastTo = records.length > 0 ? records[records.length - 1].depthTo : 0.0;
             document.getElementById('input-depth-from').value = lastTo.toFixed(2);
             document.getElementById('input-depth-to').value = (lastTo + 1.5).toFixed(2);
-            document.getElementById('input-sample-no').value = records.length + 1;
+            autoSuggestSampleNo();
             autoCalcCD();
             safeInitIcons();
         }
@@ -728,12 +1012,18 @@
                 return;
             }
 
-            listEl.innerHTML = records.map(r => `
+            const tagMap = computeTypeTagMap();
+
+            listEl.innerHTML = records.map((r, idx) => {
+                const typeTag = tagMap[r.id];
+                const sNo = r.sampleNo || (idx + 1);
+
+                return `
                 <div class="p-2 bg-slate-900 border border-slate-700/80 rounded-lg flex items-center justify-between text-xs">
                     <div class="space-y-0.5">
                         <div class="font-bold text-slate-200 flex items-center gap-2">
                             <span>${r.depthFrom.toFixed(2)}m - ${r.depthTo.toFixed(2)}m</span>
-                            <span class="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-1.5 py-0.2 rounded text-[10px]">${r.sampleType} #${r.sampleNo}</span>
+                            <span class="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-1.5 py-0.2 rounded text-[10px]">${typeTag} (No. ${sNo})</span>
                             <span class="text-slate-400 text-[10px] font-mono">(CD: ${r.cdFrom} to ${r.cdTo})</span>
                         </div>
                         <p class="text-[11px] text-slate-400 truncate max-w-[240px]">${r.description || 'No description'}</p>
@@ -743,7 +1033,8 @@
                         <button type="button" onclick="deleteRecord('${r.id}')" class="p-1 hover:bg-slate-800 text-rose-400 rounded transition" title="Delete Record"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
             safeInitIcons();
         }
@@ -840,7 +1131,12 @@
                 return;
             }
 
-            const rowsHtml = records.map(r => {
+            const tagMap = computeTypeTagMap();
+
+            const rowsHtml = records.map((r, idx) => {
+                const typeTag = tagMap[r.id];
+                const sNo = r.sampleNo || (idx + 1);
+
                 const calc = computeCalculatedFields(r, gwt, er);
                 const cdCell = showCD ? `<td class="p-0.5 border border-slate-800 text-[8.5px] text-slate-900 font-mono">${r.cdFrom || '-'}</td><td class="p-0.5 border border-slate-800 text-[8.5px] text-slate-900 font-mono">${r.cdTo || '-'}</td>` : '';
 
@@ -863,8 +1159,8 @@
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
                             ${cdCell}
-                            <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${r.sampleType}</td>
-                            <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${r.sampleNo}</td>
+                            <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}%</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
@@ -883,8 +1179,8 @@
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
                             ${cdCell}
-                            <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${r.sampleType}</td>
-                            <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${r.sampleNo}</td>
+                            <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}%</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
