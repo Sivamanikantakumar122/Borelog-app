@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v5.3</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v5.4</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,8 +26,8 @@
             transform: rotate(180deg);
             white-space: nowrap;
             padding: 4px 2px;
-            font-size: 8.5px;
-            max-height: 70px;
+            font-size: 8px;
+            max-height: 60px;
         }
 
         /* Continuous Hatch Cell Container */
@@ -37,24 +37,43 @@
             height: 100%;
         }
 
-        /* Print Media Styling for Clean Single-Page / Multi-Page Portrait A4 Output */
+        /* Print Media Styling for Strict Single-Page A4 Portrait Layout */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
             .print-area { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
-            .print-sheet { border: 1.5px solid #000 !important; box-shadow: none !important; page-break-after: always; display: flex; flex-direction: column; justify-content: space-between; height: 277mm; }
-            table { font-size: 8px !important; }
-            th, td { padding: 1.5px 1.5px !important; border: 1px solid #000 !important; }
-            .page-break-before { page-break-before: always; }
-            @page { size: A4 portrait; margin: 8mm; }
+            .print-sheet { border: 1.5px solid #000 !important; box-shadow: none !important; page-break-after: always; height: 275mm !important; max-height: 275mm !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; }
+            .graph-sheet { page-break-before: always; height: 275mm !important; display: flex !important; flex-direction: column !important; justify-content: flex-start !important; }
+            table { font-size: 7.5px !important; }
+            th, td { padding: 1px 1px !important; border: 1px solid #000 !important; }
+            @page { size: A4 portrait; margin: 6mm; }
         }
 
-        /* Screen Preview Fixed A4 Portrait Box Styling to strictly simulate single-page layout */
+        /* Screen Preview Fixed A4 Portrait Box Styling */
         .print-sheet {
-            min-height: 1050px;
+            width: 210mm;
+            min-height: 297mm;
+            max-height: 297mm;
+            margin: 0 auto;
+            background: white;
+            box-sizing: border-box;
+            padding: 10mm;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .graph-sheet {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: white;
+            box-sizing: border-box;
+            padding: 10mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
         /* Scrollbar Styling */
@@ -110,7 +129,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.3 Strict Single-Page Flow</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.4 Strict Single-Page</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Professional A4 Portrait Geotechnical Report Engine</p>
                 </div>
@@ -377,22 +396,23 @@
         <!-- RIGHT PANEL: Live Printable Portrait Sheet Preview (7 Columns) -->
         <div class="lg:col-span-7 print-area space-y-6">
             
-            <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-6 print-sheet border border-slate-300 space-y-3">
+            <!-- STRECTHED STRICT SINGLE-PAGE A4 PORTRAIT SHEET -->
+            <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
                 
                 <!-- TOP SECTION: Document Header & Metadata -->
                 <div class="border-2 border-slate-900">
                     <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
                         <div class="text-left">
                             <h2 id="sheet-title-display" class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-slate-900">FIELD BORELOG REPORT</h2>
-                            <p class="text-[8.5px] text-slate-600">Geotechnical Subsurface Investigation</p>
+                            <p class="text-[8px] text-slate-600">Geotechnical Subsurface Investigation</p>
                         </div>
                         <div>
-                            <span id="sheet-mode-badge" class="bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded text-[9px] font-bold">FIELD LOG</span>
+                            <span id="sheet-mode-badge" class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8.5px] font-bold">FIELD LOG</span>
                         </div>
                     </div>
 
                     <!-- Metadata Grid -->
-                    <div class="grid grid-cols-3 gap-0 text-[9px] divide-x divide-y divide-slate-800 text-slate-900">
+                    <div class="grid grid-cols-3 gap-0 text-[8.5px] divide-x divide-y divide-slate-800 text-slate-900">
                         <div class="p-1"><strong>Project Title:</strong> <span id="out-project-title">-</span></div>
                         <div class="p-1"><strong>Project Code:</strong> <span id="out-project-code" class="font-mono">-</span></div>
                         <div class="p-1"><strong>Location:</strong> <span id="out-location">-</span></div>
@@ -400,8 +420,8 @@
                         <div class="p-1"><strong>Drilling Period:</strong> <span id="out-period">-</span></div>
                         <div class="p-1"><strong>Water Table (GWL):</strong> <span id="out-gwt" class="font-bold text-blue-800">-</span></div>
                         <div class="p-1"><strong>CD Level:</strong> <span id="out-cd-level">-</span></div>
-                        <div class="p-1"><strong>Proposed Coords:</strong> <span id="out-proposed-coords" class="font-mono text-[8.5px]">-</span></div>
-                        <div class="p-1"><strong>Achieved Coords:</strong> <span id="out-achieved-coords" class="font-mono text-[8.5px]">-</span></div>
+                        <div class="p-1"><strong>Proposed Coords:</strong> <span id="out-proposed-coords" class="font-mono text-[8px]">-</span></div>
+                        <div class="p-1"><strong>Achieved Coords:</strong> <span id="out-achieved-coords" class="font-mono text-[8px]">-</span></div>
                         <div class="p-1"><strong>Type of Rig:</strong> <span id="out-rig-type">-</span></div>
                         <div class="p-1"><strong>Boring Diameter:</strong> <span id="out-boring-dia">-</span></div>
                         <div class="p-1 bg-amber-50" id="out-energy-box"><strong>Drive Efficiency (Er):</strong> <span id="out-energy-eff" class="font-bold text-amber-900">60%</span></div>
@@ -409,8 +429,8 @@
                 </div>
 
                 <!-- MIDDLE SECTION: Dynamic Borelog Data Table -->
-                <div class="overflow-x-auto flex-1">
-                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[8.5px] text-slate-900">
+                <div class="overflow-x-auto my-2">
+                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[8px] text-slate-900">
                         <thead id="borelog-thead" class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
                             <!-- Dynamic 2-Tier Header inserted by JS -->
                         </thead>
@@ -421,33 +441,33 @@
                 </div>
 
                 <!-- BOTTOM SECTION (Strictly pinned at the bottom of the single A4 portrait sheet): Sub-Soil Legend & Signatures -->
-                <div class="space-y-2 mt-auto pt-2">
+                <div class="space-y-1.5 mt-auto">
                     <!-- Sub-Soil Legend Bar -->
-                    <div class="p-1.5 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[8.5px] font-bold text-slate-800">
+                    <div class="p-1 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[8px] font-bold text-slate-800">
                         <span class="text-slate-600">Sub-soil Legend:</span>
-                        <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
-                        <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
-                        <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
-                        <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
                     </div>
 
                     <!-- Footer Signatures & Personnel (Logged By & Checked By) -->
-                    <div class="border-2 border-slate-900 p-2 text-[9px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
-                        <div class="space-y-4">
+                    <div class="border-2 border-slate-900 p-1.5 text-[8.5px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
+                        <div class="space-y-3">
                             <p><strong>Logged By:</strong> <span id="out-logged-by">Er. J. Smith</span></p>
-                            <div class="border-b border-slate-400 w-36 mt-4"></div>
+                            <div class="border-b border-slate-400 w-32 mt-3"></div>
                         </div>
-                        <div class="space-y-4 text-right">
+                        <div class="space-y-3 text-right">
                             <p><strong>Checked By:</strong> <span id="out-checked-by">Er. R. Sharma</span></p>
-                            <div class="border-b border-slate-400 w-36 ml-auto mt-4"></div>
+                            <div class="border-b border-slate-400 w-32 ml-auto mt-3"></div>
                         </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- In Final Log mode, the Corrected SPT Graph appears on the subsequent A4 portrait sheet -->
-            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 print-sheet border border-slate-300 space-y-4 page-break-before hidden">
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH -->
+            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-4 hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
                         <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">Corrected SPT N-Value Depth Profile</h3>
@@ -455,8 +475,8 @@
                     </div>
                     <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
                 </div>
-                <div class="p-2 border-2 border-slate-900 bg-slate-50 flex items-center justify-center">
-                    <canvas id="sptCanvas" width="480" height="420" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
+                <div class="p-3 border-2 border-slate-900 bg-slate-50 flex items-center justify-center flex-1">
+                    <canvas id="sptCanvas" width="480" height="480" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
                 </div>
             </div>
 
@@ -1093,8 +1113,8 @@
                 if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
                 const hatchSvg = `
-                    <div class="cell-soil-log w-full h-full min-h-[28px] min-w-[42px] flex items-center justify-center p-0 m-0">
-                        <svg width="100%" height="28" viewBox="0 0 45 28" preserveAspectRatio="none" class="block border border-slate-900">
+                    <div class="cell-soil-log w-full h-full min-h-[24px] min-w-[36px] flex items-center justify-center p-0 m-0">
+                        <svg width="100%" height="24" viewBox="0 0 40 24" preserveAspectRatio="none" class="block border border-slate-900">
                             <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
                         </svg>
                     </div>
@@ -1113,7 +1133,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1134,7 +1154,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1149,7 +1169,7 @@
 
             const terminationHtml = `
                 <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
-                    <td colspan="${totalCols}" class="p-1.5 text-center text-[9px] uppercase tracking-wider text-slate-900 bg-slate-200">
+                    <td colspan="${totalCols}" class="p-1.5 text-center text-[8.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
                         *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
                     </td>
                 </tr>
