@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v5.5</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v5.6</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -129,7 +129,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.5 Portrait Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.6 Portrait Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Professional A4 Portrait Geotechnical Report Engine</p>
                 </div>
@@ -395,7 +395,7 @@
             <!-- STRETCHED STRICT SINGLE-PAGE A4 PORTRAIT SHEET -->
             <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
                 
-                <!-- TOP SECTION: Document Header & Metadata (Drive Efficiency Removed) -->
+                <!-- TOP SECTION: Document Header & Metadata (Complete 3-Column Border Fix applied) -->
                 <div class="border-2 border-slate-900">
                     <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
                         <div class="text-left">
@@ -407,19 +407,26 @@
                         </div>
                     </div>
 
-                    <!-- Metadata Grid (3 columns, Drive Efficiency cell removed completely) -->
-                    <div class="grid grid-cols-3 gap-0 text-[8.5px] divide-x divide-y divide-slate-800 text-slate-900">
-                        <div class="p-1"><strong>Project Title:</strong> <span id="out-project-title">-</span></div>
-                        <div class="p-1"><strong>Project Code:</strong> <span id="out-project-code" class="font-mono">-</span></div>
-                        <div class="p-1"><strong>Location:</strong> <span id="out-location">-</span></div>
-                        <div class="p-1"><strong>Borehole No:</strong> <span id="out-bh-no" class="font-mono font-bold text-blue-900">-</span></div>
-                        <div class="p-1"><strong>Drilling Period:</strong> <span id="out-period">-</span></div>
-                        <div class="p-1"><strong>Water Table (GWL):</strong> <span id="out-gwt" class="font-bold text-blue-800">-</span></div>
-                        <div class="p-1"><strong>CD Level:</strong> <span id="out-cd-level">-</span></div>
-                        <div class="p-1"><strong>Proposed Coords:</strong> <span id="out-proposed-coords" class="font-mono text-[8px]">-</span></div>
-                        <div class="p-1"><strong>Achieved Coords:</strong> <span id="out-achieved-coords" class="font-mono text-[8px]">-</span></div>
-                        <div class="p-1"><strong>Type of Rig:</strong> <span id="out-rig-type">-</span></div>
-                        <div class="p-1" colspan="2"><strong>Boring Diameter:</strong> <span id="out-boring-dia">-</span></div>
+                    <!-- Metadata Grid: Fixed missing border and cell structure to ensure complete bounding box lines -->
+                    <div class="grid grid-cols-3 gap-0 text-[8.5px] border-collapse border-slate-900 text-slate-900">
+                        <!-- Row 1 -->
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Project Title:</strong> <span id="out-project-title">-</span></div>
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Project Code:</strong> <span id="out-project-code" class="font-mono">-</span></div>
+                        <div class="p-1 border-b border-slate-900"><strong>Location:</strong> <span id="out-location">-</span></div>
+                        
+                        <!-- Row 2 -->
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span id="out-bh-no" class="font-mono font-bold text-blue-900">-</span></div>
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span id="out-period">-</span></div>
+                        <div class="p-1 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span id="out-gwt" class="font-bold text-blue-800">-</span></div>
+                        
+                        <!-- Row 3 -->
+                        <div class="p-1 border-r border-b border-slate-900"><strong>CD Level:</strong> <span id="out-cd-level">-</span></div>
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span id="out-proposed-coords" class="font-mono text-[8px]">-</span></div>
+                        <div class="p-1 border-b border-slate-900"><strong>Achieved Coords:</strong> <span id="out-achieved-coords" class="font-mono text-[8px]">-</span></div>
+                        
+                        <!-- Row 4 -->
+                        <div class="p-1 border-r border-slate-900"><strong>Type of Rig:</strong> <span id="out-rig-type">-</span></div>
+                        <div class="p-1 col-span-2"><strong>Boring Diameter:</strong> <span id="out-boring-dia">-</span></div>
                     </div>
                 </div>
 
@@ -461,7 +468,7 @@
 
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Graph Aligned to Top) -->
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Only visible in Final Log Mode) -->
             <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-4 hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
