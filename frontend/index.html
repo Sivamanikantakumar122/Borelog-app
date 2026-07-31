@@ -52,14 +52,14 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- SVG Standard Sub-Soil Hatch Legend Definitions (Matching Geotechnical Standards) -->
-    <svg class="hidden" aria-hidden="true">
+    <!-- SVG Standard Sub-Soil Hatch Legend Definitions (Renderable offscreen container for browser url(#hatch) support) -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
         <defs>
             <!-- SAND: Yellow Background (#facc15) + Fine Black Stipple Dots -->
             <pattern id="hatch-SAND" width="10" height="10" patternUnits="userSpaceOnUse">
                 <rect width="10" height="10" fill="#facc15" />
-                <circle cx="2" cy="2" r="1.1" fill="#000000" />
-                <circle cx="7" cy="7" r="1.1" fill="#000000" />
+                <circle cx="2" cy="2" r="1.2" fill="#000000" />
+                <circle cx="7" cy="7" r="1.2" fill="#000000" />
             </pattern>
 
             <!-- SILT: Grey Background (#9ca3af) + Solid Vertical Black Lines -->
@@ -443,13 +443,13 @@
                     </div>
                 </div>
 
-                <!-- Sub-Soil Legend Bar (Moved to Last) -->
+                <!-- Sub-Soil Legend Bar (Positioned at the very end) -->
                 <div class="mt-2 p-1 border border-slate-800 bg-slate-50 flex items-center justify-center gap-4 text-[9px] font-bold">
                     <span>Sub-soil Legend:</span>
-                    <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
-                    <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
-                    <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
-                    <span class="flex items-center gap-1"><svg width="18" height="12" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
+                    <span class="flex items-center gap-1"><svg width="22" height="14" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
+                    <span class="flex items-center gap-1"><svg width="22" height="14" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
+                    <span class="flex items-center gap-1"><svg width="22" height="14" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
+                    <span class="flex items-center gap-1"><svg width="22" height="14" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
                 </div>
 
             </div>
@@ -792,12 +792,11 @@
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery (%)</div></th>
                         <th colspan="4" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                        <th class="p-1 border border-slate-900 text-slate-900 w-14">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
                         <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900 no-print">Action</th>
                     </tr>
                     <tr class="bg-slate-200 text-[8.5px] text-slate-900 font-bold">
                         <th class="p-0.5 border border-slate-900 text-slate-900">From</th><th class="p-0.5 border border-slate-900 text-slate-900">To</th>
@@ -807,7 +806,6 @@
                         <th class="p-0.5 border border-slate-900 text-slate-900">N1</th><th class="p-0.5 border border-slate-900 text-slate-900">N2</th><th class="p-0.5 border border-slate-900 text-slate-900">N3</th><th class="p-0.5 border border-slate-900 font-bold text-slate-900">N</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">Hatch</th><th class="p-0.5 border border-slate-900 text-slate-900">Description</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">TCR</th><th class="p-0.5 border border-slate-900 text-slate-900">SCR</th><th class="p-0.5 border border-slate-900 text-slate-900">RQD</th>
-                        <th class="p-0.5 border border-slate-900 text-slate-900 no-print">Edit/Del</th>
                     </tr>
                 `;
             } else {
@@ -819,12 +817,11 @@
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery (%)</div></th>
                         <th colspan="5" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                        <th class="p-1 border border-slate-900 text-slate-900 w-14">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
                         <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900 no-print">Action</th>
                     </tr>
                     <tr class="bg-slate-200 text-[8.5px] text-slate-900 font-bold">
                         <th class="p-0.5 border border-slate-900 text-slate-900">From</th><th class="p-0.5 border border-slate-900 text-slate-900">To</th>
@@ -834,7 +831,6 @@
                         <th class="p-0.5 border border-slate-900 text-slate-900">N1</th><th class="p-0.5 border border-slate-900 text-slate-900">N2</th><th class="p-0.5 border border-slate-900 text-slate-900">N3</th><th class="p-0.5 border border-slate-900 font-bold text-slate-900">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 text-slate-900">N60</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">Hatch</th><th class="p-0.5 border border-slate-900 text-slate-900">Description</th>
                         <th class="p-0.5 border border-slate-900 text-slate-900">TCR</th><th class="p-0.5 border border-slate-900 text-slate-900">SCR</th><th class="p-0.5 border border-slate-900 text-slate-900">RQD</th>
-                        <th class="p-0.5 border border-slate-900 text-slate-900 no-print">Edit/Del</th>
                     </tr>
                 `;
             }
@@ -852,17 +848,13 @@
                 let hType = (r.hatchType || 'CLAY').toUpperCase();
                 if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
+                // Render SVG Hatch Pattern Box
                 const hatchSvg = `
-                    <div class="cell-soil-log w-full h-full min-h-[36px] flex items-center justify-center p-0 m-0">
-                        <svg width="100%" height="36" class="block border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-${hType})" /></svg>
+                    <div class="cell-soil-log w-full h-full min-h-[32px] min-w-[45px] flex items-center justify-center p-0 m-0">
+                        <svg width="100%" height="32" viewBox="0 0 50 32" preserveAspectRatio="none" class="block border border-slate-900">
+                            <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
+                        </svg>
                     </div>
-                `;
-
-                const actionCell = `
-                    <td class="p-0.5 border border-slate-800 text-center no-print whitespace-nowrap">
-                        <button onclick="editRecord('${r.id}')" class="text-blue-600 hover:text-blue-800 font-bold px-1 py-0.5 border border-blue-300 rounded bg-blue-50 text-[10px] mr-1">Edit</button>
-                        <button onclick="deleteRecord('${r.id}')" class="text-rose-600 hover:text-rose-800 font-bold px-1 py-0.5 border border-rose-300 rounded bg-rose-50 text-[10px]">Del</button>
-                    </td>
                 `;
 
                 if (currentMode === 'field') {
@@ -878,12 +870,11 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8.5px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd + '%' : '-'}</td>
-                            ${actionCell}
                         </tr>
                     `;
                 } else {
@@ -900,12 +891,11 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-14">${hatchSvg}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8.5px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr + '%' : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd + '%' : '-'}</td>
-                            ${actionCell}
                         </tr>
                     `;
                 }
@@ -913,7 +903,7 @@
 
             // Termination Sentence Row at the end of the Borehole
             const maxDepth = Math.max(...records.map(r => r.depthTo));
-            const totalCols = (currentMode === 'field' ? 14 : 15) + (showCD ? 2 : 0) + 1;
+            const totalCols = (currentMode === 'field' ? 14 : 15) + (showCD ? 2 : 0);
 
             const terminationHtml = `
                 <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
