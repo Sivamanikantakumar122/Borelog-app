@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v5.6</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v6.0</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,11 +30,15 @@
             max-height: 60px;
         }
 
-        /* Continuous Hatch Cell Container */
+        /* Continuous Hatch Cell Container - Seamless uniform block without grid breaks */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
             height: 100%;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+            border-top: none !important;
+            border-bottom: none !important;
         }
 
         /* Print Media Styling for Strict Single-Page A4 Portrait Layout */
@@ -84,38 +88,38 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- SVG Standard Sub-Soil Hatch Legend Definitions -->
+    <!-- SVG Standard Sub-Soil Bright High-Contrast Hatch Legend Definitions -->
     <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
         <defs>
-            <pattern id="hatch-SAND" width="10" height="10" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="#fef08a" />
-                <circle cx="2" cy="2" r="1.1" fill="#000000" />
-                <circle cx="7" cy="7" r="1.1" fill="#000000" />
+            <pattern id="hatch-SAND" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fde047" />
+                <circle cx="3" cy="3" r="1.5" fill="#000000" />
+                <circle cx="9" cy="9" r="1.5" fill="#000000" />
             </pattern>
-            <pattern id="hatch-SILT" width="8" height="8" patternUnits="userSpaceOnUse">
-                <rect width="8" height="8" fill="#e2e8f0" />
-                <line x1="4" y1="0" x2="4" y2="8" stroke="#000000" stroke-width="1.1" />
+            <pattern id="hatch-SILT" width="10" height="10" patternUnits="userSpaceOnUse">
+                <rect width="10" height="10" fill="#cbd5e1" />
+                <line x1="5" y1="0" x2="5" y2="10" stroke="#000000" stroke-width="1.5" />
             </pattern>
-            <pattern id="hatch-CLAY" width="10" height="10" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="#bbf7d0" />
-                <line x1="0" y1="10" x2="10" y2="0" stroke="#000000" stroke-width="1.1" />
+            <pattern id="hatch-CLAY" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#4ade80" />
+                <line x1="0" y1="12" x2="12" y2="0" stroke="#000000" stroke-width="1.5" />
             </pattern>
-            <pattern id="hatch-SOLID_ROCK" width="10" height="10" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="#fed7aa" />
-                <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="0.9" />
+            <pattern id="hatch-SOLID_ROCK" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fb923c" />
+                <path d="M 0 0 L 12 12 M 12 0 L 0 12" stroke="#000000" stroke-width="1.2" />
             </pattern>
-            <pattern id="hatch-ROCK" width="10" height="10" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="#fed7aa" />
-                <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="0.9" />
+            <pattern id="hatch-ROCK" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fb923c" />
+                <path d="M 0 0 L 12 12 M 12 0 L 0 12" stroke="#000000" stroke-width="1.2" />
             </pattern>
             <pattern id="hatch-GRAVEL" width="14" height="14" patternUnits="userSpaceOnUse">
-                <rect width="14" height="14" fill="#f1f5f9" />
-                <circle cx="4" cy="4" r="2" fill="none" stroke="#000000" stroke-width="0.9" />
-                <circle cx="10" cy="10" r="2.3" fill="none" stroke="#000000" stroke-width="0.9" />
+                <rect width="14" height="14" fill="#e2e8f0" />
+                <circle cx="4" cy="4" r="2.2" fill="none" stroke="#000000" stroke-width="1.2" />
+                <circle cx="11" cy="11" r="2.5" fill="none" stroke="#000000" stroke-width="1.2" />
             </pattern>
             <pattern id="hatch-WEATHERED_ROCK" width="10" height="10" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="#cbd5e1" />
-                <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="0.8" />
+                <rect width="10" height="10" fill="#94a3b8" />
+                <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="1.0" />
             </pattern>
         </defs>
     </svg>
@@ -129,7 +133,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v5.6 Portrait Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.0 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Professional A4 Portrait Geotechnical Report Engine</p>
                 </div>
@@ -228,7 +232,7 @@
                     </div>
                 </div>
 
-                <!-- Final Borelog Settings -->
+                <!-- Final Borelog Settings with Energy Efficiency Control -->
                 <div id="final-borelog-settings" class="pt-3 border-t border-slate-800 grid grid-cols-1 gap-2.5 text-xs bg-slate-950/60 p-3 rounded-xl border border-amber-500/20 hidden">
                     <div>
                         <label class="block text-amber-300 font-medium mb-1 flex items-center justify-between">
@@ -287,23 +291,23 @@
                         </div>
                     </div>
 
-                    <!-- SPT Blow Counts -->
+                    <!-- SPT Blow Counts: Enter numbers or text like 'R' (Refusal) -->
                     <div class="grid grid-cols-4 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
                         <div>
-                            <label class="block text-slate-400 mb-0.5 text-[11px]">15cm</label>
-                            <input type="number" id="input-n1" value="2" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
+                            <label class="block text-slate-400 mb-0.5 text-[11px]">15cm (N1)</label>
+                            <input type="text" id="input-n1" value="2" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-mono">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-0.5 text-[11px]">30cm</label>
-                            <input type="number" id="input-n2" value="4" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
+                            <label class="block text-slate-400 mb-0.5 text-[11px]">30cm (N2)</label>
+                            <input type="text" id="input-n2" value="4" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-mono">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-0.5 text-[11px]">45cm</label>
-                            <input type="number" id="input-n3" value="6" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
+                            <label class="block text-slate-400 mb-0.5 text-[11px]">45cm (N3)</label>
+                            <input type="text" id="input-n3" value="6" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-mono">
                         </div>
                         <div>
                             <label class="block text-blue-400 font-bold mb-0.5 text-[11px]">N</label>
-                            <input type="number" id="input-n-val" readonly value="10" class="w-full bg-slate-950 border border-blue-500/50 rounded-lg p-2 text-blue-300 font-bold">
+                            <input type="text" id="input-n-val" readonly value="10" class="w-full bg-slate-950 border border-blue-500/50 rounded-lg p-2 text-blue-300 font-bold font-mono">
                         </div>
                     </div>
 
@@ -311,10 +315,10 @@
                         <div>
                             <label class="block text-slate-400 mb-0.5">Standard Soil Hatch</label>
                             <select id="input-hatch-type" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
-                                <option value="CLAY">Clay (Green + Diagonal Lines)</option>
-                                <option value="SAND">Sand (Yellow + Stipple Dots)</option>
+                                <option value="CLAY">Clay (Bright Green + Diagonal Lines)</option>
+                                <option value="SAND">Sand (Bright Yellow + Stipple Dots)</option>
                                 <option value="SILT">Silt (Grey + Vertical Lines)</option>
-                                <option value="SOLID_ROCK">Rock / Basalt (Brown + Cross Hatch)</option>
+                                <option value="SOLID_ROCK">Rock / Basalt (Bright Orange + Cross Hatch)</option>
                                 <option value="GRAVEL">Gravel (Pebbles)</option>
                                 <option value="WEATHERED_ROCK">Weathered Rock</option>
                             </select>
@@ -395,7 +399,7 @@
             <!-- STRETCHED STRICT SINGLE-PAGE A4 PORTRAIT SHEET -->
             <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
                 
-                <!-- TOP SECTION: Document Header & Metadata (Complete 3-Column Border Fix applied) -->
+                <!-- TOP SECTION: Document Header & Metadata -->
                 <div class="border-2 border-slate-900">
                     <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
                         <div class="text-left">
@@ -407,30 +411,26 @@
                         </div>
                     </div>
 
-                    <!-- Metadata Grid: Fixed missing border and cell structure to ensure complete bounding box lines -->
+                    <!-- Metadata Grid -->
                     <div class="grid grid-cols-3 gap-0 text-[8.5px] border-collapse border-slate-900 text-slate-900">
-                        <!-- Row 1 -->
                         <div class="p-1 border-r border-b border-slate-900"><strong>Project Title:</strong> <span id="out-project-title">-</span></div>
                         <div class="p-1 border-r border-b border-slate-900"><strong>Project Code:</strong> <span id="out-project-code" class="font-mono">-</span></div>
                         <div class="p-1 border-b border-slate-900"><strong>Location:</strong> <span id="out-location">-</span></div>
                         
-                        <!-- Row 2 -->
                         <div class="p-1 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span id="out-bh-no" class="font-mono font-bold text-blue-900">-</span></div>
                         <div class="p-1 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span id="out-period">-</span></div>
                         <div class="p-1 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span id="out-gwt" class="font-bold text-blue-800">-</span></div>
                         
-                        <!-- Row 3 -->
                         <div class="p-1 border-r border-b border-slate-900"><strong>CD Level:</strong> <span id="out-cd-level">-</span></div>
                         <div class="p-1 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span id="out-proposed-coords" class="font-mono text-[8px]">-</span></div>
                         <div class="p-1 border-b border-slate-900"><strong>Achieved Coords:</strong> <span id="out-achieved-coords" class="font-mono text-[8px]">-</span></div>
                         
-                        <!-- Row 4 -->
                         <div class="p-1 border-r border-slate-900"><strong>Type of Rig:</strong> <span id="out-rig-type">-</span></div>
                         <div class="p-1 col-span-2"><strong>Boring Diameter:</strong> <span id="out-boring-dia">-</span></div>
                     </div>
                 </div>
 
-                <!-- MIDDLE SECTION: Dynamic Borelog Data Table -->
+                <!-- MIDDLE SECTION: Dynamic Borelog Data Table (Seamless Uniform Soil Log Hatching) -->
                 <div class="overflow-x-auto my-2">
                     <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[8px] text-slate-900">
                         <thead id="borelog-thead" class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
@@ -468,16 +468,16 @@
 
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Only visible in Final Log Mode) -->
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Continuous line showing both N and Corrected N values) -->
             <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-4 hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
-                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">Corrected SPT N-Value Depth Profile</h3>
-                        <p class="text-[9px] text-slate-600">Energy and Overburden Pressure Corrected ($N_{60} / (N_1)_{65}$)</p>
+                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT 'N' & Corrected 'N₁' Depth Profile</h3>
+                        <p class="text-[9px] text-slate-600">Continuous Depth vs Penetration Resistance Curves</p>
                     </div>
                     <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
                 </div>
-                <!-- Canvas aligned to top using justify-start and pt-2 -->
+                <!-- Canvas aligned to top -->
                 <div class="p-3 border-2 border-slate-900 bg-slate-50 flex items-start justify-center pt-2">
                     <canvas id="sptCanvas" width="480" height="480" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
                 </div>
@@ -536,20 +536,20 @@
             {
                 id: '1', depthFrom: 0.0, depthTo: 0.45, cdFrom: '-9.20', cdTo: '-9.65',
                 sampleType: 'SPT', sampleNo: 1, recoveredLength: 0.45,
-                n1: 2, n2: 4, n3: 6, nVal: 10, hatchType: 'SAND', unitWeight: 18.0,
+                n1: '2', n2: '4', n3: '6', nVal: 10, hatchType: 'SAND', unitWeight: 18.0,
                 description: 'Medium dense yellow coarse SAND.', coreRec: 0, solidCore: 0, rockPieces: ''
             },
             {
                 id: '2', depthFrom: 0.45, depthTo: 2.50, cdFrom: '-9.65', cdTo: '-11.70',
                 sampleType: 'SPT', sampleNo: 2, recoveredLength: 0.45,
-                n1: 4, n2: 8, n3: 12, nVal: 20, hatchType: 'CLAY', unitWeight: 18.5,
+                n1: '4', n2: '8', n3: '12', nVal: 20, hatchType: 'CLAY', unitWeight: 18.5,
                 description: 'Soft to stiff brown silty CLAY.', coreRec: 0, solidCore: 0, rockPieces: ''
             },
             {
                 id: '3', depthFrom: 2.50, depthTo: 3.00, cdFrom: '-11.70', cdTo: '-12.20',
-                sampleType: 'DS', sampleNo: 3, recoveredLength: 0.45,
-                n1: 8, n2: 15, n3: 20, nVal: 35, hatchType: 'SILT', unitWeight: 19.5,
-                description: 'Terminated at 3.0m depth in dense grey SILT stratum.', coreRec: 0, solidCore: 0, rockPieces: ''
+                sampleType: 'SPT', sampleNo: 3, recoveredLength: 0.45,
+                n1: '15', n2: '30', n3: 'R', nVal: 'R', hatchType: 'SILT', unitWeight: 19.5,
+                description: 'Refusal encountered at 3.0m depth in dense grey SILT stratum.', coreRec: 0, solidCore: 0, rockPieces: ''
             }
         ];
 
@@ -636,10 +636,20 @@
                         else if (sTypeRaw.includes('UDS')) sType = 'UDS';
                         else if (sTypeRaw.includes('CR') || sTypeRaw.includes('CORE')) sType = 'CR';
 
-                        const n1 = parseInt(findVal(['n1', '15cm'])) || 0;
-                        const n2 = parseInt(findVal(['n2', '30cm'])) || 0;
-                        const n3 = parseInt(findVal(['n3', '45cm'])) || 0;
-                        const nValRaw = parseInt(findVal(['nval', 'nvalue', 'nfield'])) || (n2 + n3);
+                        const n1Str = String(findVal(['n1', '15cm'])).trim() || '2';
+                        const n2Str = String(findVal(['n2', '30cm'])).trim() || '4';
+                        const n3Str = String(findVal(['n3', '45cm'])).trim() || '6';
+
+                        let nValFinal = 10;
+                        const u2 = n2Str.toUpperCase();
+                        const u3 = n3Str.toUpperCase();
+                        if (u2 === 'R' || u3 === 'R' || u2 === 'REFUSAL' || u3 === 'REFUSAL') {
+                            nValFinal = 'R';
+                        } else {
+                            const val2 = parseInt(n2Str) || 0;
+                            const val3 = parseInt(n3Str) || 0;
+                            nValFinal = val2 + val3;
+                        }
 
                         const desc = String(findVal(['description', 'strata', 'soil'])) || 'Imported strata row';
                         let hatch = 'CLAY';
@@ -663,7 +673,7 @@
                             cdFrom: cdFromStr, cdTo: cdToStr,
                             sampleType: sType, sampleNo: idx + 1,
                             recoveredLength: (dTo - dFrom),
-                            n1: n1, n2: n2, n3: n3, nVal: nValRaw,
+                            n1: n1Str, n2: n2Str, n3: n3Str, nVal: nValFinal,
                             hatchType: hatch, unitWeight: 18.0,
                             description: desc, coreRec: 0, solidCore: 0, rockPieces: ''
                         });
@@ -735,13 +745,17 @@
                         else if (/UDS/i.test(line)) sType = 'UDS';
                         else if (/CR|CORE/i.test(line)) sType = 'CR';
 
-                        const numbers = line.match(/\b\d+\b/g) || [];
-                        let n1 = 2, n2 = 4, n3 = 6, nVal = 10;
-                        if (numbers.length >= 3) {
-                            n1 = parseInt(numbers[numbers.length - 3]) || 2;
-                            n2 = parseInt(numbers[numbers.length - 2]) || 4;
-                            n3 = parseInt(numbers[numbers.length - 1]) || 6;
-                            nVal = n2 + n3;
+                        let n1 = '2', n2 = '4', n3 = '6', nVal = 10;
+                        if (/R|REFUSAL/i.test(line)) {
+                            n2 = '15'; n3 = 'R'; nVal = 'R';
+                        } else {
+                            const numbers = line.match(/\b\d+\b/g) || [];
+                            if (numbers.length >= 3) {
+                                n1 = numbers[numbers.length - 3];
+                                n2 = numbers[numbers.length - 2];
+                                n3 = numbers[numbers.length - 1];
+                                nVal = (parseInt(n2) || 0) + (parseInt(n3) || 0);
+                            }
                         }
 
                         let hatch = 'CLAY';
@@ -827,9 +841,19 @@
         }
 
         function calcNValue() {
-            const n2 = parseInt(document.getElementById('input-n2').value) || 0;
-            const n3 = parseInt(document.getElementById('input-n3').value) || 0;
-            document.getElementById('input-n-val').value = n2 + n3;
+            const n2Str = document.getElementById('input-n2').value.trim();
+            const n3Str = document.getElementById('input-n3').value.trim();
+            
+            const u2 = n2Str.toUpperCase();
+            const u3 = n3Str.toUpperCase();
+
+            if (u2 === 'R' || u3 === 'R' || u2 === 'REFUSAL' || u3 === 'REFUSAL') {
+                document.getElementById('input-n-val').value = 'R';
+            } else {
+                const val2 = parseInt(n2Str) || 0;
+                const val3 = parseInt(n3Str) || 0;
+                document.getElementById('input-n-val').value = val2 + val3;
+            }
         }
 
         function toggleRockFields() {
@@ -842,7 +866,15 @@
         function computeCalculatedFields(r, gwt, er) {
             const interval = Math.max(0.01, r.depthTo - r.depthFrom);
             const sampleRecPct = Math.round(Math.min(100, (r.recoveredLength / interval) * 100));
-            const nVal = r.sampleType === 'SPT' ? (r.n2 + r.n3) : (r.nVal || 0);
+            
+            let nValNumeric = 10;
+            const u2 = String(r.n2).trim().toUpperCase();
+            const u3 = String(r.n3).trim().toUpperCase();
+            if (u2 === 'R' || u3 === 'R' || u2 === 'REFUSAL' || u3 === 'REFUSAL' || String(r.nVal).toUpperCase() === 'R') {
+                nValNumeric = 50; // Refusal standard engineering proxy for energy/overburden correction calculation
+            } else {
+                nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
+            }
 
             const tcr = Math.round(Math.min(100, (r.coreRec / interval) * 100));
             const rawScr = (r.solidCore / interval) * 100;
@@ -857,7 +889,7 @@
             }
             const rqd = Math.round(Math.min(100, (sumPieces / interval) * 100));
 
-            const n60 = Math.round((Math.min(er, 90) / 60.0) * nVal);
+            const n60 = Math.round((Math.min(er, 90) / 60.0) * nValNumeric);
 
             const midDepth = (r.depthFrom + r.depthTo) / 2.0;
             const effGamma = midDepth > gwt ? Math.max(0.1, r.unitWeight - 9.81) : r.unitWeight;
@@ -870,7 +902,9 @@
             const N1_final = N1_E <= 15.0 ? N1_E : (15.0 + 0.5 * (N1_E - 15.0));
 
             return {
-                sampleRecPct, nVal, n60,
+                sampleRecPct, 
+                nVal: String(r.nVal), 
+                n60,
                 tcr, scr, rqd,
                 N1_final: Math.round(N1_final)
             };
@@ -883,6 +917,10 @@
             const depthTo = parseFloat(document.getElementById('input-depth-to').value) || 1;
             const sampleNo = parseInt(document.getElementById('input-sample-no').value) || (records.length + 1);
 
+            const n2Input = document.getElementById('input-n2').value.trim();
+            const n3Input = document.getElementById('input-n3').value.trim();
+            const nValInput = document.getElementById('input-n-val').value.trim();
+
             const recordData = {
                 id: editId ? editId : Date.now().toString(),
                 depthFrom, depthTo,
@@ -891,10 +929,10 @@
                 sampleType: document.getElementById('input-sample-type').value,
                 sampleNo,
                 recoveredLength: parseFloat(document.getElementById('input-recovered-length').value) || 0,
-                n1: parseInt(document.getElementById('input-n1').value) || 0,
-                n2: parseInt(document.getElementById('input-n2').value) || 0,
-                n3: parseInt(document.getElementById('input-n3').value) || 0,
-                nVal: (parseInt(document.getElementById('input-n2').value) || 0) + (parseInt(document.getElementById('input-n3').value) || 0),
+                n1: document.getElementById('input-n1').value.trim(),
+                n2: n2Input,
+                n3: n3Input,
+                nVal: nValInput,
                 hatchType: document.getElementById('input-hatch-type').value,
                 unitWeight: parseFloat(document.getElementById('input-unit-weight').value) || 18.0,
                 description: document.getElementById('input-description').value,
@@ -926,10 +964,10 @@
             document.getElementById('input-sample-type').value = r.sampleType;
             document.getElementById('input-sample-no').value = r.sampleNo;
             document.getElementById('input-recovered-length').value = r.recoveredLength;
-            document.getElementById('input-n1').value = r.n1;
-            document.getElementById('input-n2').value = r.n2;
-            document.getElementById('input-n3').value = r.n3;
-            document.getElementById('input-n-val').value = r.nVal;
+            document.getElementById('input-n1').value = r.n1 || '';
+            document.getElementById('input-n2').value = r.n2 || '';
+            document.getElementById('input-n3').value = r.n3 || '';
+            document.getElementById('input-n-val').value = r.nVal || '';
             document.getElementById('input-hatch-type').value = r.hatchType || 'CLAY';
             document.getElementById('input-unit-weight').value = r.unitWeight || 18.0;
             document.getElementById('input-description').value = r.description || '';
@@ -1111,9 +1149,10 @@
                 let hType = (r.hatchType || 'CLAY').toUpperCase();
                 if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
+                // Seamless continuous Hatch SVG rendering without internal horizontal cell boundary lines
                 const hatchSvg = `
-                    <div class="cell-soil-log w-full h-full min-h-[24px] min-w-[36px] flex items-center justify-center p-0 m-0">
-                        <svg width="100%" height="24" viewBox="0 0 40 24" preserveAspectRatio="none" class="block border border-slate-900">
+                    <div class="cell-soil-log w-full h-full min-h-[26px] min-w-[36px] flex items-center justify-center p-0 m-0">
+                        <svg width="100%" height="26" viewBox="0 0 40 26" preserveAspectRatio="none" class="block" style="border:none;">
                             <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
                         </svg>
                     </div>
@@ -1128,11 +1167,11 @@
                             <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
                             <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
-                            <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16 p-0">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1148,12 +1187,12 @@
                             <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
                             <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
-                            <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 text-slate-700">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 font-bold text-blue-900">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
-                            <td class="cell-soil-log border border-slate-800 w-16">${hatchSvg}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-blue-900 font-mono">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
+                            <td class="cell-soil-log border border-slate-800 w-16 p-0">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1177,6 +1216,7 @@
             tbody.innerHTML = rowsHtml + terminationHtml;
         }
 
+        // Render Continuous Curves for N Value and Corrected N Value on Final Mode Graph Sheet
         function renderSptCanvasGraph() {
             const canvas = document.getElementById('sptCanvas');
             if (!canvas) return;
@@ -1220,7 +1260,7 @@
             ctx.fillStyle = '#0f172a';
             ctx.font = 'bold 9.5px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText("Corrected SPT 'N' Value", marginLeft + graphW / 2, 12);
+            ctx.fillText("SPT 'N' & Corrected 'N₁' Value", marginLeft + graphW / 2, 12);
 
             ctx.strokeStyle = '#f1f5f9';
             ctx.setLineDash([3, 3]);
@@ -1257,15 +1297,47 @@
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
 
+            const fieldPts = [];
             const corrPts = [];
+
             sptRecords.forEach(r => {
                 const midD = (r.depthFrom + r.depthTo) / 2.0;
                 const calc = computeCalculatedFields(r, gwt, er);
+                
+                let rawNValNum = 10;
+                const uVal = String(r.nVal).toUpperCase();
+                if (uVal === 'R') {
+                    rawNValNum = 50;
+                } else {
+                    rawNValNum = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
+                }
+
+                const xField = marginLeft + (Math.min(rawNValNum, maxN) / maxN) * graphW;
                 const xCorr = marginLeft + (Math.min(calc.N1_final, maxN) / maxN) * graphW;
                 const y = marginTop + (Math.min(midD, maxDepth) / maxDepth) * graphH;
+
+                fieldPts.push({ x: xField, y: y });
                 corrPts.push({ x: xCorr, y: y });
             });
 
+            // Draw continuous line for Field N Value (Blue)
+            if (fieldPts.length > 0) {
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(fieldPts[0].x, fieldPts[0].y);
+                for (let i = 1; i < fieldPts.length; i++) { ctx.lineTo(fieldPts[i].x, fieldPts[i].y); }
+                ctx.stroke();
+
+                fieldPts.forEach(p => {
+                    ctx.fillStyle = '#2563eb';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            // Draw continuous line for Corrected N1 Value (Orange)
             if (corrPts.length > 0) {
                 ctx.strokeStyle = '#d97706';
                 ctx.lineWidth = 2;
@@ -1282,11 +1354,30 @@
                 });
             }
 
+            // Legend on Graph
+            const legX = marginLeft + graphW - 130;
+            const legY = marginTop + 10;
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.fillRect(legX, legY, 120, 36);
+            ctx.strokeRect(legX, legY, 120, 36);
+
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath(); ctx.arc(legX + 12, legY + 12, 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '8.5px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("SPT N Value", legX + 22, legY + 15);
+
+            ctx.fillStyle = '#d97706';
+            ctx.beginPath(); ctx.arc(legX + 12, legY + 26, 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '8.5px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("Corrected N₁ Value", legX + 22, legY + 29);
+
             const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
             ctx.fillStyle = '#0f172a';
             ctx.font = 'bold 10px Inter, sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText(`Borehole: ${bhNo} (Corrected Profile)`, marginLeft + 10, marginTop + graphH - 12);
+            ctx.fillText(`Borehole: ${bhNo} (Continuous N & N₁ Profiles)`, marginLeft + 10, marginTop + graphH - 12);
         }
     </script>
 </body>
