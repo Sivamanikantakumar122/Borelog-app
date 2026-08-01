@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v6.5</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v6.8</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -73,7 +73,7 @@
                 justify-content: flex-start !important; 
             }
 
-            table { font-size: 7px !important; }
+            table { font-size: 6.5px !important; }
             th, td { padding: 1px 1px !important; border: 1px solid #000 !important; }
             @page { size: A4 portrait; margin: 6mm; }
         }
@@ -158,7 +158,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.5 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.8 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -311,8 +311,8 @@
                             <input type="number" id="input-sample-no" value="1" min="1" step="1" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-bold">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-0.5">Recovery Length (m)</label>
-                            <input type="number" step="0.01" id="input-recovered-length" value="0.45" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white">
+                            <label class="block text-slate-400 mb-0.5">Recovery % (e.g. 100, 30)</label>
+                            <input type="number" step="1" id="input-recovery-pct" value="100" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono">
                         </div>
                     </div>
 
@@ -378,13 +378,21 @@
                         <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Soft brown silty CLAY."></textarea>
                     </div>
 
-                    <!-- Optional Final Borelog Strength Parameters (Point Load & UCS) -->
-                    <div id="strength-inputs-section" class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 hidden">
+                    <!-- Optional Strength Parameters (Field Log: TV & PP | Final Log: PL & UCS) -->
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
                         <div>
+                            <label class="block text-cyan-300 text-[10px] mb-0.5">Torvane TV (kPa)</label>
+                            <input type="text" id="input-tv" value="" placeholder="e.g. 45" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-cyan-300 text-[10px] mb-0.5">Pocket Penetrometer PP (kPa)</label>
+                            <input type="text" id="input-pp" value="" placeholder="e.g. 100" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
+                        </div>
+                        <div class="final-mode-only hidden">
                             <label class="block text-purple-300 text-[10px] mb-0.5">Point Load Is(50) (MPa)</label>
                             <input type="text" id="input-point-load" value="" placeholder="e.g. 2.4" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
-                        <div>
+                        <div class="final-mode-only hidden">
                             <label class="block text-purple-300 text-[10px] mb-0.5">UCS (MPa)</label>
                             <input type="text" id="input-ucs" value="" placeholder="e.g. 45.0" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
@@ -469,7 +477,7 @@
 
                 <!-- MIDDLE SECTION: Dynamic Borelog Data Table -->
                 <div class="overflow-x-auto my-2">
-                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[7.5px] text-slate-900">
+                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[7px] text-slate-900">
                         <thead id="borelog-thead" class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
                             <!-- Dynamic 2-Tier Header inserted by JS -->
                         </thead>
@@ -538,7 +546,7 @@
                 <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Option 1: Upload Excel File (.xlsx, .xls, .csv)
                 </div>
-                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app extracts intervals, test types, and blow counts.</p>
+                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app extracts exact sample recoveries, test types, and blow counts.</p>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
             </div>
 
@@ -570,22 +578,16 @@
         let currentMode = 'field';
         let records = [
             {
-                id: '1', depthFrom: 0.0, depthTo: 0.45, cdFrom: '-9.20', cdTo: '-9.65',
-                sampleType: 'SPT', sampleNo: 1, recoveredLength: 0.45,
-                n1: '2', n2: '4', n3: '6', nVal: '10', hatchType: 'SAND', unitWeight: 18.0,
-                description: 'Medium dense yellow coarse SAND.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: ''
+                id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-10.50', cdTo: '-11.00',
+                sampleType: 'DS', sampleNo: 1, recoveryPct: 30,
+                n1: '-', n2: '-', n3: '-', nVal: '-', hatchType: 'SAND', unitWeight: 18.0,
+                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '25', pp: '50'
             },
             {
-                id: '2', depthFrom: 0.45, depthTo: 2.50, cdFrom: '-9.65', cdTo: '-11.70',
-                sampleType: 'SPT', sampleNo: 2, recoveredLength: 0.45,
-                n1: '4', n2: '8', n3: '12', nVal: '20', hatchType: 'CLAY', unitWeight: 18.5,
-                description: 'Soft to stiff brown silty CLAY.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: ''
-            },
-            {
-                id: '3', depthFrom: 2.50, depthTo: 3.00, cdFrom: '-11.70', cdTo: '-12.20',
-                sampleType: 'SPT', sampleNo: 3, recoveredLength: 0.45,
-                n1: '15', n2: '30', n3: 'R', nVal: 'R', hatchType: 'SILT', unitWeight: 19.5,
-                description: 'Refusal encountered at 3.0m depth in dense grey SILT stratum.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '2.5', ucs: '48.0'
+                id: '2', depthFrom: 0.50, depthTo: 0.95, cdFrom: '-9.70', cdTo: '-10.15',
+                sampleType: 'SPT', sampleNo: 2, recoveryPct: 100,
+                n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 18.0,
+                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
             }
         ];
 
@@ -642,78 +644,133 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonRows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-
-                    if (jsonRows.length === 0) {
+                    
+                    const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                    if (rawRows.length === 0) {
                         alert("Excel file is empty!");
                         return;
                     }
 
+                    let headerRowIdx = 0;
+                    let colMap = {};
+
+                    for (let i = 0; i < Math.min(rawRows.length, 5); i++) {
+                        let row = rawRows[i];
+                        let foundDepth = false;
+                        row.forEach((cell) => {
+                            let val = String(cell).toLowerCase().trim();
+                            if (val.includes('depth') || val.includes('bh depth') || val.includes('from')) foundDepth = true;
+                        });
+                        if (foundDepth) {
+                            headerRowIdx = i;
+                            row.forEach((cell, cIdx) => {
+                                let val = String(cell).toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+                                if (val.includes('bhdepth') || val.includes('depthfrom') || val === 'from') colMap.depthFrom = cIdx;
+                                if (val.includes('depthto') || val === 'to') colMap.depthTo = cIdx;
+                                if (val.includes('sampletype') || val === 'type') colMap.sampleType = cIdx;
+                                if (val.includes('sampleno') || val === 'no') colMap.sampleNo = cIdx;
+                                if (val.includes('recovery') || val.includes('samplerecovery') || val.includes('%')) colMap.recovery = cIdx;
+                                if (val.includes('15cm') || val === 'n1') colMap.n1 = cIdx;
+                                if (val.includes('30cm') || val === 'n2') colMap.n2 = cIdx;
+                                if (val.includes('45cm') || val === 'n3') colMap.n3 = cIdx;
+                                if (val === 'n' || val.includes('nvalue')) colMap.nVal = cIdx;
+                                if (val.includes('soil') || val.includes('desc') || val.includes('strata')) colMap.description = cIdx;
+                            });
+                            break;
+                        }
+                    }
+
                     const importedRecords = [];
-                    const datumVal = parseFloat(document.getElementById('meta-cd-level').value);
+                    const datumVal = parseFloat(document.getElementById('meta-cd-level').value) || -9.20;
+                    let rowsToParse = rawRows.slice(headerRowIdx + 1);
 
-                    jsonRows.forEach((row, idx) => {
-                        const findVal = (keys) => {
-                            for (let k of keys) {
-                                for (let rKey in row) {
-                                    if (rKey.toLowerCase().trim().replace(/[^a-z0-9]/g, '').includes(k.toLowerCase())) {
-                                        return row[rKey];
-                                    }
-                                }
-                            }
-                            return "";
-                        };
+                    rowsToParse.forEach((row, idx) => {
+                        if (!Array.isArray(row) || row.length < 2) return;
+                        let nonEmpties = row.filter(c => c !== '' && c !== null);
+                        if (nonEmpties.length === 0) return;
 
-                        const dFrom = parseFloat(findVal(['depthfrom', 'from', 'startdepth'])) || (idx * 1.5);
-                        const dTo = parseFloat(findVal(['depthto', 'to', 'enddepth'])) || (dFrom + 1.5);
-                        const sTypeRaw = String(findVal(['sampletype', 'type', 'test'])).toUpperCase();
+                        let dFrom = parseFloat(row[colMap.depthFrom ?? 0]) || parseFloat(row[0]) || (idx * 1.5);
+                        let dTo = parseFloat(row[colMap.depthTo ?? 1]) || parseFloat(row[1]) || (dFrom + 1.5);
+                        if (dFrom === dTo) dTo = dFrom + 1.5;
+
                         let sType = 'SPT';
-                        if (sTypeRaw.includes('DS') && !sTypeRaw.includes('UDS')) sType = 'DS';
-                        else if (sTypeRaw.includes('UDS')) sType = 'UDS';
-                        else if (sTypeRaw.includes('CR') || sTypeRaw.includes('CORE')) sType = 'CR';
+                        let sNo = idx + 1;
+                        let typeCell = String(row[colMap.sampleType ?? 2] || row[2] || '').trim().toUpperCase();
+                        
+                        if (typeCell.includes('DS') && !typeCell.includes('UDS')) sType = 'DS';
+                        else if (typeCell.includes('UDS')) sType = 'UDS';
+                        else if (typeCell.includes('SPT')) sType = 'SPT';
+                        else if (typeCell.includes('CR') || typeCell.includes('CORE')) sType = 'CR';
 
-                        const n1Str = String(findVal(['n1', '15cm'])).trim() || '2';
-                        const n2Str = String(findVal(['n2', '30cm'])).trim() || '4';
-                        const n3Str = String(findVal(['n3', '45cm'])).trim() || '6';
-
-                        let nValFinal = '10';
-                        const u2 = n2Str.toUpperCase();
-                        const u3 = n3Str.toUpperCase();
-                        if (u2 === 'R' || u3 === 'R' || u2 === 'REFUSAL' || u3 === 'REFUSAL') {
-                            nValFinal = 'R';
+                        if (typeCell.includes('-')) {
+                            let parts = typeCell.split('-');
+                            sType = parts[0].trim();
+                            if (parts[1] && !isNaN(parts[1])) sNo = parseInt(parts[1]);
                         } else {
-                            const val2 = parseInt(n2Str) || 0;
-                            const val3 = parseInt(n3Str) || 0;
-                            nValFinal = String(val2 + val3);
+                            let numCandidate = parseInt(row[colMap.sampleNo ?? 3] || row[3]);
+                            if (!isNaN(numCandidate)) sNo = numCandidate;
                         }
 
-                        const desc = String(findVal(['description', 'strata', 'soil'])) || 'Imported strata row';
+                        let recoveryVal = 100;
+                        let recCandidate = parseFloat(row[colMap.recovery ?? 4] || row[4]);
+                        if (!isNaN(recCandidate)) {
+                            recoveryVal = recCandidate;
+                        }
+
+                        let n1 = String(row[colMap.n1 ?? 5] || row[5] || '-').trim();
+                        let n2 = String(row[colMap.n2 ?? 6] || row[6] || '-').trim();
+                        let n3 = String(row[colMap.n3 ?? 7] || row[7] || '-').trim();
+                        let nVal = String(row[colMap.nVal ?? 8] || row[8] || '-').trim();
+
+                        if (sType === 'SPT' && (nVal === '-' || nVal === '') && !isNaN(parseInt(n2)) && !isNaN(parseInt(n3))) {
+                            nVal = String(parseInt(n2) + parseInt(n3));
+                        }
+
+                        let desc = '';
+                        for (let c = 5; c < row.length; c++) {
+                            let val = String(row[c]).trim();
+                            if (val.length > 10 && !val.match(/^-?[\d.]+$/)) {
+                                desc = val;
+                                break;
+                            }
+                        }
+                        if (!desc) desc = 'Geotechnical subsurface strata layer';
+
                         let hatch = 'CLAY';
-                        const descUpper = desc.toUpperCase();
-                        if (descUpper.includes('SAND')) hatch = 'SAND';
-                        else if (descUpper.includes('SILT')) hatch = 'SILT';
-                        else if (descUpper.includes('ROCK') || descUpper.includes('BASALT')) hatch = 'SOLID_ROCK';
-                        else if (descUpper.includes('GRAVEL')) hatch = 'GRAVEL';
+                        let descUp = desc.toUpperCase();
+                        if (descUp.includes('SAND')) hatch = 'SAND';
+                        else if (descUp.includes('SILT')) hatch = 'SILT';
+                        else if (descUp.includes('ROCK') || descUp.includes('BASALT')) hatch = 'SOLID_ROCK';
+                        else if (descUp.includes('GRAVEL')) hatch = 'GRAVEL';
 
-                        let cdFromStr = '', cdToStr = '';
-                        if (!isNaN(datumVal)) {
-                            const cF = datumVal - dFrom;
-                            const cT = datumVal - dTo;
-                            cdFromStr = cF >= 0 ? `+${cF.toFixed(2)}` : cF.toFixed(2);
-                            cdToStr = cT >= 0 ? `+${cT.toFixed(2)}` : cT.toFixed(2);
-                        }
+                        let cF = datumVal - dFrom;
+                        let cT = datumVal - dTo;
+                        let cdFromStr = cF >= 0 ? `+${cF.toFixed(2)}` : cF.toFixed(2);
+                        let cdToStr = cT >= 0 ? `+${cT.toFixed(2)}` : cT.toFixed(2);
 
                         importedRecords.push({
                             id: Date.now().toString() + '_' + idx,
-                            depthFrom: dFrom, depthTo: dTo,
-                            cdFrom: cdFromStr, cdTo: cdToStr,
-                            sampleType: sType, sampleNo: idx + 1,
-                            recoveredLength: (dTo - dFrom),
-                            n1: n1Str, n2: n2Str, n3: n3Str, nVal: nValFinal,
-                            hatchType: hatch, unitWeight: 18.0,
-                            description: desc, coreRec: 0, solidCore: 0, rockPieces: '',
-                            pointLoad: String(findVal(['pointload', 'is50']) || ''),
-                            ucs: String(findVal(['ucs', 'unconfined']) || '')
+                            depthFrom: dFrom, 
+                            depthTo: dTo,
+                            cdFrom: cdFromStr, 
+                            cdTo: cdToStr,
+                            sampleType: sType, 
+                            sampleNo: sNo,
+                            recoveryPct: recoveryVal,
+                            n1: n1, 
+                            n2: n2, 
+                            n3: n3, 
+                            nVal: nVal,
+                            hatchType: hatch, 
+                            unitWeight: 18.0,
+                            description: desc, 
+                            coreRec: 0, 
+                            solidCore: 0, 
+                            rockPieces: '',
+                            pointLoad: '', 
+                            ucs: '',
+                            tv: '',
+                            pp: ''
                         });
                     });
 
@@ -722,11 +779,11 @@
                         records.sort((a, b) => a.depthFrom - b.depthFrom);
                         updateAll();
                         closeImportModal();
-                        alert(`Successfully imported ${importedRecords.length} records!`);
+                        alert(`Successfully imported ${importedRecords.length} records with exact recovery percentages!`);
                     }
                 } catch(err) {
                     console.error("Excel import failed:", err);
-                    alert("Failed to parse Excel file.");
+                    alert("Failed to parse Excel file. Please ensure columns match standard borelog layouts.");
                 }
             };
             reader.readAsArrayBuffer(file);
@@ -814,12 +871,12 @@
                             depthFrom: dFrom, depthTo: dTo,
                             cdFrom: cdFromStr, cdTo: cdToStr,
                             sampleType: sType, sampleNo: newRecords.length + 1,
-                            recoveredLength: (dTo - dFrom),
+                            recoveryPct: 100,
                             n1: n1, n2: n2, n3: n3, nVal: nVal,
                             hatchType: hatch, unitWeight: 18.0,
                             description: line.trim() || 'Scanned stratum',
                             coreRec: 0, solidCore: 0, rockPieces: '',
-                            pointLoad: '', ucs: ''
+                            pointLoad: '', ucs: '', tv: '', pp: ''
                         });
                     }
                 }
@@ -845,7 +902,7 @@
             const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
-            const strengthInputs = document.getElementById('strength-inputs-section');
+            const finalModeInputs = document.querySelectorAll('.final-mode-only');
 
             if (mode === 'field') {
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-blue-600 text-white shadow";
@@ -859,7 +916,7 @@
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
                 sptGraphBox.classList.remove('active-final-print');
-                strengthInputs.classList.add('hidden');
+                finalModeInputs.forEach(el => el.classList.add('hidden'));
             } else {
                 btnFinal.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow";
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white";
@@ -872,7 +929,7 @@
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
                 sptGraphBox.classList.add('active-final-print');
-                strengthInputs.classList.remove('hidden');
+                finalModeInputs.forEach(el => el.classList.remove('hidden'));
             }
 
             updateAll();
@@ -909,7 +966,7 @@
 
         function computeCalculatedFields(r, gwt, er) {
             const interval = Math.max(0.01, r.depthTo - r.depthFrom);
-            const sampleRecPct = Math.round(Math.min(100, (r.recoveredLength / interval) * 100));
+            const sampleRecPct = r.recoveryPct !== undefined ? r.recoveryPct : 100;
             
             let nValNumeric = 10;
             const uVal = String(r.nVal).trim().toUpperCase();
@@ -969,7 +1026,7 @@
                 cdTo: document.getElementById('input-cd-to').value,
                 sampleType: document.getElementById('input-sample-type').value,
                 sampleNo,
-                recoveredLength: parseFloat(document.getElementById('input-recovered-length').value) || 0,
+                recoveryPct: parseFloat(document.getElementById('input-recovery-pct').value) || 100,
                 n1: document.getElementById('input-n1').value.trim(),
                 n2: document.getElementById('input-n2').value.trim(),
                 n3: document.getElementById('input-n3').value.trim(),
@@ -981,7 +1038,9 @@
                 solidCore: parseFloat(document.getElementById('input-solid-core').value) || 0,
                 rockPieces: document.getElementById('input-rock-pieces').value,
                 pointLoad: document.getElementById('input-point-load').value.trim(),
-                ucs: document.getElementById('input-ucs').value.trim()
+                ucs: document.getElementById('input-ucs').value.trim(),
+                tv: document.getElementById('input-tv').value.trim(),
+                pp: document.getElementById('input-pp').value.trim()
             };
 
             if (editId) {
@@ -1006,7 +1065,7 @@
             document.getElementById('input-cd-to').value = r.cdTo || '';
             document.getElementById('input-sample-type').value = r.sampleType;
             document.getElementById('input-sample-no').value = r.sampleNo;
-            document.getElementById('input-recovered-length').value = r.recoveredLength;
+            document.getElementById('input-recovery-pct').value = r.recoveryPct !== undefined ? r.recoveryPct : 100;
             document.getElementById('input-n1').value = r.n1 || '';
             document.getElementById('input-n2').value = r.n2 || '';
             document.getElementById('input-n3').value = r.n3 || '';
@@ -1020,6 +1079,8 @@
             document.getElementById('input-rock-pieces').value = r.rockPieces || '';
             document.getElementById('input-point-load').value = r.pointLoad || '';
             document.getElementById('input-ucs').value = r.ucs || '';
+            document.getElementById('input-tv').value = r.tv || '';
+            document.getElementById('input-pp').value = r.pp || '';
 
             toggleRockFields();
             safeInitIcons();
@@ -1128,7 +1189,6 @@
             const cdHeader = showCD ? `<th colspan="2" class="p-1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
             const cdSubHeader = showCD ? `<th class="p-0.5 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.5 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
 
-            // Render extra dedicated columns for PL (Point Load) and UCS (MPa) in Final Log mode matching user markup request
             if (currentMode === 'field') {
                 thead.innerHTML = `
                     <tr class="text-slate-900 font-bold">
@@ -1140,6 +1200,8 @@
                         <th colspan="4" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
                         <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
                         <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
@@ -1149,6 +1211,7 @@
                         ${cdSubHeader}
                         <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
                         <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold">N</th>
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                     </tr>
@@ -1183,7 +1246,7 @@
             }
 
             if (records.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="18" class="p-3 text-slate-500 italic">No strata records added yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="19" class="p-3 text-slate-500 italic">No strata records added yet.</td></tr>`;
                 return;
             }
 
@@ -1221,6 +1284,8 @@
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="cell-soil-log border border-slate-800 w-16 p-0">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${r.tv || '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${r.pp || '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
@@ -1253,7 +1318,7 @@
             }).join('');
 
             const maxDepth = Math.max(...records.map(r => r.depthTo));
-            const totalCols = (currentMode === 'field' ? 14 : 17) + (showCD ? 2 : 0);
+            const totalCols = (currentMode === 'field' ? 16 : 17) + (showCD ? 2 : 0);
 
             const terminationHtml = `
                 <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
