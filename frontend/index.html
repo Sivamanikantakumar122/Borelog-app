@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v10.2</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v10.3</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +30,7 @@
             max-height: 50px;
         }
 
-        /* Continuous Solid Vertical Soil Log Column Container */
+        /* Continuous Solid Vertical Soil Log Column Container (Removes internal row split lines) */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -178,7 +178,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.2 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.3 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -772,8 +772,6 @@
             const btnFinal = document.getElementById('btn-mode-final');
             const modeText = document.getElementById('mode-title-text');
             const modeBadge = document.getElementById('mode-badge');
-            const sheetBadge = document.getElementById('sheet-mode-badge');
-            const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
 
@@ -783,9 +781,6 @@
                 modeText.innerText = "Field Borelog";
                 modeBadge.innerText = "Field Mode";
                 modeBadge.className = "text-[11px] bg-blue-500/20 text-blue-200 border border-blue-400/20 px-2 py-0.5 rounded";
-                sheetBadge.innerText = "FIELD LOG";
-                sheetBadge.className = "bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded font-bold";
-                sheetTitle.innerText = "FIELD BORELOG REPORT";
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
                 sptGraphBox.classList.remove('active-final-print');
@@ -795,9 +790,6 @@
                 modeText.innerText = "Final Borelog";
                 modeBadge.innerText = "Final Mode";
                 modeBadge.className = "text-[11px] bg-amber-500/20 text-amber-200 border border-amber-400/20 px-2 py-0.5 rounded";
-                sheetBadge.innerText = "FINAL LOG";
-                sheetBadge.className = "bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded font-bold";
-                sheetTitle.innerText = "FINAL BORELOG REPORT";
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
                 sptGraphBox.classList.add('active-final-print');
@@ -1114,6 +1106,25 @@
             `;
             }).join('');
             safeInitIcons();
+        }
+
+        function renderHeaderValues() {
+            const getVal = id => document.getElementById(id)?.value || '-';
+            return {
+                title: getVal('meta-project-title'),
+                code: getVal('meta-project-code'),
+                location: getVal('meta-location'),
+                bhNo: getVal('meta-bh-no'),
+                period: (getVal('meta-period-from') !== '-' && getVal('meta-period-to') !== '-') ? `${getVal('meta-period-from')} to ${getVal('meta-period-to')}` : '-',
+                gwt: `${getVal('meta-gwt')} m`,
+                cdLevel: getVal('meta-cd-level'),
+                proposedCoords: getVal('meta-proposed-coords'),
+                achievedCoords: getVal('meta-achieved-coords'),
+                rigType: getVal('meta-rig-type'),
+                boringDia: getVal('meta-boring-dia'),
+                loggedBy: getVal('meta-logged-by'),
+                checkedBy: getVal('meta-checked-by')
+            };
         }
 
         function renderHeaderOutputs() {
