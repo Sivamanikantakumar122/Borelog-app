@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v8.3</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v8.4</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -178,7 +178,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v8.3 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v8.4 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -485,10 +485,10 @@
                             <tr>
                                 <th class="p-1.5 border-r border-slate-800">Depth (m)</th>
                                 <th class="p-1.5 border-r border-slate-800">Raw N</th>
-                                <th class="p-1.5 border-r border-slate-800">N60</th>
-                                <th class="p-1.5 border-r border-slate-800">σ'v (kPa)</th>
-                                <th class="p-1.5 border-r border-slate-800">Cn</th>
-                                <th class="p-1.5">Corrected N₁</th>
+                                <th class="p-1.5 border-r border-slate-800">N<sub>60</sub></th>
+                                <th class="p-1.5 border-r border-slate-800">&sigma;'<sub>v</sub> (kPa)</th>
+                                <th class="p-1.5 border-r border-slate-800">C<sub>n</sub></th>
+                                <th class="p-1.5">Corrected N<sub>1</sub></th>
                             </tr>
                         </thead>
                         <tbody id="panel-n-calc-tbody" class="divide-y divide-slate-800/60 font-mono">
@@ -605,8 +605,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- FRESH SEPARATE A4 SHEET FOR N-CORRECTION CALCULATION TABLE (Removed from final printed sheet, accessible purely via Excel Download) -->
 
         </div>
 
@@ -1308,10 +1306,10 @@
                     "Sample No": tagMap[r.id],
                     "Raw Field N": r.nVal,
                     "Energy Ratio (Er %)": er,
-                    "N60": calc.n60,
+                    "N60 (N')": calc.n60,
                     "Effective Overburden Sigma_v' (kPa)": calc.sigmaVPrime,
                     "Overburden Factor (Cn)": calc.Cn,
-                    "Corrected N1": calc.N1_final
+                    "Corrected N1 (N'')": calc.N1_final
                 };
             });
 
@@ -1462,7 +1460,7 @@
                         <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
                         ${cdSubHeader}
                         <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
-                        <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">N60</th>
+                        <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">N'</th>
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                         ${optSubHeaders}
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
@@ -1534,7 +1532,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${r.sampleType === 'SPT' ? calc.N1_final : '-'}</td>
                             <td class="cell-soil-log border border-slate-800 w-7 p-0">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             ${optDataCells}
