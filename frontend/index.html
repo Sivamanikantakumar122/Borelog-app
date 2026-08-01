@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v10.7</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v10.8</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -180,7 +180,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.7 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.8 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -409,7 +409,7 @@
                                 <option value="SAND">Sand (Bright Yellow + Stipple Dots)</option>
                                 <option value="CLAY">Clay (Bright Green + Diagonal Lines)</option>
                                 <option value="SILT">Silt (Grey + Vertical Lines)</option>
-                                <option value="SOLID_ROCK">Rock / Sandstone / Basalt</option>
+                                <option value="SOLID_ROCK">Rock / Basalt / Sandstone</option>
                                 <option value="GRAVEL">Gravel (Pebbles)</option>
                                 <option value="WEATHERED_ROCK">Weathered Rock</option>
                             </select>
@@ -576,7 +576,7 @@
                 <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Option 1: Upload Excel File (.xlsx, .xls, .csv)
                 </div>
-                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. Extracts sample recoveries and test types (SPT, DS, UDS, CR).</p>
+                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app extracts exact sample recoveries, test types, and blow counts.</p>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
             </div>
 
@@ -697,7 +697,7 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             safeInitIcons();
-            toggleSampleTypeFields();
+            toggleRockFields();
             updateAll();
         });
 
@@ -749,11 +749,11 @@
                             headerRowIdx = i;
                             row.forEach((cell, cIdx) => {
                                 let val = String(cell).toLowerCase().trim().replace(/[^a-z0-9]/g, '');
-                                if (val.includes('depthfrom') || val === 'from') colMap.depthFrom = cIdx;
+                                if (val.includes('bhdepth') || val.includes('depthfrom') || val === 'from') colMap.depthFrom = cIdx;
                                 if (val.includes('depthto') || val === 'to') colMap.depthTo = cIdx;
                                 if (val.includes('sampletype') || val === 'type') colMap.sampleType = cIdx;
                                 if (val.includes('sampleno') || val === 'no') colMap.sampleNo = cIdx;
-                                if (val.includes('recovery') || val.includes('%')) colMap.recovery = cIdx;
+                                if (val.includes('recovery') || val.includes('samplerecovery') || val.includes('%')) colMap.recovery = cIdx;
                                 if (val.includes('15cm') || val === 'n1') colMap.n1 = cIdx;
                                 if (val.includes('30cm') || val === 'n2') colMap.n2 = cIdx;
                                 if (val.includes('45cm') || val === 'n3') colMap.n3 = cIdx;
@@ -797,7 +797,9 @@
 
                         let recoveryVal = 100;
                         let recCandidate = parseFloat(row[colMap.recovery ?? 4] || row[4]);
-                        if (!isNaN(recCandidate)) recoveryVal = recCandidate;
+                        if (!isNaN(recCandidate)) {
+                            recoveryVal = recCandidate;
+                        }
 
                         let n1 = sType === 'SPT' ? String(row[colMap.n1 ?? 5] || row[5] || '1').trim() : '-';
                         let n2 = sType === 'SPT' ? String(row[colMap.n2 ?? 6] || row[6] || '1').trim() : '-';
@@ -811,7 +813,7 @@
                         let desc = '';
                         for (let c = 5; c < row.length; c++) {
                             let val = String(row[c]).trim();
-                            if (val.length > 5 && !val.match(/^-?[\d.]+$/)) {
+                            if (val.length > 10 && !val.match(/^-?[\d.]+$/)) {
                                 desc = val;
                                 break;
                             }
@@ -822,7 +824,7 @@
                         let hatch = 'SAND';
                         let descUp = desc.toUpperCase();
                         if (descUp.includes('CLAY')) hatch = 'CLAY';
-                        else if (descUp.includes('SILT') && !descUp.includes('SAND')) hatch = 'SILT';
+                        else if (descUp.includes('SILT')) hatch = 'SILT';
                         else if (descUp.includes('ROCK') || descUp.includes('SANDSTONE') || descUp.includes('BASALT') || descUp.includes('GRANITE')) hatch = 'SOLID_ROCK';
                         else if (descUp.includes('GRAVEL')) hatch = 'GRAVEL';
 
@@ -1150,8 +1152,13 @@
                 hatchType: hatch,
                 unitWeight: parseFloat(document.getElementById('input-unit-weight').value) || 20.0,
                 description: descText,
-                coreRec: 0, solidCore: 0, rockPieces: '',
-                pointLoad: '', ucs: '', tv: '', pp: '',
+                coreRec: parseFloat(document.getElementById('input-core-rec').value) || 0,
+                solidCore: parseFloat(document.getElementById('input-solid-core').value) || 0,
+                rockPieces: document.getElementById('input-rock-pieces').value,
+                pointLoad: document.getElementById('input-point-load').value.trim(),
+                ucs: document.getElementById('input-ucs').value.trim(),
+                tv: document.getElementById('input-tv').value.trim(),
+                pp: document.getElementById('input-pp').value.trim(),
                 tcr: sampleType === 'CR' ? '100' : '-',
                 scr: sampleType === 'CR' ? '90' : '-',
                 rqd: sampleType === 'CR' ? '80' : '-'
@@ -1188,7 +1195,15 @@
             document.getElementById('input-unit-weight').value = r.unitWeight || 20.0;
             document.getElementById('input-description').value = r.description || '';
 
-            toggleSampleTypeFields();
+            document.getElementById('input-core-rec').value = r.coreRec || 0;
+            document.getElementById('input-solid-core').value = r.solidCore || 0;
+            document.getElementById('input-rock-pieces').value = r.rockPieces || '';
+            document.getElementById('input-point-load').value = r.pointLoad || '';
+            document.getElementById('input-ucs').value = r.ucs || '';
+            document.getElementById('input-tv').value = r.tv || '';
+            document.getElementById('input-pp').value = r.pp || '';
+
+            toggleRockFields();
             safeInitIcons();
         }
 
@@ -1234,11 +1249,10 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const tagMap = computeTypeTagMap();
 
-            // Filter strictly for SPT records in the summary table
             const sptRecords = sortedRecords.filter(r => r.sampleType === 'SPT');
 
             if (sptRecords.length === 0) {
-                if (panelTbody) panelTbody.innerHTML = `<tr><td colspan="11" class="p-3 text-slate-500 italic">No SPT records added for corrections.</td></tr>`;
+                if (panelTbody) panelTbody.innerHTML = `<tr><td colspan="11" class="p-3 text-slate-500 italic">No SPT records found for corrections.</td></tr>`;
                 return;
             }
 
@@ -1629,10 +1643,6 @@
                 `;
             }).join('');
             safeInitIcons();
-        }
-
-        function renderBorelogTable() {
-            renderBorelogSheets();
         }
 
         function renderSptCanvasGraph() {
