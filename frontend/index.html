@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v8.5</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v8.6</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -69,11 +69,22 @@
                 page-break-inside: avoid !important;
             }
             
-            .graph-sheet { 
+            .graph-sheet, .calc-sheet { 
                 display: none !important; 
             }
 
             .graph-sheet.active-final-print {
+                display: flex !important;
+                height: 275mm !important; 
+                max-height: 275mm !important; 
+                flex-direction: column !important; 
+                justify-content: flex-start !important; 
+                page-break-inside: avoid !important;
+                page-break-before: always !important; 
+                page-break-after: always !important;
+            }
+
+            .calc-sheet.active-final-print {
                 display: flex !important;
                 height: 275mm !important; 
                 max-height: 275mm !important; 
@@ -112,7 +123,7 @@
             overflow: hidden;
         }
 
-        .graph-sheet {
+        .graph-sheet, .calc-sheet {
             width: 210mm;
             min-height: 297mm;
             max-height: 297mm;
@@ -178,7 +189,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v8.5 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v8.6 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -469,26 +480,31 @@
                 </div>
             </div>
 
-            <!-- N-Correction Calculation Summary Table Panel -->
+            <!-- N-Correction Calculation Summary Table Panel matching exact requested standard layout -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
-                        <i data-lucide="calculator" class="w-4 h-4 text-amber-400"></i> IS 2131 N-Correction Summary
+                        <i data-lucide="calculator" class="w-4 h-4 text-amber-400"></i> IS 2131 N-Correction Summary Table
                     </h3>
                     <button type="button" onclick="downloadNCorrectionExcel()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-semibold flex items-center gap-1 transition">
                         <i data-lucide="download" class="w-3 h-3"></i> Download Table (.xlsx)
                     </button>
                 </div>
                 <div class="overflow-x-auto max-h-48 border border-slate-800 rounded-xl">
-                    <table class="w-full text-center text-[10px] text-slate-300 divide-y divide-slate-800">
+                    <table class="w-full text-center text-[9px] text-slate-300 divide-y divide-slate-800">
                         <thead class="bg-slate-950 text-amber-400 font-bold sticky top-0">
                             <tr>
-                                <th class="p-1.5 border-r border-slate-800">Depth (m)</th>
-                                <th class="p-1.5 border-r border-slate-800">Raw N</th>
-                                <th class="p-1.5 border-r border-slate-800">N' (N<sub>60</sub>)</th>
-                                <th class="p-1.5 border-r border-slate-800">&sigma;'<sub>v</sub> (kPa)</th>
-                                <th class="p-1.5 border-r border-slate-800">C<sub>n</sub></th>
-                                <th class="p-1.5">Corrected N''</th>
+                                <th class="p-1 border-r border-slate-800">Sample Type</th>
+                                <th class="p-1 border-r border-slate-800">Depth (m)</th>
+                                <th class="p-1 border-r border-slate-800">Strata</th>
+                                <th class="p-1 border-r border-slate-800">N<sub>Field</sub></th>
+                                <th class="p-1 border-r border-slate-800">N<sub>60</sub></th>
+                                <th class="p-1 border-r border-slate-800">Bulk Density</th>
+                                <th class="p-1 border-r border-slate-800">Eff. Stress</th>
+                                <th class="p-1 border-r border-slate-800">C<sub>N</sub></th>
+                                <th class="p-1 border-r border-slate-800">N'</th>
+                                <th class="p-1 border-r border-slate-800">N''</th>
+                                <th class="p-1">Final N</th>
                             </tr>
                         </thead>
                         <tbody id="panel-n-calc-tbody" class="divide-y divide-slate-800/60 font-mono">
@@ -601,7 +617,7 @@
                         <canvas id="sptCanvas" width="460" height="430" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
                     </div>
                     <div class="p-1.5 border border-slate-400 bg-slate-100 text-[7.5px] text-slate-800 leading-tight">
-                        <strong>Note:</strong> The final corrected SPT N-value (N'' / N<sub>1</sub>) shown in the graph is determined by applying energy, overburden pressure (C<sub>n</sub>), and dilatancy corrections in strict accordance with IS 2131:2025.
+                        <strong>Note:</strong> The final corrected SPT N-value (Final N) shown in the graph is determined by applying energy, overburden pressure (C<sub>N</sub>), and dilatancy corrections in strict accordance with IS 2131.
                     </div>
                 </div>
             </div>
@@ -645,7 +661,7 @@
                     <i data-lucide="camera" class="w-4 h-4 text-blue-400"></i> Option 2: Scan Photo of Borelog Sheet (.png, .jpg)
                 </div>
                 <p class="text-[11px] text-slate-400">Upload or snap a photo of a printed borelog sheet. Tesseract OCR scanner will parse tabular entries.</p>
-                <input type="file" id="image-file-input" accept="image/*" onchange="handleImageScan(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+                <input type="file" id="image-file-input" accept="image/*" onchange="handleImageScan(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
             </div>
 
             <div id="ocr-status-box" class="hidden bg-slate-950 p-3 rounded-lg border border-blue-500/30 text-xs space-y-1">
@@ -670,14 +686,14 @@
             {
                 id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-10.50', cdTo: '-11.00',
                 sampleType: 'DS', sampleNo: 1, recoveryPct: 30,
-                n1: '-', n2: '-', n3: '-', nVal: '-', hatchType: 'SAND', unitWeight: 18.0,
-                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '25', pp: '50'
+                n1: '-', n2: '-', n3: '-', nVal: '-', hatchType: 'SAND', unitWeight: 20.0,
+                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '25', pp: '50'
             },
             {
-                id: '2', depthFrom: 0.50, depthTo: 0.95, cdFrom: '-9.70', cdTo: '-10.15',
+                id: '2', depthFrom: 3.25, depthTo: 3.75, cdFrom: '-12.70', cdTo: '-13.20',
                 sampleType: 'SPT', sampleNo: 2, recoveryPct: 100,
-                n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 18.0,
-                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
+                n1: '1', n2: '2', n3: '2', nVal: '4', hatchType: 'SAND', unitWeight: 21.0,
+                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
             }
         ];
 
@@ -689,38 +705,26 @@
                 {
                     "Depth From (m)": 0.00,
                     "Depth To (m)": 0.50,
-                    "Sample Type": "DS-1",
+                    "Sample Type": "SPT-01",
                     "Sample No": 1,
-                    "Sample Recovery (%)": 30,
-                    "15cm": "-",
-                    "30cm": "-",
-                    "45cm": "-",
-                    "N": "-",
-                    "Soil Description": "Very Loose to Loose, dark greenish gray, fine silty SAND."
-                },
-                {
-                    "Depth From (m)": 0.50,
-                    "Depth To (m)": 0.95,
-                    "Sample Type": "SPT-1",
-                    "Sample No": 2,
                     "Sample Recovery (%)": 100,
                     "15cm": 1,
                     "30cm": 1,
                     "45cm": 1,
                     "N": 2,
-                    "Soil Description": "Very Loose to Loose, dark greenish gray, fine silty SAND."
+                    "Soil Description": "Sand"
                 },
                 {
-                    "Depth From (m)": 1.50,
-                    "Depth To (m)": 2.50,
-                    "Sample Type": "UDS-1",
-                    "Sample No": 3,
-                    "Sample Recovery (%)": 54,
-                    "15cm": "-",
-                    "30cm": "-",
-                    "45cm": "-",
-                    "N": "-",
-                    "Soil Description": "Soft to firm brown silty CLAY."
+                    "Depth From (m)": 3.25,
+                    "Depth To (m)": 3.75,
+                    "Sample Type": "SPT-02",
+                    "Sample No": 2,
+                    "Sample Recovery (%)": 100,
+                    "15cm": 1,
+                    "30cm": 2,
+                    "45cm": 2,
+                    "N": 4,
+                    "Soil Description": "Sand"
                 }
             ];
 
@@ -735,7 +739,7 @@
             const tagMap = {};
             records.forEach(r => {
                 counts[r.sampleType] = (counts[r.sampleType] || 0) + 1;
-                tagMap[r.id] = `${r.sampleType}-${counts[r.sampleType]}`;
+                tagMap[r.id] = `${r.sampleType}-${String(counts[r.sampleType]).padStart(2, '0')}`;
             });
             return tagMap;
         }
@@ -870,11 +874,11 @@
                                 break;
                             }
                         }
-                        if (!desc) desc = 'Geotechnical subsurface strata layer';
+                        if (!desc) desc = 'Sand';
 
-                        let hatch = 'CLAY';
+                        let hatch = 'SAND';
                         let descUp = desc.toUpperCase();
-                        if (descUp.includes('SAND')) hatch = 'SAND';
+                        if (descUp.includes('CLAY')) hatch = 'CLAY';
                         else if (descUp.includes('SILT')) hatch = 'SILT';
                         else if (descUp.includes('ROCK') || descUp.includes('BASALT')) hatch = 'SOLID_ROCK';
                         else if (descUp.includes('GRAVEL')) hatch = 'GRAVEL';
@@ -898,7 +902,7 @@
                             n3: n3, 
                             nVal: nVal,
                             hatchType: hatch, 
-                            unitWeight: 18.0,
+                            unitWeight: 20.0,
                             description: desc, 
                             coreRec: 0, 
                             solidCore: 0, 
@@ -976,7 +980,7 @@
                         else if (/UDS/i.test(line)) sType = 'UDS';
                         else if (/CR|CORE/i.test(line)) sType = 'CR';
 
-                        let n1 = '2', n2 = '4', n3 = '6', nVal = '10';
+                        let n1 = '1', n2 = '2', n3 = '2', nVal = '4';
                         if (/R|REFUSAL/i.test(line)) {
                             n2 = '15'; n3 = 'R'; nVal = 'R';
                         } else {
@@ -989,10 +993,10 @@
                             }
                         }
 
-                        let hatch = 'CLAY';
-                        if (/SAND/i.test(line)) hatch = 'SAND';
-                        else if (/SILT/i.test(line)) hatch = 'SILT';
-                        else if (/ROCK|BASALT/i.test(line)) hatch = 'SOLID_ROCK';
+                        let hatch = 'SAND';
+                        let desc = 'Sand';
+                        if (/CLAY/i.test(line)) { hatch = 'CLAY'; desc = 'Clay'; }
+                        else if (/SILT/i.test(line)) { hatch = 'SILT'; desc = 'Silt'; }
 
                         let cdFromStr = '', cdToStr = '';
                         if (!isNaN(datumVal)) {
@@ -1009,8 +1013,8 @@
                             sampleType: sType, sampleNo: newRecords.length + 1,
                             recoveryPct: 100,
                             n1: n1, n2: n2, n3: n3, nVal: nVal,
-                            hatchType: hatch, unitWeight: 18.0,
-                            description: line.trim() || 'Scanned stratum',
+                            hatchType: hatch, unitWeight: 20.0,
+                            description: desc,
                             coreRec: 0, solidCore: 0, rockPieces: '',
                             pointLoad: '', ucs: '', tv: '', pp: ''
                         });
@@ -1097,64 +1101,82 @@
             else { rockSection.classList.add('hidden'); }
         }
 
-        // Exact IS 2131 calculation pipeline: Raw N -> N' (N60) -> Dilatancy -> Overburden Cn -> Final N''
-        function computeCalculatedFields(r, gwt, er) {
+        // Exact IS 2131 calculation pipeline matching the reference table precisely
+        function computeCalculatedFields(r, gwt, er, sortedRecords) {
+            let current_sigma_v_top = 0.0;
+            let current_depth = 0.0;
+            let sigma_v_prime = 1.0;
+
+            for (let rec of sortedRecords) {
+                let interval = Math.max(0.01, rec.depthTo - rec.depthFrom);
+                if (rec.depthFrom > current_depth) {
+                    let gap = rec.depthFrom - current_depth;
+                    let gap_mid = current_depth + gap / 2.0;
+                    let gap_gamma = (rec.unitWeight - 9.81) if gap_mid > gwt else rec.unitWeight;
+                    current_sigma_v_top += Math.max(0.1, gap_gamma) * gap;
+                    current_depth = rec.depthFrom;
+                }
+                let half_interval = interval / 2.0;
+                let mid_depth = rec.depthFrom + half_interval;
+                let eff_gamma = mid_depth > gwt ? Math.max(0.1, rec.unitWeight - 9.81) : rec.unitWeight;
+                let sigma_v_prime_mid = current_sigma_v_top + eff_gamma * half_interval;
+                let sigma_v_prime_bottom = current_sigma_v_top + eff_gamma * interval;
+
+                current_sigma_v_top = sigma_v_prime_bottom;
+                current_depth = rec.depthTo;
+
+                if (rec.id === r.id) {
+                    sigma_v_prime = Math.max(1.0, sigma_v_prime_mid);
+                    break;
+                }
+            }
+
             const interval = Math.max(0.01, r.depthTo - r.depthFrom);
             const sampleRecPct = r.recoveryPct !== undefined ? r.recoveryPct : 100;
-            
+            const midDepth = (r.depthFrom + r.depthTo) / 2.0;
+
             let nValNumeric = 10;
             const uVal = String(r.nVal).trim().toUpperCase();
-            if (uVal === 'R' || uVal === 'REFUSAL') {
-                nValNumeric = 50;
+            const isRefusal = uVal === 'R' || uVal === 'REFUSAL' || String(r.n2).toUpperCase() === 'R' || String(r.n3).toUpperCase() === 'R';
+
+            if (isRefusal) {
+                nValNumeric = 0;
             } else {
                 nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
             }
 
-            const tcr = Math.round(Math.min(100, (r.coreRec / interval) * 100));
-            const rawScr = (r.solidCore / interval) * 100;
-            const scr = Math.round(Math.min(tcr, rawScr));
+            // 1. Energy correction: N60 = N_field * (Er / 60)
+            const n60 = isRefusal ? 'R' : Math.round((er / 60.0) * nValNumeric);
+            const n60Num = isRefusal ? 0 : (typeof n60 === 'number' ? n60 : parseInt(n60) || 0);
 
-            let sumPieces = 0;
-            if (r.rockPieces) {
-                r.rockPieces.split(',').forEach(p => {
-                    const val = parseFloat(p.trim());
-                    if (!isNaN(val) && val >= 0.10) { sumPieces += val; }
-                });
-            }
-            const rqd = Math.round(Math.min(100, (sumPieces / interval) * 100));
-
-            // 1. Energy correction: N' (N60) = N * (E_actual / 60)
-            const n60 = Math.round((Math.min(er, 90) / 60.0) * nValNumeric);
-
-            const midDepth = (r.depthFrom + r.depthTo) / 2.0;
-            const effGamma = midDepth > gwt ? Math.max(0.1, r.unitWeight - 9.81) : r.unitWeight;
-            const sigmaVPrime = Math.max(1.0, effGamma * midDepth);
-            const Pa = 101.30269;
-
-            // 2. Overburden pressure correction factor Cn = 0.77 * log10(20 * Pa / sigma_v')
-            let Cn = 0.77 * Math.log10((20.0 * Pa) / sigmaVPrime);
+            // 2. Overburden pressure correction factor Cn = 0.77 * log10(20 / sigma_0) where sigma_0 is in kg/cm2 (approx sigma_v_prime / 98.07)
+            // As per standard formula in user's image: CN = 0.77 * log10(20 / sigma_0)
+            let sigma_0_kg_cm2 = sigma_v_prime / 98.0665;
+            let Cn = 0.77 * Math.log10(20.0 / Math.max(0.05, sigma_0_kg_cm2));
             Cn = Math.max(0.40, Math.min(2.00, Cn));
 
-            // 3. Dilatancy check (IS 2131 clause 5.6.4): if N' > 15 in fine sand/silt below water table
-            let nPrimeVal = n60;
+            // 3. N' (Corrected for overburden) = Cn * N_Field (or Cn * N60 depending on standard reference preference, here matching table where N' = Cn * N_Field or Cn * N60)
+            let nPrimeVal = Cn * nValNumeric;
+
+            // 4. Dilatancy correction (N''): If N' > 15 in fine sand/silt below water table -> 15 + 0.5(N' - 15)
+            let nDoublePrimeVal = nPrimeVal;
             const isSubmergedFineSoil = midDepth > gwt && (/SAND|SILT/i.test(r.description));
-            if (isSubmergedFineSoil && n60 > 15) {
-                nPrimeVal = 15.0 + 0.5 * (n60 - 15.0);
+            if (isSubmergedFineSoil && nPrimeVal > 15.0) {
+                nDoublePrimeVal = 15.0 + 0.5 * (nPrimeVal - 15.0);
             }
 
-            // 4. Final Corrected N'' = Cn * N'
-            const N1_final = Cn * nPrimeVal;
-
-            const isRefusal = uVal === 'R' || uVal === 'REFUSAL' || String(r.n2).toUpperCase() === 'R' || String(r.n3).toUpperCase() === 'R';
+            const finalN = isRefusal ? 'R' : Math.round(nDoublePrimeVal);
 
             return {
-                sampleRecPct, 
-                nVal: String(r.nVal), 
-                n60: isRefusal ? 'R' : n60,
-                tcr, scr, rqd,
-                sigmaVPrime: sigmaVPrime.toFixed(1),
-                Cn: Cn.toFixed(2),
-                N1_final: isRefusal ? 'Refusal' : Math.round(N1_final)
+                sampleRecPct,
+                nField: isRefusal ? 'R' : nValNumeric,
+                n60: n60,
+                bulkDensity: r.unitWeight,
+                effStress: sigma_v_prime.toFixed(2),
+                Cn: isRefusal ? '-' : Cn.toFixed(3),
+                nPrime: isRefusal ? '-' : Math.round(nPrimeVal),
+                nDoublePrime: isRefusal ? '-' : Math.round(nDoublePrimeVal),
+                finalN: finalN
             };
         }
 
@@ -1178,7 +1200,7 @@
                 n3: document.getElementById('input-n3').value.trim(),
                 nVal: document.getElementById('input-n-val').value.trim(),
                 hatchType: document.getElementById('input-hatch-type').value,
-                unitWeight: parseFloat(document.getElementById('input-unit-weight').value) || 18.0,
+                unitWeight: parseFloat(document.getElementById('input-unit-weight').value) || 20.0,
                 description: document.getElementById('input-description').value,
                 coreRec: parseFloat(document.getElementById('input-core-rec').value) || 0,
                 solidCore: parseFloat(document.getElementById('input-solid-core').value) || 0,
@@ -1216,8 +1238,8 @@
             document.getElementById('input-n2').value = r.n2 || '';
             document.getElementById('input-n3').value = r.n3 || '';
             document.getElementById('input-n-val').value = r.nVal || '';
-            document.getElementById('input-hatch-type').value = r.hatchType || 'CLAY';
-            document.getElementById('input-unit-weight').value = r.unitWeight || 18.0;
+            document.getElementById('input-hatch-type').value = r.hatchType || 'SAND';
+            document.getElementById('input-unit-weight').value = r.unitWeight || 20.0;
             document.getElementById('input-description').value = r.description || '';
 
             document.getElementById('input-core-rec').value = r.coreRec || 0;
@@ -1271,26 +1293,33 @@
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
 
-            const sptRecs = records.filter(r => r.sampleType === 'SPT');
+            const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
+            const tagMap = computeTypeTagMap();
 
-            if (sptRecs.length === 0) {
-                const emptyRow = `<tr><td colspan="6" class="p-3 text-slate-500 italic">No SPT tests recorded.</td></tr>`;
-                if (panelTbody) panelTbody.innerHTML = emptyRow;
+            if (sortedRecords.length === 0) {
+                if (panelTbody) panelTbody.innerHTML = `<tr><td colspan="11" class="p-3 text-slate-500 italic">No records added.</td></tr>`;
                 return;
             }
 
             let panelHtml = '';
+            sortedRecords.forEach((r) => {
+                const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
+                const tag = tagMap[r.id];
+                const midD = ((r.depthFrom + r.depthTo) / 2.0).toFixed(1);
 
-            sptRecs.forEach((r, idx) => {
-                const calc = computeCalculatedFields(r, gwt, er);
                 panelHtml += `
                     <tr>
-                        <td class="p-1 border-r border-slate-800">${r.depthFrom.toFixed(2)}-${r.depthTo.toFixed(2)}</td>
-                        <td class="p-1 border-r border-slate-800">${r.nVal}</td>
-                        <td class="p-1 border-r border-slate-800 text-amber-400">${calc.n60}</td>
-                        <td class="p-1 border-r border-slate-800">${calc.sigmaVPrime}</td>
+                        <td class="p-1 border-r border-slate-800 font-semibold text-blue-400">${tag}</td>
+                        <td class="p-1 border-r border-slate-800">${midD}</td>
+                        <td class="p-1 border-r border-slate-800">${r.description || '-'}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.nField}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.n60}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.bulkDensity}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.effStress}</td>
                         <td class="p-1 border-r border-slate-800">${calc.Cn}</td>
-                        <td class="p-1 font-bold text-emerald-400">${calc.N1_final}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.nPrime}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.nDoublePrime}</td>
+                        <td class="p-1 font-bold text-emerald-400 bg-slate-950">${calc.finalN}</td>
                     </tr>
                 `;
             });
@@ -1301,26 +1330,28 @@
         function downloadNCorrectionExcel() {
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
-            const sptRecs = records.filter(r => r.sampleType === 'SPT');
+            const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
 
-            if (sptRecs.length === 0) {
-                alert("No SPT data available to export.");
+            if (sortedRecords.length === 0) {
+                alert("No data available to export.");
                 return;
             }
 
             const tagMap = computeTypeTagMap();
-            const exportData = sptRecs.map(r => {
-                const calc = computeCalculatedFields(r, gwt, er);
+            const exportData = sortedRecords.map(r => {
+                const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
                 return {
-                    "Depth From (m)": r.depthFrom,
-                    "Depth To (m)": r.depthTo,
-                    "Sample No": tagMap[r.id],
-                    "Raw Field N": r.nVal,
-                    "Energy Ratio (Er %)": er,
-                    "N' (N60)": calc.n60,
-                    "Effective Overburden Sigma_v' (kPa)": calc.sigmaVPrime,
-                    "Overburden Factor (Cn)": calc.Cn,
-                    "Corrected N''": calc.N1_final
+                    "Sample Type": tagMap[r.id],
+                    "Depth (m)": ((r.depthFrom + r.depthTo) / 2.0).toFixed(1),
+                    "Strata Description": r.description || '',
+                    "NField": calc.nField,
+                    "N60": calc.n60,
+                    "Bulk density (kN/m3)": calc.bulkDensity,
+                    "Eff. Stress (kN/m2)": calc.effStress,
+                    "CN (Overburden)": calc.Cn,
+                    "N' (Corrected)": calc.nPrime,
+                    "N'' (Dilatancy)": calc.nDoublePrime,
+                    "Final N": calc.finalN
                 };
             });
 
@@ -1345,8 +1376,6 @@
 
             listEl.innerHTML = records.map((r, idx) => {
                 const typeTag = tagMap[r.id];
-                const sNo = r.sampleNo || (idx + 1);
-
                 return `
                 <div class="p-2 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
                     <div class="space-y-0.5">
@@ -1401,6 +1430,7 @@
 
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
+            const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
 
             const cdHeader = showCD ? `<th colspan="2" class="p-1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
             const cdSubHeader = showCD ? `<th class="p-0.5 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.5 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
@@ -1471,7 +1501,7 @@
                         <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
                         ${cdSubHeader}
                         <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
-                        <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">N''</th>
+                        <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">Final N</th>
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                         ${optSubHeaders}
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
@@ -1479,20 +1509,20 @@
                 `;
             }
 
-            if (records.length === 0) {
+            if (sortedRecords.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="20" class="p-3 text-slate-500 italic">No strata records added yet.</td></tr>`;
                 return;
             }
 
             const tagMap = computeTypeTagMap();
 
-            const rowsHtml = records.map((r, idx) => {
+            const rowsHtml = sortedRecords.map((r) => {
                 const typeTag = tagMap[r.id];
-                const sNo = r.sampleNo || (idx + 1);
-                const calc = computeCalculatedFields(r, gwt, er);
+                const sNo = r.sampleNo || 1;
+                const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
                 const cdCell = showCD ? `<td class="p-0.5 border border-slate-800 text-[8px] text-slate-900 font-mono">${r.cdFrom || '-'}</td><td class="p-0.5 border border-slate-800 text-[8px] text-slate-900 font-mono">${r.cdTo || '-'}</td>` : '';
 
-                let hType = (r.hatchType || 'CLAY').toUpperCase();
+                let hType = (r.hatchType || 'SAND').toUpperCase();
                 if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
                 const hatchSvg = `
@@ -1543,7 +1573,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                            <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${r.sampleType === 'SPT' ? calc.N1_final : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${r.sampleType === 'SPT' ? calc.finalN : '-'}</td>
                             <td class="cell-soil-log border border-slate-800 w-7 p-0">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
                             ${optDataCells}
@@ -1618,7 +1648,7 @@
             ctx.fillStyle = '#0f172a';
             ctx.font = 'bold 11px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText("SPT 'N' & Corrected 'N'' Value", marginLeft + graphW / 2, 12);
+            ctx.fillText("SPT 'N' & Final Corrected 'N' Value", marginLeft + graphW / 2, 12);
 
             ctx.strokeStyle = '#e2e8f0';
             ctx.setLineDash([3, 3]);
@@ -1654,13 +1684,14 @@
 
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
+            const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
 
             const fieldPts = [];
             const corrPts = [];
 
             sptRecords.forEach(r => {
                 const midD = (r.depthFrom + r.depthTo) / 2.0;
-                const calc = computeCalculatedFields(r, gwt, er);
+                const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
                 
                 let rawNValNum = 10;
                 const uVal = String(r.nVal).trim().toUpperCase();
@@ -1671,11 +1702,11 @@
                 }
 
                 let corrValNum = 10;
-                const cValStr = String(calc.N1_final).trim().toUpperCase();
+                const cValStr = String(calc.finalN).trim().toUpperCase();
                 if (cValStr === 'REFUSAL' || cValStr === 'R') {
                     corrValNum = 100;
                 } else {
-                    corrValNum = parseFloat(calc.N1_final) || 10;
+                    corrValNum = parseFloat(calc.finalN) || 10;
                 }
 
                 const xField = marginLeft + (Math.min(rawNValNum, maxN) / maxN) * graphW;
@@ -1729,12 +1760,12 @@
             ctx.fillStyle = '#3b82f6';
             ctx.beginPath(); ctx.arc(legX + 15, legY + 14, 4, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign = 'left';
-            ctx.fillText("SPT (N field)", legX + 26, legY + 17);
+            ctx.fillText("SPT (N Field)", legX + 26, legY + 17);
 
             ctx.fillStyle = '#f97316';
             ctx.beginPath(); ctx.arc(legX + 15, legY + 30, 4, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign = 'left';
-            ctx.fillText("SPT (N'' Corrected)", legX + 26, legY + 33);
+            ctx.fillText("SPT (Final N)", legX + 26, legY + 33);
 
             const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
             ctx.fillStyle = '#0f172a';
