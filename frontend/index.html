@@ -50,7 +50,7 @@
             font-weight: bold;
         }
 
-        /* Ultra-compact row heights matching reference style */
+        /* Ultra-compact row heights */
         tr { height: 16px !important; }
         th, td { padding: 1px 2px !important; border: 1px solid #000 !important; font-size: 7px !important; vertical-align: middle !important; }
 
@@ -1109,23 +1109,28 @@
             safeInitIcons();
         }
 
-        function renderHeaderValues() {
+        function renderHeaderOutputs() {
             const getVal = id => document.getElementById(id)?.value || '-';
-            return {
-                title: getVal('meta-project-title'),
-                code: getVal('meta-project-code'),
-                location: getVal('meta-location'),
-                bhNo: getVal('meta-bh-no'),
-                period: (getVal('meta-period-from') !== '-' && getVal('meta-period-to') !== '-') ? `${getVal('meta-period-from')} to ${getVal('meta-period-to')}` : '-',
-                gwt: `${getVal('meta-gwt')} m`,
-                cdLevel: getVal('meta-cd-level'),
-                proposedCoords: getVal('meta-proposed-coords'),
-                achievedCoords: getVal('meta-achieved-coords'),
-                rigType: getVal('meta-rig-type'),
-                boringDia: getVal('meta-boring-dia'),
-                loggedBy: getVal('meta-logged-by'),
-                checkedBy: getVal('meta-checked-by')
-            };
+            const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+
+            setTxt('out-project-title', getVal('meta-project-title'));
+            setTxt('out-project-code', getVal('meta-project-code'));
+            setTxt('out-location', getVal('meta-location'));
+            setTxt('out-bh-no', getVal('meta-bh-no'));
+
+            const pFrom = getVal('meta-period-from');
+            const pTo = getVal('meta-period-to');
+            setTxt('out-period', (pFrom !== '-' && pTo !== '-') ? `${pFrom} to ${pTo}` : '-');
+
+            setTxt('out-gwt', `${getVal('meta-gwt')} m`);
+            setTxt('out-cd-level', getVal('meta-cd-level'));
+            setTxt('out-proposed-coords', getVal('meta-proposed-coords'));
+            setTxt('out-achieved-coords', getVal('meta-achieved-coords'));
+            setTxt('out-rig-type', getVal('meta-rig-type'));
+            setTxt('out-boring-dia', getVal('meta-boring-dia'));
+
+            setTxt('out-logged-by', getVal('meta-logged-by'));
+            setTxt('out-checked-by', getVal('meta-checked-by'));
         }
 
         // Automatic Multi-Page Split Engine supporting 30m+ depths with identical repeated headers
