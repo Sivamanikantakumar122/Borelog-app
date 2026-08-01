@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v11.7</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v11.8</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,6 +31,7 @@
             vertical-align: middle;
         }
 
+        /* Fully seamless continuous soil log column style filling entire cell height */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -40,8 +41,8 @@
             border-right: 1.2px solid #000 !important;
             border-top: none !important;
             border-bottom: none !important;
-            background-clip: padding-box;
-            position: relative;
+            vertical-align: stretch !important;
+            height: 100% !important;
         }
 
         .col-n-val {
@@ -50,7 +51,7 @@
         }
 
         tr { height: 16px !important; max-height: 19px !important; }
-        th, td { padding: 1.5px 2px !important; border: 1px solid #000 !important; font-size: 7.2px !important; vertical-align: middle !important; }
+        th, td { padding: 1px 2px !important; border: 1px solid #000 !important; font-size: 7.2px !important; vertical-align: middle !important; }
 
         @media print {
             .no-print { display: none !important; }
@@ -167,7 +168,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.7 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.8 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -400,7 +401,7 @@
                                 <option value="SAND">Sand (Bright Yellow + Stipple Dots)</option>
                                 <option value="CLAY">Clay (Bright Green + Diagonal Lines)</option>
                                 <option value="SILT">Silt (Grey + Vertical Lines)</option>
-                                <option value="SOLID_ROCK">Rock / Basalt (Bright Orange + Cross Hatch)</option>
+                                <option value="SOLID_ROCK">Rock / Sandstone (Bright Orange + Cross Hatch)</option>
                                 <option value="GRAVEL">Gravel (Pebbles)</option>
                             </select>
                         </div>
@@ -814,10 +815,10 @@
 
                         let hatch = 'SAND';
                         let descUp = desc.toUpperCase();
-                        if (descUp.includes('SAND')) hatch = 'SAND';
+                        if (descUp.includes('SANDSTONE') || descUp.includes('ROCK') || descUp.includes('BASALT') || descUp.includes('GRANITE')) hatch = 'SOLID_ROCK';
+                        else if (descUp.includes('SAND')) hatch = 'SAND';
                         else if (descUp.includes('CLAY')) hatch = 'CLAY';
                         else if (descUp.includes('SILT')) hatch = 'SILT';
-                        else if (descUp.includes('ROCK') || descUp.includes('SANDSTONE') || descUp.includes('BASALT') || descUp.includes('GRANITE')) hatch = 'SOLID_ROCK';
                         else if (descUp.includes('GRAVEL')) hatch = 'GRAVEL';
 
                         let cF = datumVal - dFrom;
@@ -931,9 +932,9 @@
                         let hatch = 'SAND';
                         let desc = 'Sand';
                         let descUp = line.toUpperCase();
-                        if (descUp.includes('SAND')) { hatch = 'SAND'; desc = 'Sand'; }
+                        if (descUp.includes('SANDSTONE') || descUp.includes('ROCK') || descUp.includes('BASALT') || descUp.includes('GRANITE')) { hatch = 'SOLID_ROCK'; desc = 'Sandstone'; }
+                        else if (descUp.includes('SAND')) { hatch = 'SAND'; desc = 'Sand'; }
                         else if (descUp.includes('CLAY')) { hatch = 'CLAY'; desc = 'Clay'; }
-                        else if (descUp.includes('ROCK') || descUp.includes('SANDSTONE') || descUp.includes('BASALT') || descUp.includes('GRANITE')) { hatch = 'SOLID_ROCK'; desc = 'Sandstone'; }
 
                         let cdFromStr = '', cdToStr = '';
                         if (!isNaN(datumVal)) {
@@ -1143,10 +1144,10 @@
             const descText = document.getElementById('input-description').value;
             let hatch = document.getElementById('input-hatch-type').value;
             let descUp = descText.toUpperCase();
-            if (descUp.includes('SAND')) hatch = 'SAND';
+            if (descUp.includes('SANDSTONE') || descUp.includes('ROCK') || descUp.includes('BASALT') || descUp.includes('GRANITE')) hatch = 'SOLID_ROCK';
+            else if (descUp.includes('SAND')) hatch = 'SAND';
             else if (descUp.includes('CLAY')) hatch = 'CLAY';
             else if (descUp.includes('SILT') && !descUp.includes('SAND')) hatch = 'SILT';
-            else if (descUp.includes('ROCK') || descUp.includes('SANDSTONE') || descUp.includes('BASALT') || descUp.includes('GRANITE')) hatch = 'SOLID_ROCK';
             else if (descUp.includes('GRAVEL')) hatch = 'GRAVEL';
 
             const recordData = {
@@ -1527,9 +1528,9 @@
                         const cdCell = showCD ? `<td class="p-0.5 border border-slate-800 text-[7.5px] text-slate-900 font-mono">${r.cdFrom || '-'}</td><td class="p-0.5 border border-slate-800 text-[7.5px] text-slate-900 font-mono">${r.cdTo || '-'}</td>` : '';
 
                         let hType = (r.hatchType || 'SAND').toUpperCase();
-                        if (hType === 'ROCK') hType = 'SOLID_ROCK';
+                        if (hType === 'ROCK' || hType === 'SANDSTONE') hType = 'SOLID_ROCK';
 
-                        // Continuous block fill matching Attachment 2 styling perfectly without any horizontal seams
+                        // Seamless block fill matching professional engineering layout without vertical/horizontal gaps
                         const hatchDiv = `
                             <div class="cell-soil-log w-full h-full min-h-[16px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat;">
                             </div>
