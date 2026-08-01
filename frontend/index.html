@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v10.6</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v10.7</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -180,7 +180,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.6 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.7 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -346,7 +346,7 @@
                     <div class="grid grid-cols-3 gap-2">
                         <div>
                             <label class="block text-slate-400 mb-0.5">Type of Test</label>
-                            <select id="input-sample-type" onchange="toggleRockFields(); autoSuggestSampleNo();" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-semibold">
+                            <select id="input-sample-type" onchange="toggleSampleTypeFields(); autoSuggestSampleNo();" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-semibold">
                                 <option value="SPT">SPT (Standard Penetration)</option>
                                 <option value="DS">DS (Disturbed Sample)</option>
                                 <option value="UDS">UDS (Undisturbed Sample)</option>
@@ -363,8 +363,8 @@
                         </div>
                     </div>
 
-                    <!-- SPT Blow Counts -->
-                    <div class="grid grid-cols-4 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                    <!-- SPT Blow Counts Box -->
+                    <div id="spt-blows-box" class="grid grid-cols-4 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
                         <div>
                             <label class="block text-slate-400 mb-0.5 text-[11px]">15cm (N1)</label>
                             <input type="text" id="input-n1" value="1" oninput="calcNValue()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-mono">
@@ -383,6 +383,25 @@
                         </div>
                     </div>
 
+                    <!-- Rock Core Parameters Box (Visible when CR is selected) -->
+                    <div id="rock-core-section" class="bg-slate-950 p-3 rounded-xl border border-purple-500/30 space-y-2 hidden">
+                        <div class="text-purple-300 font-semibold text-[11px]">Rock Core Parameters (CR)</div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-slate-400 text-[10px] mb-0.5">TCR (%)</label>
+                                <input type="number" step="1" id="input-tcr" value="100" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 text-[10px] mb-0.5">SCR (%)</label>
+                                <input type="number" step="1" id="input-scr" value="90" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 text-[10px] mb-0.5">RQD (%)</label>
+                                <input type="number" step="1" id="input-rqd" value="80" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs font-mono">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-slate-400 mb-0.5">Standard Soil Hatch</label>
@@ -390,7 +409,7 @@
                                 <option value="SAND">Sand (Bright Yellow + Stipple Dots)</option>
                                 <option value="CLAY">Clay (Bright Green + Diagonal Lines)</option>
                                 <option value="SILT">Silt (Grey + Vertical Lines)</option>
-                                <option value="SOLID_ROCK">Rock / Basalt / Sandstone (Bright Orange + Cross Hatch)</option>
+                                <option value="SOLID_ROCK">Rock / Sandstone / Basalt</option>
                                 <option value="GRAVEL">Gravel (Pebbles)</option>
                                 <option value="WEATHERED_ROCK">Weathered Rock</option>
                             </select>
@@ -398,25 +417,6 @@
                         <div>
                             <label class="block text-amber-300 mb-0.5">Unit Weight γ (kN/m³)</label>
                             <input type="number" step="0.5" id="input-unit-weight" value="20.0" class="w-full bg-slate-950 border border-amber-500/40 rounded-lg p-2 text-amber-200">
-                        </div>
-                    </div>
-
-                    <!-- Rock Core Section -->
-                    <div id="rock-core-section" class="bg-slate-950 p-3 rounded-xl border border-purple-500/30 space-y-2 hidden">
-                        <div class="text-purple-300 font-semibold text-[11px]">Rock Core Parameters</div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-slate-400 text-[10px] mb-0.5">Core Recovered (m)</label>
-                                <input type="number" step="0.01" id="input-core-rec" value="3.80" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs">
-                            </div>
-                            <div>
-                                <label class="block text-slate-400 text-[10px] mb-0.5">Solid Core Intact (m)</label>
-                                <input type="number" step="0.01" id="input-solid-core" value="3.20" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 text-[10px] mb-0.5">Rock Pieces >10cm (m) (comma separated)</label>
-                            <input type="text" id="input-rock-pieces" value="0.15, 0.22, 0.35, 0.40, 0.18, 0.25" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-mono text-xs">
                         </div>
                     </div>
 
@@ -576,7 +576,7 @@
                 <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Option 1: Upload Excel File (.xlsx, .xls, .csv)
                 </div>
-                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app extracts exact sample recoveries, test types, and blow counts.</p>
+                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. Extracts sample recoveries and test types (SPT, DS, UDS, CR).</p>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
             </div>
 
@@ -604,6 +604,9 @@
         </div>
     </div>
 
+    <!-- Tesseract OCR Library -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
     <script>
         let currentMode = 'field';
         let records = [
@@ -611,13 +614,13 @@
                 id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-10.50', cdTo: '-11.00',
                 sampleType: 'SPT', sampleNo: 1, recoveryPct: 100,
                 n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 20.0,
-                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
+                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: '', tcr: '-', scr: '-', rqd: '-'
             },
             {
                 id: '2', depthFrom: 3.25, depthTo: 3.75, cdFrom: '-12.70', cdTo: '-13.20',
                 sampleType: 'SPT', sampleNo: 2, recoveryPct: 100,
                 n1: '1', n2: '2', n3: '2', nVal: '4', hatchType: 'SAND', unitWeight: 21.0,
-                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
+                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: '', tcr: '-', scr: '-', rqd: '-'
             }
         ];
 
@@ -694,9 +697,26 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             safeInitIcons();
-            toggleRockFields();
+            toggleSampleTypeFields();
             updateAll();
         });
+
+        function toggleSampleTypeFields() {
+            const sType = document.getElementById('input-sample-type').value;
+            const blowsBox = document.getElementById('spt-blows-box');
+            const rockBox = document.getElementById('rock-core-section');
+
+            if (sType === 'SPT') {
+                blowsBox.classList.remove('hidden');
+                rockBox.classList.add('hidden');
+            } else if (sType === 'CR') {
+                blowsBox.classList.add('hidden');
+                rockBox.classList.remove('hidden');
+            } else {
+                blowsBox.classList.add('hidden');
+                rockBox.classList.add('hidden');
+            }
+        }
 
         function handleExcelUpload(event) {
             const file = event.target.files[0];
@@ -825,7 +845,10 @@
                             unitWeight: 20.0,
                             description: desc, 
                             coreRec: 0, solidCore: 0, rockPieces: '',
-                            pointLoad: '', ucs: '', tv: '', pp: ''
+                            pointLoad: '', ucs: '', tv: '', pp: '',
+                            tcr: sType === 'CR' ? '100' : '-',
+                            scr: sType === 'CR' ? '90' : '-',
+                            rqd: sType === 'CR' ? '80' : '-'
                         });
                     });
 
@@ -934,7 +957,10 @@
                             hatchType: hatch, unitWeight: 20.0,
                             description: desc,
                             coreRec: 0, solidCore: 0, rockPieces: '',
-                            pointLoad: '', ucs: '', tv: '', pp: ''
+                            pointLoad: '', ucs: '', tv: '', pp: '',
+                            tcr: sType === 'CR' ? '100' : '-',
+                            scr: sType === 'CR' ? '90' : '-',
+                            rqd: sType === 'CR' ? '80' : '-'
                         });
                     }
                 }
@@ -1006,25 +1032,6 @@
                 const val2 = parseInt(n2Str) || 0;
                 const val3 = parseInt(n3Str) || 0;
                 document.getElementById('input-n-val').value = val2 + val3;
-            }
-        }
-
-        function toggleRockFields() {
-            const sampleType = document.getElementById('input-sample-type').value;
-            const rockSection = document.getElementById('rock-core-section');
-            if (sampleType === 'CR') { rockSection.classList.remove('hidden'); }
-            else { rockSection.classList.add('hidden'); }
-
-            if (sampleType !== 'SPT') {
-                document.getElementById('input-n1').value = '-';
-                document.getElementById('input-n2').value = '-';
-                document.getElementById('input-n3').value = '-';
-                document.getElementById('input-n-val').value = '-';
-            } else {
-                document.getElementById('input-n1').value = '1';
-                document.getElementById('input-n2').value = '1';
-                document.getElementById('input-n3').value = '1';
-                document.getElementById('input-n-val').value = '2';
             }
         }
 
@@ -1143,13 +1150,11 @@
                 hatchType: hatch,
                 unitWeight: parseFloat(document.getElementById('input-unit-weight').value) || 20.0,
                 description: descText,
-                coreRec: parseFloat(document.getElementById('input-core-rec').value) || 0,
-                solidCore: parseFloat(document.getElementById('input-solid-core').value) || 0,
-                rockPieces: document.getElementById('input-rock-pieces').value,
-                pointLoad: document.getElementById('input-point-load').value.trim(),
-                ucs: document.getElementById('input-ucs').value.trim(),
-                tv: document.getElementById('input-tv').value.trim(),
-                pp: document.getElementById('input-pp').value.trim()
+                coreRec: 0, solidCore: 0, rockPieces: '',
+                pointLoad: '', ucs: '', tv: '', pp: '',
+                tcr: sampleType === 'CR' ? '100' : '-',
+                scr: sampleType === 'CR' ? '90' : '-',
+                rqd: sampleType === 'CR' ? '80' : '-'
             };
 
             if (editId) {
@@ -1183,15 +1188,7 @@
             document.getElementById('input-unit-weight').value = r.unitWeight || 20.0;
             document.getElementById('input-description').value = r.description || '';
 
-            document.getElementById('input-core-rec').value = r.coreRec || 0;
-            document.getElementById('input-solid-core').value = r.solidCore || 0;
-            document.getElementById('input-rock-pieces').value = r.rockPieces || '';
-            document.getElementById('input-point-load').value = r.pointLoad || '';
-            document.getElementById('input-ucs').value = r.ucs || '';
-            document.getElementById('input-tv').value = r.tv || '';
-            document.getElementById('input-pp').value = r.pp || '';
-
-            toggleRockFields();
+            toggleSampleTypeFields();
             safeInitIcons();
         }
 
@@ -1237,7 +1234,7 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const tagMap = computeTypeTagMap();
 
-            // Filter strictly for SPT records in the summary calculation table
+            // Filter strictly for SPT records in the summary table
             const sptRecords = sortedRecords.filter(r => r.sampleType === 'SPT');
 
             if (sptRecords.length === 0) {
@@ -1512,9 +1509,9 @@
                                     <td class="cell-soil-log border-x border-slate-800 border-t border-b-0 w-6 p-0" style="border-bottom: none !important;">${hatchSvg}</td>
                                     <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.tcr || '-') : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.scr || '-') : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.rqd || '-') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.tcr || '100') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.scr || '90') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.rqd || '80') : '-'}</td>
                                 </tr>
                             `;
                         } else {
@@ -1534,9 +1531,9 @@
                                     <td class="cell-soil-log border-x border-slate-800 border-t border-b-0 w-6 p-0" style="border-bottom: none !important;">${hatchSvg}</td>
                                     <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.tcr || '-') : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.scr || '-') : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.rqd || '-') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.tcr || '100') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.scr || '90') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.rqd || '80') : '-'}</td>
                                 </tr>
                             `;
                         }
