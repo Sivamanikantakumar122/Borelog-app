@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v7.1</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v7.2</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -70,7 +70,7 @@
                 height: 275mm !important; 
                 max-height: 275mm !important; 
                 flex-direction: column !important; 
-                justify-content: space-between !important; 
+                justify-content: flex-start !important; 
             }
 
             table { font-size: 6.5px !important; }
@@ -93,16 +93,18 @@
             overflow: hidden;
         }
 
+        /* Graph sheet uses justify-start to place graph cleanly at the top of the page */
         .graph-sheet {
             width: 210mm;
             min-height: 297mm;
+            max-height: 297mm;
             margin: 0 auto;
             background: white;
             box-sizing: border-box;
             padding: 10mm;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
         }
 
         /* Scrollbar Styling */
@@ -158,7 +160,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.1 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.2 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -550,11 +552,11 @@
 
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH WITH IS 2131 NOTE -->
-            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-3 hidden">
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Graph strictly positioned at the top using justify-start) -->
+            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-3 justify-start hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
-                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT 'N' Value Depth Profile</h3>
+                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT 'N' VALUE DEPTH PROFILE</h3>
                         <p class="text-[9px] text-slate-600">Continuous Depth vs Penetration Resistance Curves (Matching Reference Standard)</p>
                     </div>
                     <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
