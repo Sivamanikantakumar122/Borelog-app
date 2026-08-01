@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v10.4</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v10.5</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,9 +23,11 @@
             writing-mode: vertical-rl;
             transform: rotate(180deg);
             white-space: nowrap;
-            padding: 4px 2px;
-            font-size: 7px;
-            max-height: 50px;
+            padding: 3px 1px;
+            font-size: 6.5px;
+            max-height: 48px;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         /* Continuous Solid Vertical Soil Log Column Container */
@@ -33,8 +35,8 @@
             padding: 0 !important;
             margin: 0 !important;
             height: 100% !important;
-            width: 26px !important;
-            max-width: 26px !important;
+            width: 24px !important;
+            max-width: 24px !important;
             border-left: 1.2px solid #000 !important;
             border-right: 1.2px solid #000 !important;
             border-top: none !important;
@@ -44,13 +46,13 @@
 
         /* Expanded N Value Column Width */
         .col-n-val {
-            min-width: 26px !important;
+            min-width: 24px !important;
             font-weight: bold;
         }
 
         /* Ultra-compact row heights */
-        tr { height: 16px !important; }
-        th, td { padding: 1px 2px !important; border: 1px solid #000 !important; font-size: 7px !important; vertical-align: middle !important; }
+        tr { height: 15px !important; max-height: 18px !important; }
+        th, td { padding: 1px 1.5px !important; border: 1px solid #000 !important; font-size: 6.5px !important; vertical-align: middle !important; }
 
         /* Print Media Styling: Strict multi-page pagination with repeated table headers */
         @media print {
@@ -90,7 +92,7 @@
 
             thead { display: table-header-group !important; }
             tr { page-break-inside: avoid !important; }
-            table { font-size: 6.5px !important; }
+            table { font-size: 6px !important; }
             @page { size: A4 portrait; margin: 0; }
         }
 
@@ -176,7 +178,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.4 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.5 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -377,7 +379,7 @@
                                 <option value="SAND">Sand (Bright Yellow + Stipple Dots)</option>
                                 <option value="CLAY">Clay (Bright Green + Diagonal Lines)</option>
                                 <option value="SILT">Silt (Grey + Vertical Lines)</option>
-                                <option value="SOLID_ROCK">Rock / Basalt (Bright Orange + Cross Hatch)</option>
+                                <option value="SOLID_ROCK">Rock / Basalt / Sandstone (Bright Orange + Cross Hatch)</option>
                                 <option value="GRAVEL">Gravel (Pebbles)</option>
                                 <option value="WEATHERED_ROCK">Weathered Rock</option>
                             </select>
@@ -390,7 +392,7 @@
 
                     <div>
                         <label class="block text-slate-400 mb-0.5">Strata Description</label>
-                        <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Very Loose to Loose, fine silty SAND."></textarea>
+                        <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Very Loose to Loose, fine silty SAND or Sandstone."></textarea>
                     </div>
 
                     <!-- All Strength Input Fields -->
@@ -576,14 +578,11 @@
 
         function formatDateToDDMMYYYY(dateStr) {
             if (!dateStr) return '-';
-            // If already in DD-MM-YYYY or has hyphens / slashes check format
             let parts = dateStr.split(/[-/]/);
             if (parts.length === 3) {
-                // If formatted YYYY-MM-DD
                 if (parts[0].length === 4) {
                     return `${parts[2]}-${parts[1]}-${parts[0]}`;
                 }
-                // If already DD-MM-YYYY
                 return `${parts[0]}-${parts[1]}-${parts[2]}`;
             }
             return dateStr;
@@ -645,7 +644,6 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             safeInitIcons();
-            // Set initial date inputs to DD-MM-YYYY representation or standard defaults
             updateAll();
         });
 
@@ -786,8 +784,6 @@
             const btnFinal = document.getElementById('btn-mode-final');
             const modeText = document.getElementById('mode-title-text');
             const modeBadge = document.getElementById('mode-badge');
-            const sheetBadge = document.getElementById('sheet-mode-badge');
-            const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
 
@@ -797,9 +793,6 @@
                 modeText.innerText = "Field Borelog";
                 modeBadge.innerText = "Field Mode";
                 modeBadge.className = "text-[11px] bg-blue-500/20 text-blue-200 border border-blue-400/20 px-2 py-0.5 rounded";
-                sheetBadge.innerText = "FIELD LOG";
-                sheetBadge.className = "bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded font-bold";
-                sheetTitle.innerText = "FIELD BORELOG REPORT";
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
                 sptGraphBox.classList.remove('active-final-print');
@@ -809,9 +802,6 @@
                 modeText.innerText = "Final Borelog";
                 modeBadge.innerText = "Final Mode";
                 modeBadge.className = "text-[11px] bg-amber-500/20 text-amber-200 border border-amber-400/20 px-2 py-0.5 rounded";
-                sheetBadge.innerText = "FINAL LOG";
-                sheetBadge.className = "bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded font-bold";
-                sheetTitle.innerText = "FINAL BORELOG REPORT";
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
                 sptGraphBox.classList.add('active-final-print');
@@ -887,19 +877,12 @@
                 nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
             }
 
-            // 1. Energy correction: N60 = N_field * (Er / 60)
             const n60 = isRefusal ? 'R' : Math.round((er / 60.0) * nValNumeric);
-            const n60Num = isRefusal ? 0 : (typeof n60 === 'number' ? n60 : parseInt(n60) || 0);
-
-            // 2. Overburden pressure correction factor CN = 0.77 * log10(20 / sigma_0) where sigma_0 is in kg/cm2 (approx sigma_v_prime / 98.07)
             let sigma_0_kg_cm2 = sigma_v_prime / 98.0665;
             let Cn = 0.77 * Math.log10(20.0 / Math.max(0.05, sigma_0_kg_cm2));
             Cn = Math.max(0.40, Math.min(2.00, Cn));
 
-            // 3. N' (Corrected for overburden) = Cn * N_Field
             let nPrimeVal = Cn * nValNumeric;
-
-            // 4. Dilatancy correction (N''): If N' > 15 in fine sand/silt below water table -> 15 + 0.5(N' - 15)
             let nDoublePrimeVal = nPrimeVal;
             const midDepth = (r.depthFrom + r.depthTo) / 2.0;
             const isSubmergedFineSoil = midDepth > gwt && (/SAND|SILT/i.test(r.description));
@@ -1139,13 +1122,9 @@
             setTxt('out-location', getVal('meta-location'));
             setTxt('out-bh-no', getVal('meta-bh-no'));
 
-            // Format drilling period dates from YYYY-MM-DD to DD-MM-YYYY format
             const pFromRaw = getVal('meta-period-from');
             const pToRaw = getVal('meta-period-to');
-            const pFromFormatted = formatDateToDDMMYYYY(pFromRaw);
-            const pToFormatted = formatDateToDDMMYYYY(pToRaw);
-
-            setTxt('out-period', (pFromFormatted !== '-' && pToFormatted !== '-') ? `${pFromFormatted} to ${pToFormatted}` : '-');
+            setTxt('out-period', (pFromRaw !== '-' && pToRaw !== '-') ? `${formatDateToDDMMYYYY(pFromRaw)} to ${formatDateToDDMMYYYY(pToRaw)}` : '-');
 
             setTxt('out-gwt', `${getVal('meta-gwt')} m`);
             setTxt('out-cd-level', getVal('meta-cd-level'));
@@ -1190,68 +1169,68 @@
             wrapper.innerHTML = pages.map((pageRecords, pageIdx) => {
                 const isLastPage = pageIdx === pages.length - 1;
 
-                const cdHeader = showCD ? `<th colspan="2" class="p-1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
-                const cdSubHeader = showCD ? `<th class="p-0.5 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.5 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
+                const cdHeader = showCD ? `<th colspan="2" class="p-0.5 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
+                const cdSubHeader = showCD ? `<th class="p-0.2 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.2 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
 
                 let optHeaders = '';
                 let optSubHeaders = '';
 
-                if (showTV) { optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>`; optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`; }
-                if (showPP) { optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>`; optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`; }
-                if (showPL) { optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PL (MPa)</div></th>`; optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`; }
-                if (showUCS) { optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">UCS (MPa)</div></th>`; optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`; }
+                if (showTV) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900">-</th>`; }
+                if (showPP) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900">-</th>`; }
+                if (showPL) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">PL (MPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900">-</th>`; }
+                if (showUCS) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">UCS (MPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900">-</th>`; }
 
                 let theadHtml = '';
                 if (currentMode === 'field') {
                     theadHtml = `
                         <tr class="text-slate-900 font-bold">
-                            <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                            <th colspan="2" class="p-0.5 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="4" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-1 border border-slate-900 text-slate-900 w-7">Soil Log</th>
-                            <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
+                            <th colspan="4" class="p-0.5 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900 w-6">Soil Log</th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900">Strata Description</th>
                             ${optHeaders}
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[8px] text-slate-900 font-bold">
-                            <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
+                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold">
+                            <th class="p-0.2 border border-slate-900">From</th><th class="p-0.2 border border-slate-900">To</th>
                             ${cdSubHeader}
-                            <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
-                            <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th>
-                            <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                            <th class="p-0.2 border border-slate-900">Type</th><th class="p-0.2 border border-slate-900">No.</th><th class="p-0.2 border border-slate-900">%</th>
+                            <th class="p-0.2 border border-slate-900">15cm</th><th class="p-0.2 border border-slate-900">30cm</th><th class="p-0.2 border border-slate-900">45cm</th><th class="p-0.2 border border-slate-900 font-bold col-n-val">N</th>
+                            <th class="p-0.2 border border-slate-900"></th><th class="p-0.2 border border-slate-900"></th>
                             ${optSubHeaders}
-                            <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                            <th class="p-0.2 border border-slate-900"></th><th class="p-0.2 border border-slate-900"></th><th class="p-0.2 border border-slate-900"></th>
                         </tr>
                     `;
                 } else {
                     theadHtml = `
                         <tr class="text-slate-900 font-bold">
-                            <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                            <th colspan="2" class="p-0.5 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="5" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-1 border border-slate-900 text-slate-900 w-7">Soil Log</th>
-                            <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
+                            <th colspan="5" class="p-0.5 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900 w-6">Soil Log</th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900">Strata Description</th>
                             ${optHeaders}
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
+                            <th class="p-0.5 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[8px] text-slate-900 font-bold">
-                            <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
+                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold">
+                            <th class="p-0.2 border border-slate-900">From</th><th class="p-0.2 border border-slate-900">To</th>
                             ${cdSubHeader}
-                            <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
-                            <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">Final N</th>
-                            <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                            <th class="p-0.2 border border-slate-900">Type</th><th class="p-0.2 border border-slate-900">No.</th><th class="p-0.2 border border-slate-900">%</th>
+                            <th class="p-0.2 border border-slate-900">15cm</th><th class="p-0.2 border border-slate-900">30cm</th><th class="p-0.2 border border-slate-900">45cm</th><th class="p-0.2 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.2 border border-slate-900 font-bold bg-amber-100 col-n-val">Final N</th>
+                            <th class="p-0.2 border border-slate-900"></th><th class="p-0.2 border border-slate-900"></th>
                             ${optSubHeaders}
-                            <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                            <th class="p-0.2 border border-slate-900"></th><th class="p-0.2 border border-slate-900"></th><th class="p-0.2 border border-slate-900"></th>
                         </tr>
                     `;
                 }
@@ -1264,66 +1243,66 @@
                         const typeTag = tagMap[r.id];
                         const sNo = r.sampleNo || 1;
                         const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
-                        const cdCell = showCD ? `<td class="p-0.5 border border-slate-800 text-[8px] text-slate-900 font-mono">${r.cdFrom || '-'}</td><td class="p-0.5 border border-slate-800 text-[8px] text-slate-900 font-mono">${r.cdTo || '-'}</td>` : '';
+                        const cdCell = showCD ? `<td class="p-0.2 border border-slate-800 text-[7px] text-slate-900 font-mono">${r.cdFrom || '-'}</td><td class="p-0.2 border border-slate-800 text-[7px] text-slate-900 font-mono">${r.cdTo || '-'}</td>` : '';
 
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
                         const hatchSvg = `
-                            <div class="cell-soil-log w-full h-full min-h-[16px] min-w-[26px] flex items-center justify-center p-0 m-0">
-                                <svg width="100%" height="16" viewBox="0 0 26 16" preserveAspectRatio="none" class="block" style="border:none;">
+                            <div class="cell-soil-log w-full h-full min-h-[14px] min-w-[24px] flex items-center justify-center p-0 m-0">
+                                <svg width="100%" height="14" viewBox="0 0 24 14" preserveAspectRatio="none" class="block" style="border:none;">
                                     <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
                                 </svg>
                             </div>
                         `;
 
                         let optDataCells = '';
-                        if (showTV) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showTV && r.tv) ? r.tv : '-'}</td>`;
-                        if (showPP) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showPP && r.pp) ? r.pp : '-'}</td>`;
-                        if (showPL) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
-                        if (showUCS) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
+                        if (showTV) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showTV && r.tv) ? r.tv : '-'}</td>`;
+                        if (showPP) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showPP && r.pp) ? r.pp : '-'}</td>`;
+                        if (showPL) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-purple-900 font-semibold">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
+                        if (showUCS) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-purple-900 font-semibold">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
 
                         if (currentMode === 'field') {
                             return `
                                 <tr class="text-slate-900">
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
-                                    <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
-                                    <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.n1}</td>
-                                    <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.n2}</td>
-                                    <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.n3}</td>
-                                    <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-n-val">${r.nVal}</td>
+                                    <td class="p-0.2 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n1}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n2}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n3}</td>
+                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-n-val">${r.nVal}</td>
                                     <td class="cell-soil-log border-x border-slate-800 border-t border-b-0 w-6 p-0" style="border-bottom: none !important;">${hatchSvg}</td>
-                                    <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
+                                    <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
                                 </tr>
                             `;
                         } else {
                             return `
                                 <tr class="text-slate-900">
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
-                                    <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
-                                    <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.n1}</td>
-                                    <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.n2}</td>
-                                    <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.n3}</td>
-                                    <td class="p-0.5 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${r.nVal}</td>
-                                    <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${calc.finalN}</td>
+                                    <td class="p-0.2 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n1}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n2}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n3}</td>
+                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${r.nVal}</td>
+                                    <td class="p-0.2 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${calc.finalN}</td>
                                     <td class="cell-soil-log border-x border-slate-800 border-t border-b-0 w-6 p-0" style="border-bottom: none !important;">${hatchSvg}</td>
-                                    <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
+                                    <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.5 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
                                 </tr>
                             `;
                         }
@@ -1340,7 +1319,7 @@
 
                 const terminationHtml = isLastPage ? `
                     <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
-                        <td colspan="${totalCols}" class="p-1.5 text-center text-[8.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
+                        <td colspan="${totalCols}" class="p-1 text-center text-[7.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
                             *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
                         </td>
                     </tr>
@@ -1350,38 +1329,38 @@
                     <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
                         <!-- TOP SECTION: Document Header & Metadata -->
                         <div class="border-2 border-slate-900">
-                            <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
+                            <div class="bg-slate-100 border-b-2 border-slate-900 p-1.5 text-center flex items-center justify-between">
                                 <div class="text-left">
                                     <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-slate-900">${currentMode === 'field' ? 'FIELD BORELOG REPORT' : 'FINAL BORELOG REPORT'}</h2>
-                                    <p class="text-[8px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
+                                    <p class="text-[7.5px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
                                 </div>
                                 <div>
-                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8.5px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
+                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
                                 </div>
                             </div>
 
                             <!-- Metadata Grid -->
-                            <div class="grid grid-cols-3 gap-0 text-[8.5px] border-collapse border-slate-900 text-slate-900">
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Project Title:</strong> <span>${h.title}</span></div>
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Project Code:</strong> <span class="font-mono">${h.code}</span></div>
-                                <div class="p-1 border-b border-slate-900"><strong>Location:</strong> <span>${h.location}</span></div>
+                            <div class="grid grid-cols-3 gap-0 text-[7.5px] border-collapse border-slate-900 text-slate-900">
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Project Title:</strong> <span>${h.title}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Project Code:</strong> <span class="font-mono">${h.code}</span></div>
+                                <div class="p-0.5 border-b border-slate-900"><strong>Location:</strong> <span>${h.location}</span></div>
                                 
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span class="font-mono font-bold text-blue-900">${h.bhNo}</span></div>
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span>${h.period}</span></div>
-                                <div class="p-1 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span class="font-bold text-blue-800">${h.gwt}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span class="font-mono font-bold text-blue-900">${h.bhNo}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span>${h.period}</span></div>
+                                <div class="p-0.5 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span class="font-bold text-blue-800">${h.gwt}</span></div>
                                 
-                                <div class="p-1 border-r border-b border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[8px]">${h.proposedCoords}</span></div>
-                                <div class="p-1 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[8px]">${h.achievedCoords}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[7px]">${h.proposedCoords}</span></div>
+                                <div class="p-0.5 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[7px]">${h.achievedCoords}</span></div>
                                 
-                                <div class="p-1 border-r border-slate-900"><strong>Type of Rig:</strong> <span>${h.rigType || '-'}</span></div>
-                                <div class="p-1 col-span-2"><strong>Boring Diameter:</strong> <span>${h.boringDia}</span></div>
+                                <div class="p-0.5 border-r border-slate-900"><strong>Type of Rig:</strong> <span>${h.rigType || '-'}</span></div>
+                                <div class="p-0.5 col-span-2"><strong>Boring Diameter:</strong> <span>${h.boringDia}</span></div>
                             </div>
                         </div>
 
                         <!-- MIDDLE SECTION: Dynamic Borelog Data Table -->
-                        <div class="overflow-x-auto my-2 flex-1">
-                            <table class="w-full border-collapse border-2 border-slate-900 text-center text-[7.5px] text-slate-900">
+                        <div class="overflow-x-auto my-1 flex-1">
+                            <table class="w-full border-collapse border-2 border-slate-900 text-center text-[7px] text-slate-900">
                                 <thead class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
                                     ${theadHtml}
                                 </thead>
@@ -1393,25 +1372,25 @@
                         </div>
 
                         <!-- BOTTOM SECTION: Sub-Soil Legend & Signatures -->
-                        <div class="space-y-1.5 mt-auto">
+                        <div class="space-y-1 mt-auto">
                             <!-- Sub-Soil Legend Bar -->
-                            <div class="p-1 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[8px] font-bold text-slate-800">
+                            <div class="p-0.5 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[7px] font-bold text-slate-800">
                                 <span class="text-slate-600">Sub-soil Legend:</span>
-                                <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
-                                <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
-                                <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
-                                <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
+                                <span class="flex items-center gap-1"><svg width="12" height="8" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
+                                <span class="flex items-center gap-1"><svg width="12" height="8" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
+                                <span class="flex items-center gap-1"><svg width="12" height="8" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
+                                <span class="flex items-center gap-1"><svg width="12" height="8" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
                             </div>
 
                             <!-- Footer Signatures & Personnel (Logged By & Checked By) -->
-                            <div class="border-2 border-slate-900 p-1.5 text-[8.5px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
-                                <div class="space-y-3">
+                            <div class="border-2 border-slate-900 p-1 text-[8px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
+                                <div class="space-y-2">
                                     <p><strong>Logged By:</strong> <span>${h.loggedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-32 mt-3"></div>
+                                    <div class="border-b border-slate-400 w-28 mt-2"></div>
                                 </div>
-                                <div class="space-y-3 text-right">
+                                <div class="space-y-2 text-right">
                                     <p><strong>Checked By:</strong> <span>${h.checkedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-32 ml-auto mt-3"></div>
+                                    <div class="border-b border-slate-400 w-28 ml-auto mt-2"></div>
                                 </div>
                             </div>
                         </div>
