@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v7.9</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v8.1</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,11 +26,11 @@
             transform: rotate(180deg);
             white-space: nowrap;
             padding: 4px 2px;
-            font-size: 8px;
+            font-size: 7.5px;
             max-height: 60px;
         }
 
-        /* Continuous Hatch Cell Container */
+        /* Continuous Hatch Cell Container - Reduced Soil Log Column Width */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -49,13 +49,12 @@
             font-weight: bold;
         }
 
-        /* Print Media Styling: Professional multi-page pagination with repeated table headers and readable font sizing */
+        /* Print Media Styling: Professional multi-page pagination with repeated table headers */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; width: 210mm !important; }
             .print-area { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
             
-            /* Allow natural page-by-page flow for long borelogs without shrinking text */
             .print-sheet { 
                 border: 1.5px solid #000 !important; 
                 box-shadow: none !important; 
@@ -96,7 +95,6 @@
                 page-break-after: avoid !important;
             }
 
-            /* Ensure table headers repeat automatically across split pages for readability */
             thead {
                 display: table-header-group !important;
             }
@@ -105,9 +103,9 @@
                 page-break-inside: avoid !important;
             }
 
-            table { font-size: 8px !important; }
-            th, td { padding: 2px 2px !important; border: 1px solid #000 !important; }
-            @page { size: A4 portrait; margin: 8mm; }
+            table { font-size: 6.5px !important; }
+            th, td { padding: 1px 1px !important; border: 1px solid #000 !important; }
+            @page { size: A4 portrait; margin: 0; }
         }
 
         /* Screen Preview Fixed A4 Portrait Box Styling */
@@ -191,7 +189,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.9 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v8.1 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -302,25 +300,25 @@
                 </div>
             </div>
 
-            <!-- Optional Columns Checkboxes (PL, UCS, TV, PP) -->
+            <!-- Optional Columns Checkboxes (TV, PP, PL, UCS active across modes) -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
                 <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                     <i data-lucide="check-square" class="w-4 h-4 text-amber-400"></i> Optional Strength Test Columns
                 </h2>
                 <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 field-mode-ctrl">
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
                         <input type="checkbox" id="toggle-tv" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
                         <span>Torvane (TV)</span>
                     </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 field-mode-ctrl">
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
                         <input type="checkbox" id="toggle-pp" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
                         <span>Pocket Pen. (PP)</span>
                     </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-ctrl hidden">
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
                         <input type="checkbox" id="toggle-pl" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
                         <span>Point Load (PL)</span>
                     </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-ctrl hidden">
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
                         <input type="checkbox" id="toggle-ucs" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
                         <span>UCS (MPa)</span>
                     </label>
@@ -436,21 +434,21 @@
                         <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Soft brown silty CLAY."></textarea>
                     </div>
 
-                    <!-- Strength Input Fields -->
+                    <!-- All Strength Input Fields -->
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-xs">
-                        <div class="field-mode-ctrl">
+                        <div>
                             <label class="block text-cyan-300 text-[10px] mb-1">Torvane TV (kPa)</label>
                             <input type="text" id="input-tv" value="" placeholder="e.g. 45" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
-                        <div class="field-mode-ctrl">
+                        <div>
                             <label class="block text-cyan-300 text-[10px] mb-1">Pocket Pen. PP (kPa)</label>
                             <input type="text" id="input-pp" value="" placeholder="e.g. 100" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
-                        <div class="final-mode-ctrl hidden">
+                        <div>
                             <label class="block text-purple-300 text-[10px] mb-1">Point Load Is(50) (MPa)</label>
                             <input type="text" id="input-point-load" value="" placeholder="e.g. 2.4" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
-                        <div class="final-mode-ctrl hidden">
+                        <div>
                             <label class="block text-purple-300 text-[10px] mb-1">UCS (MPa)</label>
                             <input type="text" id="input-ucs" value="" placeholder="e.g. 45.0" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
@@ -619,7 +617,7 @@
                 </div>
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR N-CORRECTION CALCULATION TABLE (Appears in Final Mode / Printout) -->
+            <!-- FRESH SEPARATE A4 SHEET FOR N-CORRECTION CALCULATION TABLE -->
             <div id="n-calc-sheet-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 calc-sheet border border-slate-300 hidden">
                 <div class="space-y-3 w-full">
                     <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
@@ -674,6 +672,17 @@
                 <button onclick="closeImportModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
+            <!-- Sample Template Download Button -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-blue-500/30 flex items-center justify-between">
+                <div>
+                    <div class="text-xs font-bold text-blue-300">Need a Template?</div>
+                    <p class="text-[10px] text-slate-400">Download the standard Excel template formatted for instant upload.</p>
+                </div>
+                <button onclick="downloadSampleExcelTemplate()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Sample .xlsx
+                </button>
+            </div>
+
             <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
                 <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Option 1: Upload Excel File (.xlsx, .xls, .csv)
@@ -725,6 +734,53 @@
 
         function openImportModal() { document.getElementById('import-modal').classList.remove('hidden'); }
         function closeImportModal() { document.getElementById('import-modal').classList.add('hidden'); }
+
+        // Function to generate and download a pre-formatted Sample Excel Template
+        function downloadSampleExcelTemplate() {
+            const sampleTemplateData = [
+                {
+                    "Depth From (m)": 0.00,
+                    "Depth To (m)": 0.50,
+                    "Sample Type": "DS-1",
+                    "Sample No": 1,
+                    "Sample Recovery (%)": 30,
+                    "15cm": "-",
+                    "30cm": "-",
+                    "45cm": "-",
+                    "N": "-",
+                    "Soil Description": "Very Loose to Loose, dark greenish gray, fine silty SAND."
+                },
+                {
+                    "Depth From (m)": 0.50,
+                    "Depth To (m)": 0.95,
+                    "Sample Type": "SPT-1",
+                    "Sample No": 2,
+                    "Sample Recovery (%)": 100,
+                    "15cm": 1,
+                    "30cm": 1,
+                    "45cm": 1,
+                    "N": 2,
+                    "Soil Description": "Very Loose to Loose, dark greenish gray, fine silty SAND."
+                },
+                {
+                    "Depth From (m)": 1.50,
+                    "Depth To (m)": 2.50,
+                    "Sample Type": "UDS-1",
+                    "Sample No": 3,
+                    "Sample Recovery (%)": 54,
+                    "15cm": "-",
+                    "30cm": "-",
+                    "45cm": "-",
+                    "N": "-",
+                    "Soil Description": "Soft to firm brown silty CLAY."
+                }
+            ];
+
+            const worksheet = XLSX.utils.json_to_sheet(sampleTemplateData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Borehole_Template");
+            XLSX.writeFile(workbook, "Borelog_Sample_Template.xlsx");
+        }
 
         function computeTypeTagMap() {
             const counts = {};
@@ -1035,8 +1091,6 @@
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
             const nCalcSheetBox = document.getElementById('n-calc-sheet-container');
-            const fieldCtrlEls = document.querySelectorAll('.field-mode-ctrl');
-            const finalCtrlEls = document.querySelectorAll('.final-mode-ctrl');
 
             if (mode === 'field') {
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-blue-600 text-white shadow";
@@ -1052,8 +1106,6 @@
                 sptGraphBox.classList.remove('active-final-print');
                 nCalcSheetBox.classList.add('hidden');
                 nCalcSheetBox.classList.remove('active-final-print');
-                fieldCtrlEls.forEach(el => el.classList.remove('hidden'));
-                finalCtrlEls.forEach(el => el.classList.add('hidden'));
             } else {
                 btnFinal.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow";
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white";
@@ -1068,8 +1120,6 @@
                 sptGraphBox.classList.add('active-final-print');
                 nCalcSheetBox.classList.remove('hidden');
                 nCalcSheetBox.classList.add('active-final-print');
-                fieldCtrlEls.forEach(el => el.classList.add('hidden'));
-                finalCtrlEls.forEach(el => el.classList.remove('hidden'));
             }
 
             updateAll();
@@ -1425,16 +1475,24 @@
             let optHeaders = '';
             let optSubHeaders = '';
 
-            if (currentMode === 'field') {
-                if (showTV) {
-                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>`;
-                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
-                }
-                if (showPP) {
-                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>`;
-                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
-                }
+            if (showTV) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
+            if (showPP) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
+            if (showPL) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PL (MPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
+            if (showUCS) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">UCS (MPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
 
+            if (currentMode === 'field') {
                 thead.innerHTML = `
                     <tr class="text-slate-900 font-bold">
                         <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
@@ -1461,15 +1519,6 @@
                     </tr>
                 `;
             } else {
-                if (showPL) {
-                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PL (MPa)</div></th>`;
-                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
-                }
-                if (showUCS) {
-                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">UCS (MPa)</div></th>`;
-                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
-                }
-
                 thead.innerHTML = `
                     <tr class="text-slate-900 font-bold">
                         <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
@@ -1522,10 +1571,12 @@
                 `;
 
                 let optDataCells = '';
-                if (currentMode === 'field') {
-                    if (showTV) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showTV && r.tv) ? r.tv : '-'}</td>`;
-                    if (showPP) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showPP && r.pp) ? r.pp : '-'}</td>`;
+                if (showTV) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showTV && r.tv) ? r.tv : '-'}</td>`;
+                if (showPP) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showPP && r.pp) ? r.pp : '-'}</td>`;
+                if (showPL) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
+                if (showUCS) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
 
+                if (currentMode === 'field') {
                     return `
                         <tr class="text-slate-900">
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
@@ -1547,9 +1598,6 @@
                         </tr>
                     `;
                 } else {
-                    if (showPL) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
-                    if (showUCS) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
-
                     return `
                         <tr class="text-slate-900">
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
@@ -1576,13 +1624,11 @@
 
             const maxDepth = Math.max(...records.map(r => r.depthTo));
             let extraColsCount = 0;
-            if (currentMode === 'field') {
-                if (showTV) extraColsCount++;
-                if (showPP) extraColsCount++;
-            } else {
-                if (showPL) extraColsCount++;
-                if (showUCS) extraColsCount++;
-            }
+            if (showTV) extraColsCount++;
+            if (showPP) extraColsCount++;
+            if (showPL) extraColsCount++;
+            if (showUCS) extraColsCount++;
+
             const totalCols = (currentMode === 'field' ? 14 : 15) + extraColsCount + (showCD ? 2 : 0);
 
             const terminationHtml = `
