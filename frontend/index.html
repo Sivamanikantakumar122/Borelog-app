@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v10.8</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v10.9</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -180,7 +180,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.8 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.9 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -363,7 +363,7 @@
                         </div>
                     </div>
 
-                    <!-- SPT Blow Counts Box -->
+                    <!-- SPT Blow Counts -->
                     <div id="spt-blows-box" class="grid grid-cols-4 gap-2 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
                         <div>
                             <label class="block text-slate-400 mb-0.5 text-[11px]">15cm (N1)</label>
@@ -383,7 +383,7 @@
                         </div>
                     </div>
 
-                    <!-- Rock Core Parameters Box (Visible when CR is selected) -->
+                    <!-- Rock Core Section -->
                     <div id="rock-core-section" class="bg-slate-950 p-3 rounded-xl border border-purple-500/30 space-y-2 hidden">
                         <div class="text-purple-300 font-semibold text-[11px]">Rock Core Parameters (CR)</div>
                         <div class="grid grid-cols-3 gap-2">
@@ -409,7 +409,7 @@
                                 <option value="SAND">Sand (Bright Yellow + Stipple Dots)</option>
                                 <option value="CLAY">Clay (Bright Green + Diagonal Lines)</option>
                                 <option value="SILT">Silt (Grey + Vertical Lines)</option>
-                                <option value="SOLID_ROCK">Rock / Basalt / Sandstone</option>
+                                <option value="SOLID_ROCK">Rock / Basalt (Bright Orange + Cross Hatch)</option>
                                 <option value="GRAVEL">Gravel (Pebbles)</option>
                                 <option value="WEATHERED_ROCK">Weathered Rock</option>
                             </select>
@@ -422,7 +422,7 @@
 
                     <div>
                         <label class="block text-slate-400 mb-0.5">Strata Description</label>
-                        <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Very Loose to Loose, fine silty SAND or Sandstone."></textarea>
+                        <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Very Loose to Loose, fine silty SAND."></textarea>
                     </div>
 
                     <!-- All Strength Input Fields -->
@@ -522,7 +522,7 @@
         <!-- RIGHT PANEL: Live Printable Portrait Sheet Preview (7 Columns) -->
         <div class="lg:col-span-7 print-area space-y-6">
             
-            <!-- STRETCHED NATURAL MULTI-PAGE FLOW A4 PORTRAIT SHEET CONTAINER -->
+            <!-- STRETCHED NATURAL MULTI-PAGE FLOW A4 PORTRAIT SHEET CONTAINER WITH ID -->
             <div id="print-sheets-wrapper" class="space-y-6">
                 <!-- Dynamically split clean single-page sheets will be rendered here -->
             </div>
@@ -576,7 +576,7 @@
                 <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Option 1: Upload Excel File (.xlsx, .xls, .csv)
                 </div>
-                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app extracts exact sample recoveries, test types, and blow counts.</p>
+                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. Extracts sample recoveries and test types (SPT, DS, UDS, CR).</p>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
             </div>
 
@@ -603,9 +603,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Tesseract OCR Library -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <script>
         let currentMode = 'field';
@@ -697,7 +694,7 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             safeInitIcons();
-            toggleRockFields();
+            toggleSampleTypeFields();
             updateAll();
         });
 
@@ -1017,11 +1014,6 @@
         }
 
         function calcNValue() {
-            const sampleType = document.getElementById('input-sample-type').value;
-            if (sampleType !== 'SPT') {
-                document.getElementById('input-n-val').value = '-';
-                return;
-            }
             const n2Str = document.getElementById('input-n2').value.trim();
             const n3Str = document.getElementById('input-n3').value.trim();
             
@@ -1203,7 +1195,7 @@
             document.getElementById('input-tv').value = r.tv || '';
             document.getElementById('input-pp').value = r.pp || '';
 
-            toggleRockFields();
+            toggleSampleTypeFields();
             safeInitIcons();
         }
 
