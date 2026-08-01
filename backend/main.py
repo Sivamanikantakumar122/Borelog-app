@@ -35,10 +35,10 @@ class SampleRecord(BaseModel):
     sampleType: str = Field(..., description="DS, SPT, UDS, or CR")
     sampleNo: int = Field(..., description="Numeric Sample Number")
     recoveredLength: float = Field(0.0, description="Recovered sample in meters")
-    n1: Optional[int] = 0
-    n2: Optional[int] = 0
-    n3: Optional[int] = 0
-    nVal: Optional[int] = 0
+    n1: Optional[str] = "0"
+    n2: Optional[str] = "0"
+    n3: Optional[str] = "0"
+    nVal: Optional[str] = "0"
     hatchType: Optional[str] = "CLAY"
     unitWeight: float = Field(18.0, description="Unit weight of soil gamma in kN/m3")
     description: Optional[str] = ""
@@ -57,15 +57,15 @@ class CalculatedRecordResponse(BaseModel):
     id: str
     sampleDepthInterval: float
     sampleRecoveryPct: float
-    nValue: int
-    n60: Optional[int] = None
+    nValue: str
+    n60: Optional[str] = None
     tcrPct: float
     scrPct: float
     rqdPct: float
     effectiveOverburdenStress: float
     Cn: Optional[float] = None
-    N1_E: Optional[float] = None
-    N1_final_dilatancy: Optional[float] = None
+    N1_E: Optional[str] = None
+    N1_final_dilatancy: Optional[str] = None
 
 @app.post("/api/calculate", response_model=List[CalculatedRecordResponse])
 def calculate_borelog(request: BorelogCalculationRequest):
@@ -73,6 +73,7 @@ def calculate_borelog(request: BorelogCalculationRequest):
     Computes all geotechnical parameters with cumulative overburden stress:
     - Cumulative effective overburden stress sigma_v' summed down through all preceding strata layers.
     - SPT Corrections (N60, Cn, N1_E, Dilatancy N1'') applied ONLY to SPT samples.
+    - Handles 'R' / 'Refusal' by setting N'' as 'Refusal' and using 100 as the final output value for graphs/computations.
     - Non-SPT samples (DS, UDS, CR) contribute to overburden stress accumulation but ignore SPT corrections.
     """
     Er = min(request.energyEfficiency, 90.0)
@@ -141,42 +142,61 @@ def calculate_borelog(request: BorelogCalculationRequest):
             rqd_pct = min(100.0, (sum_pieces / interval) * 100.0)
 
         # 5. SPT Corrections (ONLY for SPT samples)
-        n_val = 0
-        n60 = None
+        n_val_str = "0"
+        n60_str = None
         Cn = None
-        N1_E = None
-        N1_final = None
+        N1_E_str = None
+        N1_final_str = None
 
         if r.sampleType == 'SPT':
-            n_val = r.n2 + r.n3 if (r.n2 is not None and r.n3 is not None) else (r.nVal or 0)
-            n60 = round((Er / 60.0) * n_val)
+            n2_str = str(r.n2).strip()
+            n3_str = str(r.n3).strip()
+            
+            is_refusal = (n2_str.upper() in ['R', 'REFUSAL'] or n3_str.upper() in ['R', 'REFUSAL'] or str(r.nVal).strip().upper() in ['R', 'REFUSAL'])
 
-            Cn_raw = 0.77 * math.log10((20.0 * Pa) / sigma_v_prime)
-            Cn = max(0.40, min(2.00, Cn_raw))
-
-            N1_E_raw = Cn * n60
-            N1_E = round(N1_E_raw, 1)
-
-            if N1_E_raw <= 15.0:
-                N1_final_raw = N1_E_raw
+            if is_refusal:
+                n_val_str = "R"
+                n60_str = "R"
+                N1_E_str = "Refusal"
+                N1_final_str = "Refusal"
             else:
-                N1_final_raw = 15.0 + 0.5 * (N1_E_raw - 15.0)
+                try:
+                    val2 = int(n2_str) if n2_str else 0
+                    val3 = int(n3_str) if n3_str else 0
+                    n_num = val2 + val3
+                except ValueError:
+                    n_num = int(r.nVal) if r.nVal and str(r.nVal).isdigit() else 0
 
-            N1_final = round(N1_final_raw, 1)
+                n_val_str = str(n_num)
+                n60_val = round((Er / 60.0) * n_num)
+                n60_str = str(n60_val)
+
+                Cn_raw = 0.77 * math.log10((20.0 * Pa) / sigma_v_prime)
+                Cn = max(0.40, min(2.00, Cn_raw))
+
+                N1_E_raw = Cn * n60_val
+                N1_E_str = str(round(N1_E_raw, 1))
+
+                if N1_E_raw <= 15.0:
+                    N1_final_raw = N1_E_raw
+                else:
+                    N1_final_raw = 15.0 + 0.5 * (N1_E_raw - 15.0)
+
+                N1_final_str = str(round(N1_final_raw, 1))
 
         calc_map[r.id] = CalculatedRecordResponse(
             id=r.id,
             sampleDepthInterval=round(interval, 2),
             sampleRecoveryPct=round(sample_rec_pct, 1),
-            nValue=n_val,
-            n60=n60,
+            nValue=n_val_str,
+            n60=n60_str,
             tcrPct=round(tcr_pct, 1),
             scrPct=round(scr_pct, 1),
             rqdPct=round(rqd_pct, 1),
             effectiveOverburdenStress=round(sigma_v_prime, 2),
             Cn=round(Cn, 3) if Cn is not None else None,
-            N1_E=N1_E,
-            N1_final_dilatancy=N1_final
+            N1_E=N1_E_str,
+            N1_final_dilatancy=N1_final_str
         )
 
     # Return results in the original request order
@@ -187,13 +207,9 @@ def generate_spt_graph(request: BorelogCalculationRequest):
     """
     Generates a high-resolution Matplotlib SPT Depth Profile Graph matching
     the exact visual styling of reference image:
-    - Top X-axis labeled "SPT 'N' Value" (0 to 120)
-    - Inverted Y-axis labeled "Depth below Seabed, m" (0 to 30m)
-    - Blue curve with solid circles for Field N
-    - Orange curve with solid circles for Corrected N1''
-    - Light dashed grid
-    - Inside Legend top right
-    - Inside Bold Title "Borehole: BH-XX" at bottom left
+    - Top X-axis labeled 'SPT 'N' & Corrected 'N₁' Value' (0 to 100)
+    - Inverted Y-axis labeled 'Depth below Ground Level (m)' (0 to 25m)
+    - Handles 'Refusal' (R) by mapping value to 100 for graph plotting.
     """
     calcs = calculate_borelog(request)
     
@@ -205,8 +221,27 @@ def generate_spt_graph(request: BorelogCalculationRequest):
         if r.sampleType == 'SPT':
             mid_d = (r.depthFrom + r.depthTo) / 2.0
             depths.append(mid_d)
-            n_field.append(r.n2 + r.n3)
-            n_corrected.append(calcs[idx].N1_final_dilatancy)
+            
+            # Field N value parsing with Refusal check
+            n2_s = str(r.n2).strip().upper()
+            n3_s = str(r.n3).strip().upper()
+            if n2_s in ['R', 'REFUSAL'] or n3_s in ['R', 'REFUSAL'] or str(r.nVal).strip().upper() in ['R', 'REFUSAL']:
+                n_field.append(100.0)
+            else:
+                try:
+                    n_field.append(float(r.n2) + float(r.n3))
+                except ValueError:
+                    n_field.append(float(r.nVal) if str(r.nVal).replace('.','',1).isdigit() else 50.0)
+
+            # Corrected N value parsing with Refusal check
+            corr_str = str(calcs[idx].N1_final_dilatancy).strip().upper()
+            if corr_str in ['REFUSAL', 'R']:
+                n_corrected.append(100.0)
+            else:
+                try:
+                    n_corrected.append(float(corr_str))
+                except ValueError:
+                    n_corrected.append(0.0)
 
     fig, ax = plt.subplots(figsize=(6, 7), dpi=180)
     
@@ -224,32 +259,32 @@ def generate_spt_graph(request: BorelogCalculationRequest):
             n_field_smooth = spl_field(depths_smooth)
             n_corr_smooth = spl_corr(depths_smooth)
 
-            ax.plot(n_field_smooth, depths_smooth, color='#4A90E2', linestyle='-', linewidth=2.0, label='SPT (N field)')
-            ax.plot(n_corr_smooth, depths_smooth, color='#E67E22', linestyle='-', linewidth=2.0, label='SPT (N Corrected)')
+            ax.plot(n_field_smooth, depths_smooth, color='#2563eb', linestyle='-', linewidth=2.0, label='SPT N Value')
+            ax.plot(n_corr_smooth, depths_smooth, color='#d97706', linestyle='-', linewidth=2.0, label='Corrected N₁ Value')
         except Exception:
-            ax.plot(n_field, depths, color='#4A90E2', linestyle='-', label='SPT (N field)')
-            ax.plot(n_corrected, depths, color='#E67E22', linestyle='-', label='SPT (N Corrected)')
+            ax.plot(n_field, depths, color='#2563eb', linestyle='-', label='SPT N Value')
+            ax.plot(n_corrected, depths, color='#d97706', linestyle='-', label='Corrected N₁ Value')
 
-    ax.scatter(n_field, depths, color='#4A90E2', s=35, zorder=5)
-    ax.scatter(n_corrected, depths, color='#E67E22', s=35, zorder=5)
+    ax.scatter(n_field, depths, color='#2563eb', s=35, zorder=5)
+    ax.scatter(n_corrected, depths, color='#d97706', s=35, zorder=5)
 
     # Invert Y-axis & set bounds
-    ax.set_ylim(30, 0)
-    ax.set_xlim(0, 120)
+    ax.set_ylim(25, 0)
+    ax.set_xlim(0, 100)
 
     # Move X-axis to top
     ax.xaxis.tick_top()
     ax.xaxis.set_label_position('top')
 
-    ax.set_xlabel("SPT 'N' Value", fontsize=11, fontweight='bold', family='serif', labelpad=10)
-    ax.set_ylabel("Depth below Seabed, m", fontsize=10, family='serif', labelpad=8)
+    ax.set_xlabel("SPT 'N' & Corrected 'N₁' Value", fontsize=11, fontweight='bold', family='serif', labelpad=10)
+    ax.set_ylabel("Depth below Ground Level (m)", fontsize=10, family='serif', labelpad=8)
     
     ax.grid(True, linestyle='--', color='#e2e8f0', alpha=0.8)
     ax.legend(loc='upper right', fontsize=9, frameon=True, facecolor='white', edgecolor='#cbd5e1')
 
     # Add Borehole ID at bottom left inside plot
     bh_no = request.boreholeNo or 'BH-01'
-    ax.text(0.08, 0.08, f"Borehole: {bh_no}", transform=ax.transAxes, fontsize=14, fontweight='bold', family='serif')
+    ax.text(0.08, 0.08, f"Borehole: {bh_no} (Continuous N & N₁ Profiles)", transform=ax.transAxes, fontsize=11, fontweight='bold', family='serif')
 
     plt.tight_layout()
     
