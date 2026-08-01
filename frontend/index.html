@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v11.5</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v11.6</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -50,8 +50,8 @@
             font-weight: bold;
         }
 
-        tr { height: 18px !important; max-height: 22px !important; }
-        th, td { padding: 2px 3px !important; border: 1px solid #000 !important; font-size: 7.5px !important; vertical-align: middle !important; }
+        tr { height: 17px !important; max-height: 20px !important; }
+        th, td { padding: 1.5px 2.5px !important; border: 1px solid #000 !important; font-size: 7.5px !important; vertical-align: middle !important; }
 
         @media print {
             .no-print { display: none !important; }
@@ -62,6 +62,8 @@
                 border: 1.5px solid #000 !important; 
                 box-shadow: none !important; 
                 width: 210mm !important;
+                height: 297mm !important;
+                max-height: 297mm !important;
                 margin: 0 auto !important;
                 padding: 10mm !important;
                 background: white !important;
@@ -97,6 +99,7 @@
         .print-sheet {
             width: 210mm;
             min-height: 297mm;
+            max-height: 297mm;
             margin: 0 auto;
             background: white;
             box-sizing: border-box;
@@ -106,6 +109,7 @@
             justify-content: space-between;
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
             margin-bottom: 2rem;
+            overflow: hidden;
         }
 
         .graph-sheet {
@@ -127,6 +131,34 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
+    <!-- SVG Standard Sub-Soil Bright High-Contrast Hatch Legend Definitions -->
+    <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+        <defs>
+            <pattern id="hatch-SAND" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fde047" />
+                <circle cx="3" cy="3" r="1.5" fill="#000000" />
+                <circle cx="9" cy="9" r="1.5" fill="#000000" />
+            </pattern>
+            <pattern id="hatch-SILT" width="10" height="10" patternUnits="userSpaceOnUse">
+                <rect width="10" height="10" fill="#cbd5e1" />
+                <line x1="5" y1="0" x2="5" y2="10" stroke="#000000" stroke-width="1.5" />
+            </pattern>
+            <pattern id="hatch-CLAY" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#4ade80" />
+                <line x1="0" y1="12" x2="12" y2="0" stroke="#000000" stroke-width="1.5" />
+            </pattern>
+            <pattern id="hatch-SOLID_ROCK" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fb923c" />
+                <path d="M 0 0 L 12 12 M 12 0 L 0 12" stroke="#000000" stroke-width="1.2" />
+            </pattern>
+            <pattern id="hatch-GRAVEL" width="14" height="14" patternUnits="userSpaceOnUse">
+                <rect width="14" height="14" fill="#e2e8f0" />
+                <circle cx="4" cy="4" r="2.2" fill="none" stroke="#000000" stroke-width="1.2" />
+                <circle cx="11" cy="11" r="2.5" fill="none" stroke="#000000" stroke-width="1.2" />
+            </pattern>
+        </defs>
+    </svg>
+
     <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 sticky top-0 z-50 no-print shadow-lg">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center space-x-3">
@@ -136,7 +168,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.5 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.6 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -1393,7 +1425,7 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const h = renderHeaderValues();
 
-            const pageSize = 20;
+            const pageSize = 23; // Adjusted page size to fill vertical A4 height cleanly without blank gaps
             const pages = [];
             if (sortedRecords.length === 0) {
                 pages.push([]);
@@ -1488,9 +1520,9 @@
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
-                        // Solid SVG pattern data background fill mapping accurately to correct soil types without line breaking
+                        // Clean background fill matching Attachment 2 styling perfectly without any horizontal seams
                         const hatchDiv = `
-                            <div class="cell-soil-log w-full h-full min-h-[18px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22><rect width=%2216%22 height=%2216%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-4 20L20-4M-4 4L20 28' : hType === 'SILT' ? 'M7 0v14' : hType === 'SOLID_ROCK' ? 'M0 0l16 16M16 0L0 16' : 'M4 4a1.8 1.8 0 110-0.1M12 12a1.8 1.8 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.5%22/></svg>'); background-repeat: repeat;">
+                            <div class="cell-soil-log w-full h-full min-h-[17px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat;">
                             </div>
                         `;
 
@@ -1564,7 +1596,7 @@
 
                 const terminationHtml = isLastPage ? `
                     <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
-                        <td colspan="${totalCols}" class="p-1.5 text-center text-[8px] uppercase tracking-wider text-slate-900 bg-slate-200">
+                        <td colspan="${totalCols}" class="p-1 text-center text-[7.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
                             *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
                         </td>
                     </tr>
@@ -1574,38 +1606,38 @@
                     <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
                         <!-- TOP SECTION: Document Header & Metadata -->
                         <div class="border-2 border-slate-900">
-                            <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
+                            <div class="bg-slate-100 border-b-2 border-slate-900 p-1.5 text-center flex items-center justify-between">
                                 <div class="text-left">
                                     <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-slate-900">${currentMode === 'field' ? 'FIELD BORELOG REPORT' : 'FINAL BORELOG REPORT'}</h2>
-                                    <p class="text-[8px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
+                                    <p class="text-[7.5px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
                                 </div>
                                 <div>
-                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8.5px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
+                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
                                 </div>
                             </div>
 
                             <!-- Metadata Grid -->
-                            <div class="grid grid-cols-3 gap-0 text-[8px] border-collapse border-slate-900 text-slate-900">
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Project Title:</strong> <span>${h.title}</span></div>
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Project Code:</strong> <span class="font-mono">${h.code}</span></div>
-                                <div class="p-1 border-b border-slate-900"><strong>Location:</strong> <span>${h.location}</span></div>
+                            <div class="grid grid-cols-3 gap-0 text-[7.5px] border-collapse border-slate-900 text-slate-900">
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Project Title:</strong> <span>${h.title}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Project Code:</strong> <span class="font-mono">${h.code}</span></div>
+                                <div class="p-0.5 border-b border-slate-900"><strong>Location:</strong> <span>${h.location}</span></div>
                                 
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span class="font-mono font-bold text-blue-900">${h.bhNo}</span></div>
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span>${h.period}</span></div>
-                                <div class="p-1 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span class="font-bold text-blue-800">${h.gwt}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span class="font-mono font-bold text-blue-900">${h.bhNo}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span>${h.period}</span></div>
+                                <div class="p-0.5 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span class="font-bold text-blue-800">${h.gwt}</span></div>
                                 
-                                <div class="p-1 border-r border-b border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
-                                <div class="p-1 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[7.5px]">${h.proposedCoords}</span></div>
-                                <div class="p-1 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[7.5px]">${h.achievedCoords}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[7px]">${h.proposedCoords}</span></div>
+                                <div class="p-0.5 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[7px]">${h.achievedCoords}</span></div>
                                 
-                                <div class="p-1 border-r border-slate-900"><strong>Type of Rig:</strong> <span>${h.rigType || '-'}</span></div>
-                                <div class="p-1 col-span-2"><strong>Boring Diameter:</strong> <span>${h.boringDia}</span></div>
+                                <div class="p-0.5 border-r border-slate-900"><strong>Type of Rig:</strong> <span>${h.rigType || '-'}</span></div>
+                                <div class="p-0.5 col-span-2"><strong>Boring Diameter:</strong> <span>${h.boringDia}</span></div>
                             </div>
                         </div>
 
                         <!-- MIDDLE SECTION: Dynamic Borelog Data Table -->
-                        <div class="overflow-x-auto my-1.5 flex-1">
-                            <table class="w-full border-collapse border-2 border-slate-900 text-center text-[7.5px] text-slate-900">
+                        <div class="overflow-x-auto my-1 flex-1">
+                            <table class="w-full border-collapse border-2 border-slate-900 text-center text-[7px] text-slate-900">
                                 <thead class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
                                     ${theadHtml}
                                 </thead>
@@ -1617,9 +1649,9 @@
                         </div>
 
                         <!-- BOTTOM SECTION: Sub-Soil Legend & Signatures -->
-                        <div class="space-y-1.5 mt-auto">
+                        <div class="space-y-1 mt-auto">
                             <!-- Sub-Soil Legend Bar -->
-                            <div class="p-1 border border-slate-800 bg-slate-50 flex items-center justify-center gap-4 sm:gap-6 text-[7.5px] font-bold text-slate-800">
+                            <div class="p-0.5 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[7px] font-bold text-slate-800">
                                 <span class="text-slate-600">Sub-soil Legend:</span>
                                 <span class="flex items-center gap-1"><svg width="12" height="8" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
                                 <span class="flex items-center gap-1"><svg width="12" height="8" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
@@ -1628,14 +1660,14 @@
                             </div>
 
                             <!-- Footer Signatures & Personnel -->
-                            <div class="border-2 border-slate-900 p-1.5 text-[8.5px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
+                            <div class="border-2 border-slate-900 p-1 text-[8px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
                                 <div class="space-y-2">
                                     <p><strong>Logged By:</strong> <span>${h.loggedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-32 mt-2"></div>
+                                    <div class="border-b border-slate-400 w-28 mt-2"></div>
                                 </div>
                                 <div class="space-y-2 text-right">
                                     <p><strong>Checked By:</strong> <span>${h.checkedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-32 ml-auto mt-2"></div>
+                                    <div class="border-b border-slate-400 w-28 ml-auto mt-2"></div>
                                 </div>
                             </div>
                         </div>
