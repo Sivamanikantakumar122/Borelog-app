@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v9.1</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v9.2</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; margin: 0; padding: 0; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
 
         /* Rotated Vertical Header Style for Compact A4 Table Headers */
@@ -27,15 +27,15 @@
             white-space: nowrap;
             padding: 2px 1px;
             font-size: 7px;
-            max-height: 45px;
+            max-height: 42px;
         }
 
         /* Compact Table Layout */
         table { border-collapse: collapse; width: 100%; table-layout: fixed; }
         th, td { border: 1px solid #000; padding: 1px 2px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; }
 
-        /* Row heights reduced to roughly half of previous size */
-        tr { height: 16px !important; max-height: 20px !important; }
+        /* Strict compact row height */
+        tr { height: 16px !important; max-height: 18px !important; }
 
         /* Explicit Column Widths */
         .col-depth { width: 30px; }
@@ -62,7 +62,7 @@
             border-bottom: none !important;
         }
 
-        /* Print Media Styling: Clean multi-page pagination with fluid natural flow */
+        /* Print Media Styling: Clean multi-page pagination with fluid natural flow, zero blank pages */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; width: 210mm !important; }
@@ -72,8 +72,8 @@
                 border: 1.5px solid #000 !important; 
                 box-shadow: none !important; 
                 width: 210mm !important;
-                height: 297mm !important;
-                max-height: 297mm !important; 
+                height: 285mm !important;
+                max-height: 285mm !important; 
                 overflow: hidden !important; 
                 display: flex !important; 
                 flex-direction: column !important; 
@@ -81,14 +81,18 @@
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
             }
+
+            .print-sheet:last-of-type {
+                page-break-after: avoid !important;
+            }
             
             .graph-sheet { display: none !important; }
 
             .graph-sheet.active-final-print {
                 display: flex !important;
                 width: 210mm !important;
-                height: 297mm !important; 
-                max-height: 297mm !important; 
+                height: 285mm !important; 
+                max-height: 285mm !important; 
                 flex-direction: column !important; 
                 justify-content: flex-start !important; 
                 page-break-inside: avoid !important;
@@ -97,7 +101,7 @@
 
             thead { display: table-header-group !important; }
             tr { page-break-inside: avoid !important; page-break-after: auto !important; }
-            @page { size: A4 portrait; margin: 0; }
+            @page { size: A4 portrait; margin: 5mm; }
         }
 
         /* Screen Preview Fixed A4 Portrait Box Styling */
@@ -178,7 +182,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.1 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.2 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -1320,7 +1324,7 @@
             // Updated dynamically inside page builder
         }
 
-        // Automatic Multi-Page Split Engine with exact strict row capacities to prevent blank trailing pages
+        // Automatic Multi-Page Split Engine with optimized capacity (18 rows per page) to strictly prevent blank trailing pages
         function renderBorelogSheets() {
             const wrapper = document.getElementById('print-sheets-wrapper');
             if (!wrapper) return;
@@ -1336,8 +1340,7 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const h = renderHeaderValues();
 
-            // Exactly 15 rows per page fits comfortably within A4 portrait without creating empty trailing pages
-            const pageSize = 15;
+            const pageSize = 18;
             const pages = [];
             if (sortedRecords.length === 0) {
                 pages.push([]);
@@ -1510,15 +1513,15 @@
 
                 return `
                     <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
-                        <!-- TOP SECTION: Document Header & Metadata (Repeated on every page as requested) -->
+                        <!-- TOP SECTION: Document Header & Metadata -->
                         <div class="border-2 border-slate-900">
-                            <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
+                            <div class="bg-slate-100 border-b-2 border-slate-900 p-1.5 text-center flex items-center justify-between">
                                 <div class="text-left">
                                     <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-slate-900">${currentMode === 'field' ? 'FIELD BORELOG REPORT' : 'FINAL BORELOG REPORT'}</h2>
-                                    <p class="text-[8px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
+                                    <p class="text-[7.5px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
                                 </div>
                                 <div>
-                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8.5px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
+                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
                                 </div>
                             </div>
 
@@ -1542,7 +1545,7 @@
                         </div>
 
                         <!-- MIDDLE SECTION: Data Table -->
-                        <div class="overflow-x-auto my-1.5 flex-1">
+                        <div class="overflow-x-auto my-1 flex-1">
                             <table class="w-full border-collapse border-2 border-slate-900 text-center text-[7px] text-slate-900">
                                 <thead class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
                                     ${theadHtml}
