@@ -17,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; margin: 0; padding: 0; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
 
         /* Rotated Vertical Header Style for Compact A4 Table Headers */
@@ -417,7 +417,7 @@
 
                     <div class="flex items-center gap-2 pt-1">
                         <button type="submit" id="btn-submit-sample" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg shadow transition flex items-center justify-center gap-1.5 text-xs">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Add Record Row
+                            <i data-lucide="plus" class="w-4 h-4"></i> Add SPT Record Row
                         </button>
                         <button type="button" onclick="clearSampleForm()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg text-xs">
                             Reset
@@ -873,12 +873,19 @@
                 nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
             }
 
+            // 1. Energy correction: N60 = N_field * (Er / 60)
             const n60 = isRefusal ? 'R' : Math.round((er / 60.0) * nValNumeric);
+            const n60Num = isRefusal ? 0 : (typeof n60 === 'number' ? n60 : parseInt(n60) || 0);
+
+            // 2. Overburden pressure correction factor CN = 0.77 * log10(20 / sigma_0) where sigma_0 is in kg/cm2 (approx sigma_v_prime / 98.07)
             let sigma_0_kg_cm2 = sigma_v_prime / 98.0665;
             let Cn = 0.77 * Math.log10(20.0 / Math.max(0.05, sigma_0_kg_cm2));
             Cn = Math.max(0.40, Math.min(2.00, Cn));
 
+            // 3. N' (Corrected for overburden) = Cn * N_Field
             let nPrimeVal = Cn * nValNumeric;
+
+            // 4. Dilatancy correction (N''): If N' > 15 in fine sand/silt below water table -> 15 + 0.5(N' - 15)
             let nDoublePrimeVal = nPrimeVal;
             const midDepth = (r.depthFrom + r.depthTo) / 2.0;
             const isSubmergedFineSoil = midDepth > gwt && (/SAND|SILT/i.test(r.description));
