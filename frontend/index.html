@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v6.8</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v6.9</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -158,7 +158,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.8 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.9 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -269,6 +269,31 @@
                 </div>
             </div>
 
+            <!-- Optional Columns Checkboxes (PL, UCS, TV, PP) -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                    <i data-lucide="check-square" class="w-4 h-4 text-amber-400"></i> Optional Strength Test Columns
+                </h2>
+                <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
+                        <input type="checkbox" id="toggle-tv" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                        <span>Torvane (TV)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
+                        <input type="checkbox" id="toggle-pp" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                        <span>Pocket Pen. (PP)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-only hidden">
+                        <input type="checkbox" id="toggle-pl" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                        <span>Point Load (PL)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-only hidden">
+                        <input type="checkbox" id="toggle-ucs" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                        <span>UCS (MPa)</span>
+                    </label>
+                </div>
+            </div>
+
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
                 <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                     <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Add Sample & Strata Record
@@ -311,7 +336,7 @@
                             <input type="number" id="input-sample-no" value="1" min="1" step="1" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-bold">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-0.5">Recovery % (e.g. 100, 30)</label>
+                            <label class="block text-slate-400 mb-0.5">Recovery %</label>
                             <input type="number" step="1" id="input-recovery-pct" value="100" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono">
                         </div>
                     </div>
@@ -378,14 +403,14 @@
                         <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Soft brown silty CLAY."></textarea>
                     </div>
 
-                    <!-- Optional Strength Parameters (Field Log: TV & PP | Final Log: PL & UCS) -->
+                    <!-- Strength Input Fields -->
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
                         <div>
                             <label class="block text-cyan-300 text-[10px] mb-0.5">Torvane TV (kPa)</label>
                             <input type="text" id="input-tv" value="" placeholder="e.g. 45" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div>
-                            <label class="block text-cyan-300 text-[10px] mb-0.5">Pocket Penetrometer PP (kPa)</label>
+                            <label class="block text-cyan-300 text-[10px] mb-0.5">Pocket Pen. PP (kPa)</label>
                             <input type="text" id="input-pp" value="" placeholder="e.g. 100" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div class="final-mode-only hidden">
@@ -1183,13 +1208,31 @@
             const thead = document.getElementById('borelog-thead');
             const tbody = document.getElementById('borelog-tbody');
             const showCD = document.getElementById('toggle-cd-level').checked;
+            const showTV = document.getElementById('toggle-tv').checked;
+            const showPP = document.getElementById('toggle-pp').checked;
+            const showPL = document.getElementById('toggle-pl').checked;
+            const showUCS = document.getElementById('toggle-ucs').checked;
+
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
 
             const cdHeader = showCD ? `<th colspan="2" class="p-1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
             const cdSubHeader = showCD ? `<th class="p-0.5 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.5 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
 
+            // Optional dynamic columns based on checkbox toggles
+            let optHeaders = '';
+            let optSubHeaders = '';
+
             if (currentMode === 'field') {
+                if (showTV) {
+                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>`;
+                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+                }
+                if (showPP) {
+                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>`;
+                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+                }
+
                 thead.innerHTML = `
                     <tr class="text-slate-900 font-bold">
                         <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
@@ -1200,8 +1243,7 @@
                         <th colspan="4" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
                         <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
                         <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>
+                        ${optHeaders}
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
@@ -1212,11 +1254,20 @@
                         <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
                         <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold">N</th>
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
-                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                        ${optSubHeaders}
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                     </tr>
                 `;
             } else {
+                if (showPL) {
+                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PL (MPa)</div></th>`;
+                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+                }
+                if (showUCS) {
+                    optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">UCS (MPa)</div></th>`;
+                    optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+                }
+
                 thead.innerHTML = `
                     <tr class="text-slate-900 font-bold">
                         <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
@@ -1227,8 +1278,7 @@
                         <th colspan="5" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
                         <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
                         <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PL (MPa)</div></th>
-                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">UCS (MPa)</div></th>
+                        ${optHeaders}
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
@@ -1239,14 +1289,14 @@
                         <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
                         <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100">N60</th>
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
-                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                        ${optSubHeaders}
                         <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                     </tr>
                 `;
             }
 
             if (records.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="19" class="p-3 text-slate-500 italic">No strata records added yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="20" class="p-3 text-slate-500 italic">No strata records added yet.</td></tr>`;
                 return;
             }
 
@@ -1269,7 +1319,11 @@
                     </div>
                 `;
 
+                let optDataCells = '';
                 if (currentMode === 'field') {
+                    if (showTV) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${r.tv || '-'}</td>`;
+                    if (showPP) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${r.pp || '-'}</td>`;
+
                     return `
                         <tr class="text-slate-900">
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
@@ -1284,14 +1338,16 @@
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="cell-soil-log border border-slate-800 w-16 p-0">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
-                            <td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${r.tv || '-'}</td>
-                            <td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${r.pp || '-'}</td>
+                            ${optDataCells}
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
                         </tr>
                     `;
                 } else {
+                    if (showPL) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${r.pointLoad || '-'}</td>`;
+                    if (showUCS) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${r.ucs || '-'}</td>`;
+
                     return `
                         <tr class="text-slate-900">
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
@@ -1307,8 +1363,7 @@
                             <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
                             <td class="cell-soil-log border border-slate-800 w-16 p-0">${hatchSvg}</td>
                             <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
-                            <td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${r.pointLoad || '-'}</td>
-                            <td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${r.ucs || '-'}</td>
+                            ${optDataCells}
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
@@ -1318,7 +1373,15 @@
             }).join('');
 
             const maxDepth = Math.max(...records.map(r => r.depthTo));
-            const totalCols = (currentMode === 'field' ? 16 : 17) + (showCD ? 2 : 0);
+            let extraColsCount = 0;
+            if (currentMode === 'field') {
+                if (showTV) extraColsCount++;
+                if (showPP) extraColsCount++;
+            } else {
+                if (showPL) extraColsCount++;
+                if (showUCS) extraColsCount++;
+            }
+            const totalCols = (currentMode === 'field' ? 14 : 15) + extraColsCount + (showCD ? 2 : 0);
 
             const terminationHtml = `
                 <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
