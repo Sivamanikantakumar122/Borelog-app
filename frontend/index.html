@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v9.5</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v9.6</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,12 +30,12 @@
             max-height: 38px;
         }
 
-        /* Compact Table Layout & Absolute Tight Row Height Enforcements */
+        /* Compact Table Layout & Flex-based natural shrink row height */
         table { border-collapse: collapse; width: 100%; table-layout: fixed; height: auto; }
-        th, td { border: 1px solid #000; padding: 0px 1px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; line-height: 1.0; }
+        th, td { border: 1px solid #000; padding: 1px 2px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; line-height: 1.1; vertical-align: middle; }
 
-        /* Force ultra-compact rows matching professional engineering logs exactly */
-        tr { height: 10px !important; min-height: 10px !important; max-height: 12px !important; }
+        /* Remove any minimum height constraint so rows shrink naturally around content */
+        tr { height: auto !important; min-height: 0 !important; max-height: none !important; }
 
         /* Explicit Column Widths matching target design */
         .col-depth { width: 28px; }
@@ -62,7 +62,7 @@
             border-bottom: none !important;
         }
 
-        /* Print Media Styling: Clean multi-page pagination with fluid natural flow, zero blank pages */
+        /* Print Media Styling */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; width: 210mm !important; }
@@ -100,7 +100,7 @@
             }
 
             thead { display: table-header-group !important; }
-            tr { page-break-inside: avoid !important; page-break-after: auto !important; height: 10px !important; }
+            tr { page-break-inside: avoid !important; page-break-after: auto !important; height: auto !important; }
             @page { size: A4 portrait; margin: 5mm; }
         }
 
@@ -182,7 +182,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.5 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.6 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -1382,7 +1382,7 @@
                 let theadHtml = '';
                 if (currentMode === 'field') {
                     theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 10px !important;">
+                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: auto !important;">
                             <th colspan="2" class="p-0.1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
                             <th class="p-0.1 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
@@ -1396,7 +1396,7 @@
                             <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
                             <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: 8px !important;">
+                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: auto !important;">
                             <th class="p-0.1 border border-slate-900 col-depth">From</th><th class="p-0.1 border border-slate-900 col-depth">To</th>
                             ${cdSubHeader}
                             <th class="p-0.1 border border-slate-900 col-type">Type</th><th class="p-0.1 border border-slate-900 col-no">No.</th><th class="p-0.1 border border-slate-900 col-rec">%</th>
@@ -1408,7 +1408,7 @@
                     `;
                 } else {
                     theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 10px !important;">
+                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: auto !important;">
                             <th colspan="2" class="p-0.1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
                             <th class="p-0.1 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
@@ -1422,7 +1422,7 @@
                             <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
                             <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: 8px !important;">
+                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: auto !important;">
                             <th class="p-0.1 border border-slate-900 col-depth">From</th><th class="p-0.1 border border-slate-900 col-depth">To</th>
                             ${cdSubHeader}
                             <th class="p-0.1 border border-slate-900 col-type">Type</th><th class="p-0.1 border border-slate-900 col-no">No.</th><th class="p-0.1 border border-slate-900 col-rec">%</th>
@@ -1448,8 +1448,8 @@
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
                         const hatchSvg = `
-                            <div class="cell-soil-log w-full h-full min-h-[10px] min-w-[24px] flex items-center justify-center p-0 m-0">
-                                <svg width="100%" height="100%" style="min-height: 10px; display: block;" preserveAspectRatio="none">
+                            <div class="cell-soil-log w-full h-full min-h-[14px] min-w-[24px] flex items-center justify-center p-0 m-0">
+                                <svg width="100%" height="100%" style="min-height: 14px; display: block;" preserveAspectRatio="none">
                                     <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
                                 </svg>
                             </div>
@@ -1463,7 +1463,7 @@
 
                         if (currentMode === 'field') {
                             return `
-                                <tr class="text-slate-900" style="height: 10px !important;">
+                                <tr class="text-slate-900">
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
@@ -1475,7 +1475,7 @@
                                     <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                                     <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.2 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
+                                    <td class="p-0.1 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
                                     ${optDataCells}
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1484,7 +1484,7 @@
                             `;
                         } else {
                             return `
-                                <tr class="text-slate-900" style="height: 10px !important;">
+                                <tr class="text-slate-900">
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
@@ -1497,7 +1497,7 @@
                                     <td class="p-0.1 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? calc.finalN : '-'}</td>
                                     <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.2 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
+                                    <td class="p-0.1 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
                                     ${optDataCells}
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1516,7 +1516,7 @@
                 const totalCols = (currentMode === 'field' ? 14 : 15) + extraColsCount + (showCD ? 2 : 0);
 
                 const terminationHtml = isLastPage ? `
-                    <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900" style="height: 10px !important;">
+                    <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
                         <td colspan="${totalCols}" class="p-0.1 text-center text-[7px] uppercase tracking-wider text-slate-900 bg-slate-200">
                             *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
                         </td>
@@ -1712,61 +1712,41 @@
                 corrPts.push({ x: xCorr, y: y });
             });
 
-            if (fieldPts.length > 0) {
-                ctx.strokeStyle = '#3b82f6';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(fieldPts[0].x, fieldPts[0].y);
-                for (let i = 1; i < fieldPts.length; i++) { ctx.lineTo(fieldPts[i].x, fieldPts[i].y); }
-                ctx.stroke();
+            if (fieldPts.length === 0) return;
 
-                fieldPts.forEach(p => {
-                    ctx.fillStyle = '#3b82f6';
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                });
+            ctx.strokeStyle = '#2563eb';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(fieldPts[0].x, fieldPts[0].y);
+            for (let i = 1; i < fieldPts.length; i++) {
+                ctx.lineTo(fieldPts[i].x, fieldPts[i].y);
             }
+            ctx.stroke();
+
+            fieldPts.forEach(p => {
+                ctx.fillStyle = '#2563eb';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
 
             if (corrPts.length > 0) {
-                ctx.strokeStyle = '#f97316';
+                ctx.strokeStyle = '#d97706';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(corrPts[0].x, corrPts[0].y);
-                for (let i = 1; i < corrPts.length; i++) { ctx.lineTo(corrPts[i].x, corrPts[i].y); }
+                for (let i = 1; i < corrPts.length; i++) {
+                    ctx.lineTo(corrPts[i].x, corrPts[i].y);
+                }
                 ctx.stroke();
 
                 corrPts.forEach(p => {
-                    ctx.fillStyle = '#f97316';
+                    ctx.fillStyle = '#d97706';
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
                     ctx.fill();
                 });
             }
-
-            const legX = marginLeft + graphW - 150;
-            const legY = marginTop + 10;
-            ctx.fillStyle = '#ffffff';
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.lineWidth = 1;
-            ctx.fillRect(legX, legY, 140, 42);
-            ctx.strokeRect(legX, legY, 140, 42);
-
-            ctx.fillStyle = '#3b82f6';
-            ctx.beginPath(); ctx.arc(legX + 15, legY + 14, 4, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign = 'left';
-            ctx.fillText("SPT (N Field)", legX + 26, legY + 17);
-
-            ctx.fillStyle = '#f97316';
-            ctx.beginPath(); ctx.arc(legX + 15, legY + 30, 4, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign, 'left';
-            ctx.fillText("SPT (Final N)", legX + 26, legY + 33);
-
-            const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
-            ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 13px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText(`Borehole: ${bhNo}`, marginLeft + 15, marginTop + graphH - 20);
         }
     </script>
 </body>
