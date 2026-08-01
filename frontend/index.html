@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v11.6</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v11.7</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +31,6 @@
             vertical-align: middle;
         }
 
-        /* Seamless Continuous Soil Log Column Style */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -50,8 +49,8 @@
             font-weight: bold;
         }
 
-        tr { height: 17px !important; max-height: 20px !important; }
-        th, td { padding: 1.5px 2.5px !important; border: 1px solid #000 !important; font-size: 7.5px !important; vertical-align: middle !important; }
+        tr { height: 16px !important; max-height: 19px !important; }
+        th, td { padding: 1.5px 2px !important; border: 1px solid #000 !important; font-size: 7.2px !important; vertical-align: middle !important; }
 
         @media print {
             .no-print { display: none !important; }
@@ -92,7 +91,7 @@
 
             thead { display: table-header-group !important; }
             tr { page-break-inside: avoid !important; }
-            table { font-size: 7px !important; }
+            table { font-size: 6.8px !important; }
             @page { size: A4 portrait; margin: 0; }
         }
 
@@ -131,7 +130,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- SVG Standard Sub-Soil Bright High-Contrast Hatch Legend Definitions -->
+    <!-- Sub-Soil Hatch Legend Definitions -->
     <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
         <defs>
             <pattern id="hatch-SAND" width="12" height="12" patternUnits="userSpaceOnUse">
@@ -168,7 +167,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.6 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.7 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -1425,15 +1424,25 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const h = renderHeaderValues();
 
-            const pageSize = 23; // Adjusted page size to fill vertical A4 height cleanly without blank gaps
+            // Strict 40m depth split engine per sheet
+            const maxDepthLimit = 40.0;
             const pages = [];
-            if (sortedRecords.length === 0) {
-                pages.push([]);
-            } else {
-                for (let i = 0; i < sortedRecords.length; i += pageSize) {
-                    pages.push(sortedRecords.slice(i, i + pageSize));
+            let currentPageRecords = [];
+            let pageStartDepth = sortedRecords.length > 0 ? sortedRecords[0].depthFrom : 0.0;
+
+            sortedRecords.forEach(r => {
+                if (r.depthTo - pageStartDepth > maxDepthLimit && currentPageRecords.length > 0) {
+                    pages.push(currentPageRecords);
+                    currentPageRecords = [r];
+                    pageStartDepth = r.depthFrom;
+                } else {
+                    currentPageRecords.push(r);
                 }
+            });
+            if (currentPageRecords.length > 0) {
+                pages.push(currentPageRecords);
             }
+            if (pages.length === 0) pages.push([]);
 
             const tagMap = computeTypeTagMap();
             const maxDepth = sortedRecords.length > 0 ? Math.max(...sortedRecords.map(r => r.depthTo)) : 0.0;
@@ -1520,9 +1529,9 @@
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
-                        // Clean background fill matching Attachment 2 styling perfectly without any horizontal seams
+                        // Continuous block fill matching Attachment 2 styling perfectly without any horizontal seams
                         const hatchDiv = `
-                            <div class="cell-soil-log w-full h-full min-h-[17px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat;">
+                            <div class="cell-soil-log w-full h-full min-h-[16px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat;">
                             </div>
                         `;
 
