@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v8.1</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v8.3</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,7 +49,7 @@
             font-weight: bold;
         }
 
-        /* Print Media Styling: Professional multi-page pagination with repeated table headers */
+        /* Print Media Styling: Strict multi-page pagination with repeated table headers */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; width: 210mm !important; }
@@ -69,22 +69,11 @@
                 page-break-inside: avoid !important;
             }
             
-            .graph-sheet, .calc-sheet { 
+            .graph-sheet { 
                 display: none !important; 
             }
 
             .graph-sheet.active-final-print {
-                display: flex !important;
-                height: 275mm !important; 
-                max-height: 275mm !important; 
-                flex-direction: column !important; 
-                justify-content: flex-start !important; 
-                page-break-inside: avoid !important;
-                page-break-before: always !important; 
-                page-break-after: always !important;
-            }
-
-            .calc-sheet.active-final-print {
                 display: flex !important;
                 height: 275mm !important; 
                 max-height: 275mm !important; 
@@ -123,7 +112,7 @@
             overflow: hidden;
         }
 
-        .graph-sheet, .calc-sheet {
+        .graph-sheet {
             width: 210mm;
             min-height: 297mm;
             max-height: 297mm;
@@ -189,7 +178,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v8.1 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v8.3 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -617,45 +606,7 @@
                 </div>
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR N-CORRECTION CALCULATION TABLE -->
-            <div id="n-calc-sheet-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 calc-sheet border border-slate-300 hidden">
-                <div class="space-y-3 w-full">
-                    <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
-                        <div>
-                            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT N-VALUE CORRECTION CALCULATIONS</h3>
-                            <p class="text-[9px] text-slate-600">Standard Overburden Pressure, Energy Ratio ($E_r$), & Dilatancy Corrections (IS 2131:2025)</p>
-                        </div>
-                        <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">CALCULATION SHEET</span>
-                    </div>
-
-                    <div class="overflow-x-auto border-2 border-slate-900 my-2">
-                        <table class="w-full text-center text-[8.5px] text-slate-900 divide-y divide-slate-900">
-                            <thead class="bg-slate-100 font-bold divide-x divide-slate-900">
-                                <tr>
-                                    <th class="p-1.5">Depth Interval (m)</th>
-                                    <th class="p-1.5">Sample No.</th>
-                                    <th class="p-1.5">Raw Field N</th>
-                                    <th class="p-1.5">Energy Ratio ($E_r$ %)</th>
-                                    <th class="p-1.5">N60</th>
-                                    <th class="p-1.5">Effective Overburden $\sigma'_v$ (kPa)</th>
-                                    <th class="p-1.5">Overburden Factor ($C_n$)</th>
-                                    <th class="p-1.5 font-bold bg-amber-50">Corrected N₁</th>
-                                </tr>
-                            </thead>
-                            <tbody id="print-n-calc-tbody" class="divide-y divide-slate-400 font-mono">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="p-2.5 border border-slate-400 bg-slate-50 text-[8px] text-slate-800 leading-relaxed space-y-1">
-                        <p><strong>Formulas Applied:</strong></p>
-                        <p>1. Energy Correction: $N_{60} = N_{field} \times (E_r / 60)$</p>
-                        <p>2. Overburden Pressure Correction: $C_n = 0.77 \log_{10}(20 \, P_a / \sigma'_v)$ (Bounded between $0.40 \le C_n \le 2.00$)</p>
-                        <p>3. Dilatancy Correction (if $N_{60} > 15$ in fine sand/silt below water table): $N_{1\_final} = 15 + 0.5(N_{60} - 15)$</p>
-                    </div>
-                </div>
-            </div>
+            <!-- FRESH SEPARATE A4 SHEET FOR N-CORRECTION CALCULATION TABLE (Removed from final printed sheet, accessible purely via Excel Download) -->
 
         </div>
 
@@ -735,7 +686,6 @@
         function openImportModal() { document.getElementById('import-modal').classList.remove('hidden'); }
         function closeImportModal() { document.getElementById('import-modal').classList.add('hidden'); }
 
-        // Function to generate and download a pre-formatted Sample Excel Template
         function downloadSampleExcelTemplate() {
             const sampleTemplateData = [
                 {
@@ -1090,7 +1040,6 @@
             const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
-            const nCalcSheetBox = document.getElementById('n-calc-sheet-container');
 
             if (mode === 'field') {
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-blue-600 text-white shadow";
@@ -1104,8 +1053,6 @@
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
                 sptGraphBox.classList.remove('active-final-print');
-                nCalcSheetBox.classList.add('hidden');
-                nCalcSheetBox.classList.remove('active-final-print');
             } else {
                 btnFinal.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow";
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white";
@@ -1118,8 +1065,6 @@
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
                 sptGraphBox.classList.add('active-final-print');
-                nCalcSheetBox.classList.remove('hidden');
-                nCalcSheetBox.classList.add('active-final-print');
             }
 
             updateAll();
@@ -1314,7 +1259,6 @@
 
         function renderNCalcTables() {
             const panelTbody = document.getElementById('panel-n-calc-tbody');
-            const printTbody = document.getElementById('print-n-calc-tbody');
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
 
@@ -1323,19 +1267,13 @@
             if (sptRecs.length === 0) {
                 const emptyRow = `<tr><td colspan="6" class="p-3 text-slate-500 italic">No SPT tests recorded.</td></tr>`;
                 if (panelTbody) panelTbody.innerHTML = emptyRow;
-                if (printTbody) printTbody.innerHTML = `<tr><td colspan="8" class="p-3 text-slate-500 italic">No SPT tests recorded.</td></tr>`;
                 return;
             }
 
-            const tagMap = computeTypeTagMap();
-
             let panelHtml = '';
-            let printHtml = '';
 
             sptRecs.forEach((r, idx) => {
                 const calc = computeCalculatedFields(r, gwt, er);
-                const tag = tagMap[r.id];
-
                 panelHtml += `
                     <tr>
                         <td class="p-1 border-r border-slate-800">${r.depthFrom.toFixed(2)}-${r.depthTo.toFixed(2)}</td>
@@ -1346,23 +1284,9 @@
                         <td class="p-1 font-bold text-emerald-400">${calc.N1_final}</td>
                     </tr>
                 `;
-
-                printHtml += `
-                    <tr class="divide-x divide-slate-400">
-                        <td class="p-1 font-mono">${r.depthFrom.toFixed(2)}m - ${r.depthTo.toFixed(2)}m</td>
-                        <td class="p-1 font-semibold">${tag}</td>
-                        <td class="p-1">${r.nVal}</td>
-                        <td class="p-1">${er}%</td>
-                        <td class="p-1 font-bold text-amber-900">${calc.n60}</td>
-                        <td class="p-1">${calc.sigmaVPrime} kPa</td>
-                        <td class="p-1">${calc.Cn}</td>
-                        <td class="p-1 font-extrabold text-blue-900 bg-amber-50">${calc.N1_final}</td>
-                    </tr>
-                `;
             });
 
             if (panelTbody) panelTbody.innerHTML = panelHtml;
-            if (printTbody) printTbody.innerHTML = printHtml;
         }
 
         function downloadNCorrectionExcel() {
