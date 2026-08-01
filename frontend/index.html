@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v7.0</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v7.1</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -70,7 +70,7 @@
                 height: 275mm !important; 
                 max-height: 275mm !important; 
                 flex-direction: column !important; 
-                justify-content: flex-start !important; 
+                justify-content: space-between !important; 
             }
 
             table { font-size: 6.5px !important; }
@@ -102,7 +102,7 @@
             padding: 10mm;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: space-between;
         }
 
         /* Scrollbar Styling */
@@ -158,7 +158,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.0 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.1 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -266,6 +266,31 @@
                         </label>
                         <input type="number" id="meta-energy-efficiency" min="10" max="90" value="60" oninput="validateEnergyEfficiency(); updateAll()" class="w-full bg-slate-900 border border-amber-500/40 rounded-lg p-2 text-amber-100 font-bold outline-none">
                     </div>
+                </div>
+            </div>
+
+            <!-- Optional Columns Checkboxes (PL, UCS, TV, PP) -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                    <i data-lucide="check-square" class="w-4 h-4 text-amber-400"></i> Optional Strength Test Columns
+                </h2>
+                <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
+                        <input type="checkbox" id="toggle-tv" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                        <span>Torvane (TV)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
+                        <input type="checkbox" id="toggle-pp" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                        <span>Pocket Pen. (PP)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-only hidden">
+                        <input type="checkbox" id="toggle-pl" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                        <span>Point Load (PL)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-only hidden">
+                        <input type="checkbox" id="toggle-ucs" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                        <span>UCS (MPa)</span>
+                    </label>
                 </div>
             </div>
 
@@ -383,28 +408,28 @@
                         <div>
                             <label class="block text-cyan-300 text-[10px] mb-1 flex items-center justify-between">
                                 <span>Torvane TV (kPa)</span>
-                                <input type="checkbox" id="toggle-tv" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                                <input type="checkbox" id="toggle-tv-input" checked onchange="document.getElementById('input-tv').disabled = !this.checked;" class="rounded bg-slate-900 border-slate-700 text-blue-600">
                             </label>
                             <input type="text" id="input-tv" value="" placeholder="e.g. 45" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div>
                             <label class="block text-cyan-300 text-[10px] mb-1 flex items-center justify-between">
                                 <span>Pocket Pen. PP (kPa)</span>
-                                <input type="checkbox" id="toggle-pp" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                                <input type="checkbox" id="toggle-pp-input" checked onchange="document.getElementById('input-pp').disabled = !this.checked;" class="rounded bg-slate-900 border-slate-700 text-blue-600">
                             </label>
                             <input type="text" id="input-pp" value="" placeholder="e.g. 100" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div class="final-mode-only hidden">
                             <label class="block text-purple-300 text-[10px] mb-1 flex items-center justify-between">
                                 <span>Point Load Is(50) (MPa)</span>
-                                <input type="checkbox" id="toggle-pl" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                                <input type="checkbox" id="toggle-pl-input" checked onchange="document.getElementById('input-point-load').disabled = !this.checked;" class="rounded bg-slate-900 border-slate-700 text-amber-600">
                             </label>
                             <input type="text" id="input-point-load" value="" placeholder="e.g. 2.4" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div class="final-mode-only hidden">
                             <label class="block text-purple-300 text-[10px] mb-1 flex items-center justify-between">
                                 <span>UCS (MPa)</span>
-                                <input type="checkbox" id="toggle-ucs" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                                <input type="checkbox" id="toggle-ucs-input" checked onchange="document.getElementById('input-ucs').disabled = !this.checked;" class="rounded bg-slate-900 border-slate-700 text-amber-600">
                             </label>
                             <input type="text" id="input-ucs" value="" placeholder="e.g. 45.0" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
@@ -525,8 +550,8 @@
 
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH -->
-            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-4 hidden">
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH WITH IS 2131 NOTE -->
+            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-3 hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
                         <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT 'N' Value Depth Profile</h3>
@@ -535,7 +560,11 @@
                     <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
                 </div>
                 <div class="p-3 border-2 border-slate-900 bg-slate-50 flex items-start justify-center pt-2">
-                    <canvas id="sptCanvas" width="480" height="520" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
+                    <canvas id="sptCanvas" width="480" height="480" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
+                </div>
+                <!-- Requested Note Below Graph -->
+                <div class="p-2 border border-slate-400 bg-slate-100 text-[8px] text-slate-800 leading-tight">
+                    <strong>Note:</strong> The final corrected SPT N-value shown in the graph is determined by applying the relevant SPT corrections in accordance with IS 2131:2025, including corrections for hammer energy, overburden pressure, and dilatancy.
                 </div>
             </div>
 
