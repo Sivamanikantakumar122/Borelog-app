@@ -402,6 +402,11 @@
                         </div>
                     </div>
 
+                    <!-- Hidden fields required by JavaScript logic for core properties -->
+                    <input type="hidden" id="input-core-rec" value="0">
+                    <input type="hidden" id="input-solid-core" value="0">
+                    <input type="hidden" id="input-rock-pieces" value="">
+
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-slate-400 mb-0.5">Standard Soil Hatch</label>
@@ -1375,6 +1380,25 @@
 
             setTxt('out-logged-by', getVal('meta-logged-by'));
             setTxt('out-checked-by', getVal('meta-checked-by'));
+        }
+
+        function renderHeaderValues() {
+            const getVal = id => document.getElementById(id)?.value || '-';
+            return {
+                title: getVal('meta-project-title'),
+                code: getVal('meta-project-code'),
+                location: getVal('meta-location'),
+                bhNo: getVal('meta-bh-no'),
+                period: `${formatDateToDDMMYYYY(getVal('meta-period-from'))} to ${formatDateToDDMMYYYY(getVal('meta-period-to'))}`,
+                gwt: `${getVal('meta-gwt')} m`,
+                cdLevel: getVal('meta-cd-level'),
+                proposedCoords: getVal('meta-proposed-coords'),
+                achievedCoords: getVal('meta-achieved-coords'),
+                rigType: getVal('meta-rig-type'),
+                boringDia: getVal('meta-boring-dia'),
+                loggedBy: getVal('meta-logged-by'),
+                checkedBy: getVal('meta-checked-by')
+            };
         }
 
         // Automatic Multi-Page Split Engine supporting 30m+ depths with identical repeated headers
