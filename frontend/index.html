@@ -1086,10 +1086,9 @@
                 nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
             }
 
-            const n60 = isRefusal ? 'R' : Math.round((er / 60.0) * nValNumeric);
+            const n60 = isRefusal ? 'R' : Math.round(nValNumeric * (er / 60.0));
             const isClay = /CLAY/i.test(r.description);
 
-            // Per user instructions, for Clay display N60 (Hammer correction only) in the Final N/N60 column
             if (isClay) {
                 return {
                     sampleRecPct,
@@ -1529,9 +1528,8 @@
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK' || hType === 'SANDSTONE') hType = 'SOLID_ROCK';
 
-                        // Completely seamless block fill with zero vertical gaps to match professional logs
                         const hatchDiv = `
-                            <div class="cell-soil-log w-full h-full min-h-[17px] min-w-[28px] m-0 p-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat; display: block;">
+                            <div class="cell-soil-log w-full h-full min-h-[16px] min-w-[28px] m-0 p-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat; display: block;">
                             </div>
                         `;
 
@@ -1546,7 +1544,7 @@
                         const colN2 = isSpt ? r.n2 : '-';
                         const colN3 = isSpt ? r.n3 : '-';
                         const colNVal = isSpt ? r.nVal : '-';
-                        const colFinalN = isSpt ? calc.finalN : '-';
+                        const colN60 = isSpt ? calc.n60 : '-';
 
                         if (currentMode === 'field') {
                             return `
@@ -1582,7 +1580,7 @@
                                     <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${colN2}</td>
                                     <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${colN3}</td>
                                     <td class="p-0.5 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${colNVal}</td>
-                                    <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${colFinalN}</td>
+                                    <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${colN60}</td>
                                     <td class="cell-soil-log border-x border-slate-800 border-t border-b-0 w-7 p-0">${hatchDiv}</td>
                                     <td class="p-1 border border-slate-800 text-left text-[7.5px] leading-snug text-slate-900">${r.description}</td>
                                     ${optDataCells}
@@ -1635,7 +1633,7 @@
                                 <div class="p-0.5 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span>${h.period}</span></div>
                                 <div class="p-0.5 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span class="font-bold text-blue-800">${h.gwt}</span></div>
                                 
-                                <div class="p-0.5 border-r border-b border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
+                                <div class="p-0.5 border-r border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
                                 <div class="p-0.5 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[7px]">${h.proposedCoords}</span></div>
                                 <div class="p-0.5 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[7px]">${h.achievedCoords}</span></div>
                                 
