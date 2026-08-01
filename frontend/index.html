@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v11.8</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v11.9</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +31,6 @@
             vertical-align: middle;
         }
 
-        /* Fully seamless continuous soil log column style filling entire cell height */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -41,8 +40,8 @@
             border-right: 1.2px solid #000 !important;
             border-top: none !important;
             border-bottom: none !important;
-            vertical-align: stretch !important;
-            height: 100% !important;
+            background-clip: padding-box;
+            position: relative;
         }
 
         .col-n-val {
@@ -51,7 +50,7 @@
         }
 
         tr { height: 16px !important; max-height: 19px !important; }
-        th, td { padding: 1px 2px !important; border: 1px solid #000 !important; font-size: 7.2px !important; vertical-align: middle !important; }
+        th, td { padding: 1.5px 2px !important; border: 1px solid #000 !important; font-size: 7.2px !important; vertical-align: middle !important; }
 
         @media print {
             .no-print { display: none !important; }
@@ -168,7 +167,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.8 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.9 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -480,7 +479,7 @@
                                 <th class="p-1 border-r border-slate-800">Depth (m)</th>
                                 <th class="p-1 border-r border-slate-800">Strata</th>
                                 <th class="p-1 border-r border-slate-800">N<sub>Field</sub></th>
-                                <th class="p-1 border-r border-slate-800">N<sub>60</sub> (Clay: Only E<sub>r</sub>)</th>
+                                <th class="p-1 border-r border-slate-800">N<sub>60</sub> (Hammer Corr.)</th>
                                 <th class="p-1 border-r border-slate-800">Bulk Density</th>
                                 <th class="p-1 border-r border-slate-800">Eff. Stress</th>
                                 <th class="p-1 border-r border-slate-800">C<sub>N</sub></th>
@@ -531,7 +530,7 @@
                         <canvas id="sptCanvas" width="460" height="430" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
                     </div>
                     <div class="p-1.5 border border-slate-400 bg-slate-100 text-[7.5px] text-slate-800 leading-tight">
-                        <strong>Note:</strong> For cohesive/clay soils, only hammer energy correction ($N_{60}$) is applied (overburden $C_N$ and dilatancy corrections omitted per standards).
+                        <strong>Note:</strong> Final Corrected N represents $N_{60}$ for cohesive/clay soils and fully overburden/dilatancy-corrected values for granular soils per IS 2131.
                     </div>
                 </div>
             </div>
@@ -1090,6 +1089,7 @@
             const n60 = isRefusal ? 'R' : Math.round((er / 60.0) * nValNumeric);
             const isClay = /CLAY/i.test(r.description);
 
+            // Per user instructions, for Clay display N60 (Hammer correction only) in the Final N/N60 column
             if (isClay) {
                 return {
                     sampleRecPct,
@@ -1425,7 +1425,6 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const h = renderHeaderValues();
 
-            // Strict 40m depth split engine per sheet
             const maxDepthLimit = 40.0;
             const pages = [];
             let currentPageRecords = [];
@@ -1509,7 +1508,7 @@
                             <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
                             ${cdSubHeader}
                             <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
-                            <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">Final N</th>
+                            <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">N<sub>60</sub></th>
                             <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
                             ${optSubHeaders}
                             <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
@@ -1530,9 +1529,9 @@
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK' || hType === 'SANDSTONE') hType = 'SOLID_ROCK';
 
-                        // Seamless block fill matching professional engineering layout without vertical/horizontal gaps
+                        // Completely seamless block fill with zero vertical gaps to match professional logs
                         const hatchDiv = `
-                            <div class="cell-soil-log w-full h-full min-h-[16px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat;">
+                            <div class="cell-soil-log w-full h-full min-h-[17px] min-w-[28px] m-0 p-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-2 14L14-2M-2 2L14 18' : hType === 'SILT' ? 'M6 0v12' : hType === 'SOLID_ROCK' ? 'M0 0l12 12M12 0L0 12' : 'M3 3a1.5 1.5 0 110-0.1M9 9a1.5 1.5 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.2%22/></svg>'); background-repeat: repeat; display: block;">
                             </div>
                         `;
 
