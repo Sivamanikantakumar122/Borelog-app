@@ -135,7 +135,6 @@
                         Geotech Borelog Studio
                         <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.1 Pro</span>
                     </h1>
-                    <!-- Updated header subtitle with requested authorship -->
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
             </div>
@@ -469,7 +468,7 @@
 
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Continuous line showing both N and Corrected N values) -->
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH -->
             <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-4 hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
@@ -537,13 +536,13 @@
             {
                 id: '1', depthFrom: 0.0, depthTo: 0.45, cdFrom: '-9.20', cdTo: '-9.65',
                 sampleType: 'SPT', sampleNo: 1, recoveredLength: 0.45,
-                n1: '2', n2: '4', n3: '6', nVal: 10, hatchType: 'SAND', unitWeight: 18.0,
+                n1: '2', n2: '4', n3: '6', nVal: '10', hatchType: 'SAND', unitWeight: 18.0,
                 description: 'Medium dense yellow coarse SAND.', coreRec: 0, solidCore: 0, rockPieces: ''
             },
             {
                 id: '2', depthFrom: 0.45, depthTo: 2.50, cdFrom: '-9.65', cdTo: '-11.70',
                 sampleType: 'SPT', sampleNo: 2, recoveredLength: 0.45,
-                n1: '4', n2: '8', n3: '12', nVal: 20, hatchType: 'CLAY', unitWeight: 18.5,
+                n1: '4', n2: '8', n3: '12', nVal: '20', hatchType: 'CLAY', unitWeight: 18.5,
                 description: 'Soft to stiff brown silty CLAY.', coreRec: 0, solidCore: 0, rockPieces: ''
             },
             {
@@ -641,7 +640,7 @@
                         const n2Str = String(findVal(['n2', '30cm'])).trim() || '4';
                         const n3Str = String(findVal(['n3', '45cm'])).trim() || '6';
 
-                        let nValFinal = 10;
+                        let nValFinal = '10';
                         const u2 = n2Str.toUpperCase();
                         const u3 = n3Str.toUpperCase();
                         if (u2 === 'R' || u3 === 'R' || u2 === 'REFUSAL' || u3 === 'REFUSAL') {
@@ -649,7 +648,7 @@
                         } else {
                             const val2 = parseInt(n2Str) || 0;
                             const val3 = parseInt(n3Str) || 0;
-                            nValFinal = val2 + val3;
+                            nValFinal = String(val2 + val3);
                         }
 
                         const desc = String(findVal(['description', 'strata', 'soil'])) || 'Imported strata row';
@@ -746,7 +745,7 @@
                         else if (/UDS/i.test(line)) sType = 'UDS';
                         else if (/CR|CORE/i.test(line)) sType = 'CR';
 
-                        let n1 = '2', n2 = '4', n3 = '6', nVal = 10;
+                        let n1 = '2', n2 = '4', n3 = '6', nVal = '10';
                         if (/R|REFUSAL/i.test(line)) {
                             n2 = '15'; n3 = 'R'; nVal = 'R';
                         } else {
@@ -755,7 +754,7 @@
                                 n1 = numbers[numbers.length - 3];
                                 n2 = numbers[numbers.length - 2];
                                 n3 = numbers[numbers.length - 1];
-                                nVal = (parseInt(n2) || 0) + (parseInt(n3) || 0);
+                                nVal = String((parseInt(n2) || 0) + (parseInt(n3) || 0));
                             }
                         }
 
@@ -864,13 +863,14 @@
             else { rockSection.classList.add('hidden'); }
         }
 
+        // Local live JavaScript calculation mirroring backend logic for instant table UI preview
         function computeCalculatedFields(r, gwt, er) {
             const interval = Math.max(0.01, r.depthTo - r.depthFrom);
             const sampleRecPct = Math.round(Math.min(100, (r.recoveredLength / interval) * 100));
             
             let nValNumeric = 10;
-            const uVal = String(r.nVal).toUpperCase();
-            if (uVal === 'R') {
+            const uVal = String(r.nVal).trim().toUpperCase();
+            if (uVal === 'R' || uVal === 'REFUSAL') {
                 nValNumeric = 50;
             } else {
                 nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
@@ -901,12 +901,14 @@
             const N1_E = Cn * n60;
             const N1_final = N1_E <= 15.0 ? N1_E : (15.0 + 0.5 * (N1_E - 15.0));
 
+            const isRefusal = uVal === 'R' || uVal === 'REFUSAL' || String(r.n2).toUpperCase() === 'R' || String(r.n3).toUpperCase() === 'R';
+
             return {
                 sampleRecPct, 
                 nVal: String(r.nVal), 
-                n60,
+                n60: isRefusal ? 'R' : n60,
                 tcr, scr, rqd,
-                N1_final: Math.round(N1_final)
+                N1_final: isRefusal ? 'Refusal' : Math.round(N1_final)
             };
         }
 
@@ -917,10 +919,6 @@
             const depthTo = parseFloat(document.getElementById('input-depth-to').value) || 1;
             const sampleNo = parseInt(document.getElementById('input-sample-no').value) || (records.length + 1);
 
-            const n2Input = document.getElementById('input-n2').value.trim();
-            const n3Input = document.getElementById('input-n3').value.trim();
-            const nValInput = document.getElementById('input-n-val').value.trim();
-
             const recordData = {
                 id: editId ? editId : Date.now().toString(),
                 depthFrom, depthTo,
@@ -930,9 +928,9 @@
                 sampleNo,
                 recoveredLength: parseFloat(document.getElementById('input-recovered-length').value) || 0,
                 n1: document.getElementById('input-n1').value.trim(),
-                n2: n2Input,
-                n3: n3Input,
-                nVal: nValInput,
+                n2: document.getElementById('input-n2').value.trim(),
+                n3: document.getElementById('input-n3').value.trim(),
+                nVal: document.getElementById('input-n-val').value.trim(),
                 hatchType: document.getElementById('input-hatch-type').value,
                 unitWeight: parseFloat(document.getElementById('input-unit-weight').value) || 18.0,
                 description: document.getElementById('input-description').value,
@@ -1215,7 +1213,6 @@
             tbody.innerHTML = rowsHtml + terminationHtml;
         }
 
-        // Render Continuous Curves for N Value and Corrected N Value on Final Mode Graph Sheet
         function renderSptCanvasGraph() {
             const canvas = document.getElementById('sptCanvas');
             if (!canvas) return;
@@ -1304,15 +1301,23 @@
                 const calc = computeCalculatedFields(r, gwt, er);
                 
                 let rawNValNum = 10;
-                const uVal = String(r.nVal).toUpperCase();
-                if (uVal === 'R') {
-                    rawNValNum = 50;
+                const uVal = String(r.nVal).trim().toUpperCase();
+                if (uVal === 'R' || uVal === 'REFUSAL') {
+                    rawNValNum = 100; // Graph mapping value for Refusal
                 } else {
                     rawNValNum = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
                 }
 
+                let corrValNum = 10;
+                const cValStr = String(calc.N1_final).trim().toUpperCase();
+                if (cValStr === 'REFUSAL' || cValStr === 'R') {
+                    corrValNum = 100;
+                } else {
+                    corrValNum = parseFloat(calc.N1_final) || 10;
+                }
+
                 const xField = marginLeft + (Math.min(rawNValNum, maxN) / maxN) * graphW;
-                const xCorr = marginLeft + (Math.min(calc.N1_final, maxN) / maxN) * graphW;
+                const xCorr = marginLeft + (Math.min(corrValNum, maxN) / maxN) * graphW;
                 const y = marginTop + (Math.min(midD, maxDepth) / maxDepth) * graphH;
 
                 fieldPts.push({ x: xField, y: y });
