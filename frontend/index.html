@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v10.9</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v11.0</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -180,7 +180,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.9 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.0 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -604,6 +604,9 @@
         </div>
     </div>
 
+    <!-- Tesseract OCR Library -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
     <script>
         let currentMode = 'field';
         let records = [
@@ -611,13 +614,13 @@
                 id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-10.50', cdTo: '-11.00',
                 sampleType: 'SPT', sampleNo: 1, recoveryPct: 100,
                 n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 20.0,
-                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: '', tcr: '-', scr: '-', rqd: '-'
+                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: '', tcr: '100', scr: '90', rqd: '80'
             },
             {
                 id: '2', depthFrom: 3.25, depthTo: 3.75, cdFrom: '-12.70', cdTo: '-13.20',
                 sampleType: 'SPT', sampleNo: 2, recoveryPct: 100,
                 n1: '1', n2: '2', n3: '2', nVal: '4', hatchType: 'SAND', unitWeight: 21.0,
-                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: '', tcr: '-', scr: '-', rqd: '-'
+                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: '', tcr: '100', scr: '90', rqd: '80'
             }
         ];
 
@@ -817,7 +820,6 @@
                         }
                         if (!desc) desc = 'Sand';
 
-                        // Smart Lithology Mapping
                         let hatch = 'SAND';
                         let descUp = desc.toUpperCase();
                         if (descUp.includes('CLAY')) hatch = 'CLAY';
@@ -1014,6 +1016,11 @@
         }
 
         function calcNValue() {
+            const sampleType = document.getElementById('input-sample-type').value;
+            if (sampleType !== 'SPT') {
+                document.getElementById('input-n-val').value = '-';
+                return;
+            }
             const n2Str = document.getElementById('input-n2').value.trim();
             const n3Str = document.getElementById('input-n3').value.trim();
             
@@ -1029,7 +1036,7 @@
             }
         }
 
-        // IS 2131 Calculation Engine (Strictly SPT Only for Corrections Table)
+        // IS 2131 Calculation Engine
         function computeCalculatedFields(r, gwt, er, sortedRecords) {
             let current_sigma_v_top = 0.0;
             let current_depth = 0.0;
@@ -1151,9 +1158,9 @@
                 ucs: document.getElementById('input-ucs').value.trim(),
                 tv: document.getElementById('input-tv').value.trim(),
                 pp: document.getElementById('input-pp').value.trim(),
-                tcr: sampleType === 'CR' ? '100' : '-',
-                scr: sampleType === 'CR' ? '90' : '-',
-                rqd: sampleType === 'CR' ? '80' : '-'
+                tcr: sampleType === 'CR' ? document.getElementById('input-tcr').value : '-',
+                scr: sampleType === 'CR' ? document.getElementById('input-scr').value : '-',
+                rqd: sampleType === 'CR' ? document.getElementById('input-rqd').value : '-'
             };
 
             if (editId) {
@@ -1194,6 +1201,9 @@
             document.getElementById('input-ucs').value = r.ucs || '';
             document.getElementById('input-tv').value = r.tv || '';
             document.getElementById('input-pp').value = r.pp || '';
+            document.getElementById('input-tcr').value = r.tcr || '100';
+            document.getElementById('input-scr').value = r.scr || '90';
+            document.getElementById('input-rqd').value = r.rqd || '80';
 
             toggleSampleTypeFields();
             safeInitIcons();
@@ -1796,7 +1806,7 @@
 
             ctx.fillStyle = '#f97316';
             ctx.beginPath(); ctx.arc(legX + 15, legY + 30, 4, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign, 'left';
             ctx.fillText("SPT (Final N)", legX + 26, legY + 33);
 
             const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
