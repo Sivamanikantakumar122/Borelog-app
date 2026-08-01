@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v6.0</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v6.1</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -133,9 +133,10 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.0 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.1 Pro</span>
                     </h1>
-                    <p class="text-[11px] text-slate-400">Professional A4 Portrait Geotechnical Report Engine</p>
+                    <!-- Updated header subtitle with requested authorship -->
+                    <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
             </div>
 
@@ -868,10 +869,9 @@
             const sampleRecPct = Math.round(Math.min(100, (r.recoveredLength / interval) * 100));
             
             let nValNumeric = 10;
-            const u2 = String(r.n2).trim().toUpperCase();
-            const u3 = String(r.n3).trim().toUpperCase();
-            if (u2 === 'R' || u3 === 'R' || u2 === 'REFUSAL' || u3 === 'REFUSAL' || String(r.nVal).toUpperCase() === 'R') {
-                nValNumeric = 50; // Refusal standard engineering proxy for energy/overburden correction calculation
+            const uVal = String(r.nVal).toUpperCase();
+            if (uVal === 'R') {
+                nValNumeric = 50;
             } else {
                 nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
             }
@@ -1149,7 +1149,6 @@
                 let hType = (r.hatchType || 'CLAY').toUpperCase();
                 if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
-                // Seamless continuous Hatch SVG rendering without internal horizontal cell boundary lines
                 const hatchSvg = `
                     <div class="cell-soil-log w-full h-full min-h-[26px] min-w-[36px] flex items-center justify-center p-0 m-0">
                         <svg width="100%" height="26" viewBox="0 0 40 26" preserveAspectRatio="none" class="block" style="border:none;">
