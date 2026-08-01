@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v7.5</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v7.9</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- SheetJS for Excel Import -->
+    <!-- SheetJS for Excel Import & Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Tesseract.js for Image OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -26,11 +26,11 @@
             transform: rotate(180deg);
             white-space: nowrap;
             padding: 4px 2px;
-            font-size: 7.5px;
+            font-size: 8px;
             max-height: 60px;
         }
 
-        /* Continuous Hatch Cell Container - Reduced Soil Log Column Width */
+        /* Continuous Hatch Cell Container */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -49,41 +49,65 @@
             font-weight: bold;
         }
 
-        /* Print Media Styling: Strict separation of Field Log, Final Log, and Graph Sheet */
+        /* Print Media Styling: Professional multi-page pagination with repeated table headers and readable font sizing */
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; width: 210mm !important; }
             .print-area { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
             
+            /* Allow natural page-by-page flow for long borelogs without shrinking text */
             .print-sheet { 
                 border: 1.5px solid #000 !important; 
                 box-shadow: none !important; 
-                height: 275mm !important; 
-                max-height: 275mm !important; 
-                overflow: hidden !important; 
+                height: auto !important; 
+                min-height: 275mm !important;
+                max-height: none !important; 
+                overflow: visible !important; 
                 display: flex !important; 
                 flex-direction: column !important; 
                 justify-content: space-between !important; 
                 page-break-after: always !important;
+                page-break-inside: avoid !important;
             }
             
-            .graph-sheet { 
+            .graph-sheet, .calc-sheet { 
                 display: none !important; 
             }
 
             .graph-sheet.active-final-print {
                 display: flex !important;
-                page-break-before: always !important; 
-                page-break-after: avoid !important;
                 height: 275mm !important; 
                 max-height: 275mm !important; 
                 flex-direction: column !important; 
-                justify-content: space-between !important; 
+                justify-content: flex-start !important; 
+                page-break-inside: avoid !important;
+                page-break-before: always !important; 
+                page-break-after: always !important;
             }
 
-            table { font-size: 6.5px !important; }
-            th, td { padding: 1px 1px !important; border: 1px solid #000 !important; }
-            @page { size: A4 portrait; margin: 6mm; }
+            .calc-sheet.active-final-print {
+                display: flex !important;
+                height: 275mm !important; 
+                max-height: 275mm !important; 
+                flex-direction: column !important; 
+                justify-content: flex-start !important; 
+                page-break-inside: avoid !important;
+                page-break-before: always !important; 
+                page-break-after: avoid !important;
+            }
+
+            /* Ensure table headers repeat automatically across split pages for readability */
+            thead {
+                display: table-header-group !important;
+            }
+
+            tr {
+                page-break-inside: avoid !important;
+            }
+
+            table { font-size: 8px !important; }
+            th, td { padding: 2px 2px !important; border: 1px solid #000 !important; }
+            @page { size: A4 portrait; margin: 8mm; }
         }
 
         /* Screen Preview Fixed A4 Portrait Box Styling */
@@ -101,16 +125,17 @@
             overflow: hidden;
         }
 
-        .graph-sheet {
+        .graph-sheet, .calc-sheet {
             width: 210mm;
             min-height: 297mm;
+            max-height: 297mm;
             margin: 0 auto;
             background: white;
             box-sizing: border-box;
             padding: 10mm;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
         }
 
         /* Scrollbar Styling */
@@ -166,7 +191,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.5 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.9 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -411,7 +436,7 @@
                         <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Soft brown silty CLAY."></textarea>
                     </div>
 
-                    <!-- Strength Input Fields with Checkbox Toggles -->
+                    <!-- Strength Input Fields -->
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-xs">
                         <div class="field-mode-ctrl">
                             <label class="block text-cyan-300 text-[10px] mb-1">Torvane TV (kPa)</label>
@@ -457,6 +482,35 @@
                 </div>
             </div>
 
+            <!-- N-Correction Calculation Summary Table Panel -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                        <i data-lucide="calculator" class="w-4 h-4 text-amber-400"></i> N-Correction Calculations Summary
+                    </h3>
+                    <button type="button" onclick="downloadNCorrectionExcel()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-semibold flex items-center gap-1 transition">
+                        <i data-lucide="download" class="w-3 h-3"></i> Download Table (.xlsx)
+                    </button>
+                </div>
+                <div class="overflow-x-auto max-h-48 border border-slate-800 rounded-xl">
+                    <table class="w-full text-center text-[10px] text-slate-300 divide-y divide-slate-800">
+                        <thead class="bg-slate-950 text-amber-400 font-bold sticky top-0">
+                            <tr>
+                                <th class="p-1.5 border-r border-slate-800">Depth (m)</th>
+                                <th class="p-1.5 border-r border-slate-800">Raw N</th>
+                                <th class="p-1.5 border-r border-slate-800">N60</th>
+                                <th class="p-1.5 border-r border-slate-800">σ'v (kPa)</th>
+                                <th class="p-1.5 border-r border-slate-800">Cn</th>
+                                <th class="p-1.5">Corrected N₁</th>
+                            </tr>
+                        </thead>
+                        <tbody id="panel-n-calc-tbody" class="divide-y divide-slate-800/60 font-mono">
+                            <!-- Dynamic populated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Footer Meta Form (Logged By & Checked By) -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl grid grid-cols-2 gap-3 text-xs">
                 <div>
@@ -474,7 +528,7 @@
         <!-- RIGHT PANEL: Live Printable Portrait Sheet Preview (7 Columns) -->
         <div class="lg:col-span-7 print-area space-y-6">
             
-            <!-- STRETCHED STRICT SINGLE-PAGE A4 PORTRAIT SHEET -->
+            <!-- STRETCHED NATURAL MULTI-PAGE FLOW A4 PORTRAIT SHEET -->
             <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
                 
                 <!-- TOP SECTION: Document Header & Metadata -->
@@ -508,9 +562,9 @@
                     </div>
                 </div>
 
-                <!-- MIDDLE SECTION: Dynamic Borelog Data Table -->
+                <!-- MIDDLE SECTION: Dynamic Borelog Data Table (With repeating headers on print split) -->
                 <div class="overflow-x-auto my-2">
-                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[7px] text-slate-900">
+                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[7.5px] text-slate-900">
                         <thead id="borelog-thead" class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
                             <!-- Dynamic 2-Tier Header inserted by JS -->
                         </thead>
@@ -547,20 +601,61 @@
             </div>
 
             <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH -->
-            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-3 justify-start hidden">
-                <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT 'N' VALUE DEPTH PROFILE</h3>
-                        <p class="text-[9px] text-slate-600">Continuous Depth vs Penetration Resistance Curves (Matching Reference Standard)</p>
+            <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 hidden">
+                <div class="space-y-2 w-full">
+                    <div class="border-b-2 border-slate-900 pb-1.5 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT 'N' VALUE DEPTH PROFILE</h3>
+                            <p class="text-[8.5px] text-slate-600">Continuous Depth vs Penetration Resistance Curves (Matching Reference Standard)</p>
+                        </div>
+                        <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
                     </div>
-                    <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
+                    <div class="p-2 border-2 border-slate-900 bg-slate-50 flex items-start justify-center pt-1">
+                        <canvas id="sptCanvas" width="460" height="430" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
+                    </div>
+                    <div class="p-1.5 border border-slate-400 bg-slate-100 text-[7.5px] text-slate-800 leading-tight">
+                        <strong>Note:</strong> The final corrected SPT N-value shown in the graph is determined by applying the relevant SPT corrections in accordance with IS 2131:2025, including corrections for hammer energy, overburden pressure, and dilatancy.
+                    </div>
                 </div>
-                <div class="p-3 border-2 border-slate-900 bg-slate-50 flex items-start justify-center pt-2">
-                    <canvas id="sptCanvas" width="480" height="480" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
-                </div>
-                <!-- Requested Note Below Graph -->
-                <div class="p-2 border border-slate-400 bg-slate-100 text-[8px] text-slate-800 leading-tight">
-                    <strong>Note:</strong> The final corrected SPT N-value shown in the graph is determined by applying the relevant SPT corrections in accordance with IS 2131:2025, including corrections for hammer energy, overburden pressure, and dilatancy.
+            </div>
+
+            <!-- FRESH SEPARATE A4 SHEET FOR N-CORRECTION CALCULATION TABLE (Appears in Final Mode / Printout) -->
+            <div id="n-calc-sheet-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 calc-sheet border border-slate-300 hidden">
+                <div class="space-y-3 w-full">
+                    <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT N-VALUE CORRECTION CALCULATIONS</h3>
+                            <p class="text-[9px] text-slate-600">Standard Overburden Pressure, Energy Ratio ($E_r$), & Dilatancy Corrections (IS 2131:2025)</p>
+                        </div>
+                        <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">CALCULATION SHEET</span>
+                    </div>
+
+                    <div class="overflow-x-auto border-2 border-slate-900 my-2">
+                        <table class="w-full text-center text-[8.5px] text-slate-900 divide-y divide-slate-900">
+                            <thead class="bg-slate-100 font-bold divide-x divide-slate-900">
+                                <tr>
+                                    <th class="p-1.5">Depth Interval (m)</th>
+                                    <th class="p-1.5">Sample No.</th>
+                                    <th class="p-1.5">Raw Field N</th>
+                                    <th class="p-1.5">Energy Ratio ($E_r$ %)</th>
+                                    <th class="p-1.5">N60</th>
+                                    <th class="p-1.5">Effective Overburden $\sigma'_v$ (kPa)</th>
+                                    <th class="p-1.5">Overburden Factor ($C_n$)</th>
+                                    <th class="p-1.5 font-bold bg-amber-50">Corrected N₁</th>
+                                </tr>
+                            </thead>
+                            <tbody id="print-n-calc-tbody" class="divide-y divide-slate-400 font-mono">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-2.5 border border-slate-400 bg-slate-50 text-[8px] text-slate-800 leading-relaxed space-y-1">
+                        <p><strong>Formulas Applied:</strong></p>
+                        <p>1. Energy Correction: $N_{60} = N_{field} \times (E_r / 60)$</p>
+                        <p>2. Overburden Pressure Correction: $C_n = 0.77 \log_{10}(20 \, P_a / \sigma'_v)$ (Bounded between $0.40 \le C_n \le 2.00$)</p>
+                        <p>3. Dilatancy Correction (if $N_{60} > 15$ in fine sand/silt below water table): $N_{1\_final} = 15 + 0.5(N_{60} - 15)$</p>
+                    </div>
                 </div>
             </div>
 
@@ -939,6 +1034,7 @@
             const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
+            const nCalcSheetBox = document.getElementById('n-calc-sheet-container');
             const fieldCtrlEls = document.querySelectorAll('.field-mode-ctrl');
             const finalCtrlEls = document.querySelectorAll('.final-mode-ctrl');
 
@@ -954,6 +1050,8 @@
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
                 sptGraphBox.classList.remove('active-final-print');
+                nCalcSheetBox.classList.add('hidden');
+                nCalcSheetBox.classList.remove('active-final-print');
                 fieldCtrlEls.forEach(el => el.classList.remove('hidden'));
                 finalCtrlEls.forEach(el => el.classList.add('hidden'));
             } else {
@@ -968,6 +1066,8 @@
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
                 sptGraphBox.classList.add('active-final-print');
+                nCalcSheetBox.classList.remove('hidden');
+                nCalcSheetBox.classList.add('active-final-print');
                 fieldCtrlEls.forEach(el => el.classList.add('hidden'));
                 finalCtrlEls.forEach(el => el.classList.remove('hidden'));
             }
@@ -1048,6 +1148,8 @@
                 nVal: String(r.nVal), 
                 n60: isRefusal ? 'R' : n60,
                 tcr, scr, rqd,
+                sigmaVPrime: sigmaVPrime.toFixed(1),
+                Cn: Cn.toFixed(2),
                 N1_final: isRefusal ? 'Refusal' : Math.round(N1_final)
             };
         }
@@ -1154,9 +1256,95 @@
         function updateAll() {
             renderHeaderOutputs();
             renderRecordList();
+            renderNCalcTables();
             renderBorelogTable();
             if (currentMode === 'final') { renderSptCanvasGraph(); }
             safeInitIcons();
+        }
+
+        function renderNCalcTables() {
+            const panelTbody = document.getElementById('panel-n-calc-tbody');
+            const printTbody = document.getElementById('print-n-calc-tbody');
+            const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
+            const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
+
+            const sptRecs = records.filter(r => r.sampleType === 'SPT');
+
+            if (sptRecs.length === 0) {
+                const emptyRow = `<tr><td colspan="6" class="p-3 text-slate-500 italic">No SPT tests recorded.</td></tr>`;
+                if (panelTbody) panelTbody.innerHTML = emptyRow;
+                if (printTbody) printTbody.innerHTML = `<tr><td colspan="8" class="p-3 text-slate-500 italic">No SPT tests recorded.</td></tr>`;
+                return;
+            }
+
+            const tagMap = computeTypeTagMap();
+
+            let panelHtml = '';
+            let printHtml = '';
+
+            sptRecs.forEach((r, idx) => {
+                const calc = computeCalculatedFields(r, gwt, er);
+                const tag = tagMap[r.id];
+
+                panelHtml += `
+                    <tr>
+                        <td class="p-1 border-r border-slate-800">${r.depthFrom.toFixed(2)}-${r.depthTo.toFixed(2)}</td>
+                        <td class="p-1 border-r border-slate-800">${r.nVal}</td>
+                        <td class="p-1 border-r border-slate-800 text-amber-400">${calc.n60}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.sigmaVPrime}</td>
+                        <td class="p-1 border-r border-slate-800">${calc.Cn}</td>
+                        <td class="p-1 font-bold text-emerald-400">${calc.N1_final}</td>
+                    </tr>
+                `;
+
+                printHtml += `
+                    <tr class="divide-x divide-slate-400">
+                        <td class="p-1 font-mono">${r.depthFrom.toFixed(2)}m - ${r.depthTo.toFixed(2)}m</td>
+                        <td class="p-1 font-semibold">${tag}</td>
+                        <td class="p-1">${r.nVal}</td>
+                        <td class="p-1">${er}%</td>
+                        <td class="p-1 font-bold text-amber-900">${calc.n60}</td>
+                        <td class="p-1">${calc.sigmaVPrime} kPa</td>
+                        <td class="p-1">${calc.Cn}</td>
+                        <td class="p-1 font-extrabold text-blue-900 bg-amber-50">${calc.N1_final}</td>
+                    </tr>
+                `;
+            });
+
+            if (panelTbody) panelTbody.innerHTML = panelHtml;
+            if (printTbody) printTbody.innerHTML = printHtml;
+        }
+
+        function downloadNCorrectionExcel() {
+            const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
+            const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
+            const sptRecs = records.filter(r => r.sampleType === 'SPT');
+
+            if (sptRecs.length === 0) {
+                alert("No SPT data available to export.");
+                return;
+            }
+
+            const tagMap = computeTypeTagMap();
+            const exportData = sptRecs.map(r => {
+                const calc = computeCalculatedFields(r, gwt, er);
+                return {
+                    "Depth From (m)": r.depthFrom,
+                    "Depth To (m)": r.depthTo,
+                    "Sample No": tagMap[r.id],
+                    "Raw Field N": r.nVal,
+                    "Energy Ratio (Er %)": er,
+                    "N60": calc.n60,
+                    "Effective Overburden Sigma_v' (kPa)": calc.sigmaVPrime,
+                    "Overburden Factor (Cn)": calc.Cn,
+                    "Corrected N1": calc.N1_final
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "N-Corrections");
+            XLSX.writeFile(workbook, `N_Correction_Calculations_${document.getElementById('meta-bh-no').value || 'BH-01'}.xlsx`);
         }
 
         function renderRecordList() {
@@ -1420,9 +1608,9 @@
             ctx.fillRect(0, 0, W, H);
 
             const marginLeft = 65;
-            const marginTop = 40;
+            const marginTop = 35;
             const marginRight = 30;
-            const marginBottom = 40;
+            const marginBottom = 35;
 
             const graphW = W - marginLeft - marginRight;
             const graphH = H - marginTop - marginBottom;
@@ -1444,14 +1632,14 @@
                 ctx.fillStyle = '#0f172a';
                 ctx.font = '10px Inter, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(n.toString(), x, marginTop - 10);
+                ctx.fillText(n.toString(), x, marginTop - 8);
             }
 
             ctx.setLineDash([]);
             ctx.fillStyle = '#0f172a';
             ctx.font = 'bold 11px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText("SPT 'N' Value", marginLeft + graphW / 2, 14);
+            ctx.fillText("SPT 'N' Value", marginLeft + graphW / 2, 12);
 
             ctx.strokeStyle = '#e2e8f0';
             ctx.setLineDash([3, 3]);
@@ -1552,7 +1740,7 @@
             }
 
             const legX = marginLeft + graphW - 140;
-            const legY = marginTop + 12;
+            const legY = marginTop + 10;
             ctx.fillStyle = '#ffffff';
             ctx.strokeStyle = '#cbd5e1';
             ctx.lineWidth = 1;
