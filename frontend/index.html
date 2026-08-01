@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v9.7</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v9.8</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
 
         /* Rotated Vertical Header Style for Compact A4 Table Headers */
@@ -25,41 +25,35 @@
             writing-mode: vertical-rl;
             transform: rotate(180deg);
             white-space: nowrap;
-            padding: 1px 0px;
-            font-size: 6.5px;
-            max-height: 38px;
+            padding: 4px 2px;
+            font-size: 7px;
+            max-height: 50px;
         }
 
-        /* Compact Table Layout & Tight Padding Enforcements */
-        table { border-collapse: collapse; width: 100%; table-layout: fixed; height: auto; }
-        th, td { border: 1px solid #000; padding: 2px 2px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; line-height: 1.15; vertical-align: top; }
-
-        /* Explicit Column Widths matching target design */
-        .col-depth { width: 28px; }
-        .col-cd { width: 28px; }
-        .col-type { width: 32px; }
-        .col-no { width: 20px; }
-        .col-rec { width: 24px; }
-        .col-spt-sm { width: 16px; }
-        .col-spt-n { width: 20px; }
-        .col-soil-log { width: 24px; min-width: 24px; max-width: 24px; padding: 0 !important; }
-        .col-desc { width: 145px; text-align: left !important; padding: 2px 4px !important; }
-        .col-opt { width: 22px; }
-        .col-rock { width: 22px; }
-
-        /* Continuous Hatch Cell Container */
+        /* Continuous Hatch Cell Container - Reduced Soil Log Column Width */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
-            height: 100% !important;
-            width: 24px !important;
-            border-left: 1.5px solid #000 !important;
-            border-right: 1.5px solid #000 !important;
+            height: 100%;
+            width: 26px !important;
+            max-width: 26px !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
             border-top: none !important;
             border-bottom: none !important;
         }
 
-        /* Print Media Styling */
+        /* Expanded N Value Column Width */
+        .col-n-val {
+            min-width: 26px !important;
+            font-weight: bold;
+        }
+
+        /* Ultra-compact row heights matching reference style */
+        tr { height: 16px !important; }
+        th, td { padding: 1px 2px !important; border: 1px solid #000 !important; font-size: 7px !important; vertical-align: middle !important; }
+
+        /* Print Media Styling: Strict multi-page pagination with repeated table headers */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; width: 210mm !important; }
@@ -68,37 +62,43 @@
             .print-sheet { 
                 border: 1.5px solid #000 !important; 
                 box-shadow: none !important; 
-                width: 210mm !important;
-                height: 285mm !important;
-                max-height: 285mm !important; 
-                overflow: hidden !important; 
+                height: auto !important; 
+                min-height: 275mm !important;
+                max-height: none !important; 
+                overflow: visible !important; 
                 display: flex !important; 
                 flex-direction: column !important; 
                 justify-content: space-between !important; 
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
             }
-
-            .print-sheet:last-of-type {
-                page-break-after: avoid !important;
-            }
             
-            .graph-sheet { display: none !important; }
+            .graph-sheet { 
+                display: none !important; 
+            }
 
             .graph-sheet.active-final-print {
                 display: flex !important;
-                width: 210mm !important;
-                height: 285mm !important; 
-                max-height: 285mm !important; 
+                height: 275mm !important; 
+                max-height: 275mm !important; 
                 flex-direction: column !important; 
                 justify-content: flex-start !important; 
                 page-break-inside: avoid !important;
                 page-break-before: always !important; 
+                page-break-after: always !important;
             }
 
-            thead { display: table-header-group !important; }
-            tr { page-break-inside: avoid !important; page-break-after: auto !important; }
-            @page { size: A4 portrait; margin: 5mm; }
+            thead {
+                display: table-header-group !important;
+            }
+
+            tr {
+                page-break-inside: avoid !important;
+            }
+
+            table { font-size: 6.5px !important; }
+            th, td { padding: 1px 1px !important; border: 1px solid #000 !important; }
+            @page { size: A4 portrait; margin: 0; }
         }
 
         /* Screen Preview Fixed A4 Portrait Box Styling */
@@ -109,12 +109,11 @@
             margin: 0 auto;
             background: white;
             box-sizing: border-box;
-            padding: 8mm;
+            padding: 10mm;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
         }
 
         .graph-sheet {
@@ -138,34 +137,38 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- Professional Geotechnical Sub-Soil Hatch Legend SVG Definitions -->
+    <!-- SVG Standard Sub-Soil Bright High-Contrast Hatch Legend Definitions -->
     <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
         <defs>
-            <pattern id="hatch-SAND" width="16" height="16" patternUnits="userSpaceOnUse">
-                <rect width="16" height="16" fill="#fef08a" />
-                <circle cx="4" cy="4" r="1.2" fill="#000000" />
-                <circle cx="12" cy="12" r="1.2" fill="#000000" />
+            <pattern id="hatch-SAND" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fde047" />
+                <circle cx="3" cy="3" r="1.5" fill="#000000" />
+                <circle cx="9" cy="9" r="1.5" fill="#000000" />
             </pattern>
-            <pattern id="hatch-SILT" width="14" height="14" patternUnits="userSpaceOnUse">
-                <rect width="14" height="14" fill="#cbd5e1" />
-                <line x1="7" y1="0" x2="7" y2="14" stroke="#000000" stroke-width="1.2" />
+            <pattern id="hatch-SILT" width="10" height="10" patternUnits="userSpaceOnUse">
+                <rect width="10" height="10" fill="#cbd5e1" />
+                <line x1="5" y1="0" x2="5" y2="10" stroke="#000000" stroke-width="1.5" />
             </pattern>
-            <pattern id="hatch-CLAY" width="16" height="16" patternUnits="userSpaceOnUse">
-                <rect width="16" height="16" fill="#bbf7d0" />
-                <line x1="0" y1="16" x2="16" y2="0" stroke="#000000" stroke-width="1.2" />
+            <pattern id="hatch-CLAY" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#4ade80" />
+                <line x1="0" y1="12" x2="12" y2="0" stroke="#000000" stroke-width="1.5" />
             </pattern>
-            <pattern id="hatch-SOLID_ROCK" width="16" height="16" patternUnits="userSpaceOnUse">
-                <rect width="16" height="16" fill="#fed7aa" />
-                <path d="M 0 0 L 16 16 M 16 0 L 0 16" stroke="#000000" stroke-width="1.2" />
+            <pattern id="hatch-SOLID_ROCK" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fb923c" />
+                <path d="M 0 0 L 12 12 M 12 0 L 0 12" stroke="#000000" stroke-width="1.2" />
             </pattern>
-            <pattern id="hatch-GRAVEL" width="18" height="18" patternUnits="userSpaceOnUse">
-                <rect width="18" height="18" fill="#e2e8f0" />
-                <circle cx="5" cy="5" r="2.5" fill="none" stroke="#000000" stroke-width="1.2" />
-                <circle cx="14" cy="14" r="2.8" fill="none" stroke="#000000" stroke-width="1.2" />
+            <pattern id="hatch-ROCK" width="12" height="12" patternUnits="userSpaceOnUse">
+                <rect width="12" height="12" fill="#fb923c" />
+                <path d="M 0 0 L 12 12 M 12 0 L 0 12" stroke="#000000" stroke-width="1.2" />
             </pattern>
-            <pattern id="hatch-WEATHERED_ROCK" width="14" height="14" patternUnits="userSpaceOnUse">
-                <rect width="14" height="14" fill="#94a3b8" />
-                <path d="M 0 0 L 14 14 M 14 0 L 0 14" stroke="#000000" stroke-width="1.0" />
+            <pattern id="hatch-GRAVEL" width="14" height="14" patternUnits="userSpaceOnUse">
+                <rect width="14" height="14" fill="#e2e8f0" />
+                <circle cx="4" cy="4" r="2.2" fill="none" stroke="#000000" stroke-width="1.2" />
+                <circle cx="11" cy="11" r="2.5" fill="none" stroke="#000000" stroke-width="1.2" />
+            </pattern>
+            <pattern id="hatch-WEATHERED_ROCK" width="10" height="10" patternUnits="userSpaceOnUse">
+                <rect width="10" height="10" fill="#94a3b8" />
+                <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="1.0" />
             </pattern>
         </defs>
     </svg>
@@ -179,7 +182,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.7 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.8 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -521,9 +524,76 @@
         <!-- RIGHT PANEL: Live Printable Portrait Sheet Preview (7 Columns) -->
         <div class="lg:col-span-7 print-area space-y-6">
             
-            <!-- STRETCHED NATURAL MULTI-PAGE FLOW A4 PORTRAIT SHEET CONTAINER -->
-            <div id="print-sheets-wrapper" class="space-y-6">
-                <!-- Dynamically split clean single-page sheets will be rendered here -->
+            <!-- STRETCHED NATURAL MULTI-PAGE FLOW A4 PORTRAIT SHEET -->
+            <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-4 sm:p-5 print-sheet border border-slate-300">
+                
+                <!-- TOP SECTION: Document Header & Metadata -->
+                <div class="border-2 border-slate-900">
+                    <div class="bg-slate-100 border-b-2 border-slate-900 p-2 text-center flex items-center justify-between">
+                        <div class="text-left">
+                            <h2 id="sheet-title-display" class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-slate-900">FIELD BORELOG REPORT</h2>
+                            <p class="text-[8px] text-slate-600">Geotechnical Subsurface Investigation</p>
+                        </div>
+                        <div>
+                            <span id="sheet-mode-badge" class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded text-[8.5px] font-bold">FIELD LOG</span>
+                        </div>
+                    </div>
+
+                    <!-- Metadata Grid -->
+                    <div class="grid grid-cols-3 gap-0 text-[8.5px] border-collapse border-slate-900 text-slate-900">
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Project Title:</strong> <span id="out-project-title">-</span></div>
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Project Code:</strong> <span id="out-project-code" class="font-mono">-</span></div>
+                        <div class="p-1 border-b border-slate-900"><strong>Location:</strong> <span id="out-location">-</span></div>
+                        
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span id="out-bh-no" class="font-mono font-bold text-blue-900">-</span></div>
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span id="out-period">-</span></div>
+                        <div class="p-1 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span id="out-gwt" class="font-bold text-blue-800">-</span></div>
+                        
+                        <div class="p-1 border-r border-b border-slate-900"><strong>CD Level:</strong> <span id="out-cd-level">-</span></div>
+                        <div class="p-1 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span id="out-proposed-coords" class="font-mono text-[8px]">-</span></div>
+                        <div class="p-1 border-b border-slate-900"><strong>Achieved Coords:</strong> <span id="out-achieved-coords" class="font-mono text-[8px]">-</span></div>
+                        
+                        <div class="p-1 border-r border-slate-900"><strong>Type of Rig:</strong> <span id="out-rig-type">-</span></div>
+                        <div class="p-1 col-span-2"><strong>Boring Diameter:</strong> <span id="out-boring-dia">-</span></div>
+                    </div>
+                </div>
+
+                <!-- MIDDLE SECTION: Dynamic Borelog Data Table (With repeating headers on print split) -->
+                <div class="overflow-x-auto my-2">
+                    <table id="borelog-table" class="w-full border-collapse border-2 border-slate-900 text-center text-[7.5px] text-slate-900">
+                        <thead id="borelog-thead" class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
+                            <!-- Dynamic 2-Tier Header inserted by JS -->
+                        </thead>
+                        <tbody id="borelog-tbody" class="divide-y divide-slate-400">
+                            <!-- Dynamic Rows inserted by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- BOTTOM SECTION: Sub-Soil Legend & Signatures -->
+                <div class="space-y-1.5 mt-auto">
+                    <!-- Sub-Soil Legend Bar -->
+                    <div class="p-1 border border-slate-800 bg-slate-50 flex items-center justify-center gap-3 sm:gap-5 text-[8px] font-bold text-slate-800">
+                        <span class="text-slate-600">Sub-soil Legend:</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
+                        <span class="flex items-center gap-1"><svg width="16" height="10" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
+                    </div>
+
+                    <!-- Footer Signatures & Personnel (Logged By & Checked By) -->
+                    <div class="border-2 border-slate-900 p-1.5 text-[8.5px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
+                        <div class="space-y-3">
+                            <p><strong>Logged By:</strong> <span id="out-logged-by">Er. J. Smith</span></p>
+                            <div class="border-b border-slate-400 w-32 mt-3"></div>
+                        </div>
+                        <div class="space-y-3 text-right">
+                            <p><strong>Checked By:</strong> <span id="out-checked-by">Er. R. Sharma</span></p>
+                            <div class="border-b border-slate-400 w-32 ml-auto mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH -->
@@ -607,28 +677,16 @@
         let currentMode = 'field';
         let records = [
             {
-                id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-9.20', cdTo: '-9.70',
-                sampleType: 'DS', sampleNo: 1, recoveryPct: 30,
-                n1: '-', n2: '-', n3: '-', nVal: '-', hatchType: 'SAND', unitWeight: 20.0,
+                id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-10.50', cdTo: '-11.00',
+                sampleType: 'SPT', sampleNo: 1, recoveryPct: 100,
+                n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 20.0,
                 description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
             },
             {
-                id: '2', depthFrom: 0.50, depthTo: 0.95, cdFrom: '-9.70', cdTo: '-10.15',
-                sampleType: 'SPT', sampleNo: 1, recoveryPct: 100,
-                n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 20.0,
-                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
-            },
-            {
-                id: '3', depthFrom: 1.50, depthTo: 2.50, cdFrom: '-10.70', cdTo: '-11.70',
-                sampleType: 'UDS', sampleNo: 1, recoveryPct: 54,
-                n1: '-', n2: '-', n3: '-', nVal: '-', hatchType: 'SAND', unitWeight: 20.0,
-                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
-            },
-            {
-                id: '4', depthFrom: 2.50, depthTo: 2.95, cdFrom: '-11.70', cdTo: '-12.15',
+                id: '2', depthFrom: 3.25, depthTo: 3.75, cdFrom: '-12.70', cdTo: '-13.20',
                 sampleType: 'SPT', sampleNo: 2, recoveryPct: 100,
-                n1: '3', n2: '3', n3: '4', nVal: '7', hatchType: 'SAND', unitWeight: 20.0,
-                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
+                n1: '1', n2: '2', n3: '2', nVal: '4', hatchType: 'SAND', unitWeight: 21.0,
+                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
             }
         ];
 
@@ -640,18 +698,6 @@
                 {
                     "Depth From (m)": 0.00,
                     "Depth To (m)": 0.50,
-                    "Sample Type": "DS-01",
-                    "Sample No": 1,
-                    "Sample Recovery (%)": 30,
-                    "15cm": "-",
-                    "30cm": "-",
-                    "45cm": "-",
-                    "N": "-",
-                    "Soil Description": "Sand"
-                },
-                {
-                    "Depth From (m)": 0.50,
-                    "Depth To (m)": 0.95,
                     "Sample Type": "SPT-01",
                     "Sample No": 1,
                     "Sample Recovery (%)": 100,
@@ -659,7 +705,19 @@
                     "30cm": 1,
                     "45cm": 1,
                     "N": 2,
-                    "Soil Description": "Very Loose to Loose, dark greenish gray, fine silty SAND."
+                    "Soil Description": "Sand"
+                },
+                {
+                    "Depth From (m)": 3.25,
+                    "Depth To (m)": 3.75,
+                    "Sample Type": "SPT-02",
+                    "Sample No": 2,
+                    "Sample Recovery (%)": 100,
+                    "15cm": 1,
+                    "30cm": 2,
+                    "45cm": 2,
+                    "N": 4,
+                    "Soil Description": "Sand"
                 }
             ];
 
@@ -792,10 +850,10 @@
                             recoveryVal = recCandidate;
                         }
 
-                        let n1 = String(row[colMap.n1 ?? 5] || row[5] || '-').trim();
-                        let n2 = String(row[colMap.n2 ?? 6] || row[6] || '-').trim();
-                        let n3 = String(row[colMap.n3 ?? 7] || row[7] || '-').trim();
-                        let nVal = String(row[colMap.nVal ?? 8] || row[8] || '-').trim();
+                        let n1 = String(row[colMap.n1 ?? 5] || row[5] || '1').trim();
+                        let n2 = String(row[colMap.n2 ?? 6] || row[6] || '1').trim();
+                        let n3 = String(row[colMap.n3 ?? 7] || row[7] || '1').trim();
+                        let nVal = String(row[colMap.nVal ?? 8] || row[8] || '2').trim();
 
                         if (sType === 'SPT' && (nVal === '-' || nVal === '') && !isNaN(parseInt(n2)) && !isNaN(parseInt(n3))) {
                             nVal = String(parseInt(n2) + parseInt(n3));
@@ -970,6 +1028,8 @@
             const btnFinal = document.getElementById('btn-mode-final');
             const modeText = document.getElementById('mode-title-text');
             const modeBadge = document.getElementById('mode-badge');
+            const sheetBadge = document.getElementById('sheet-mode-badge');
+            const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
 
@@ -979,6 +1039,9 @@
                 modeText.innerText = "Field Borelog";
                 modeBadge.innerText = "Field Mode";
                 modeBadge.className = "text-[11px] bg-blue-500/20 text-blue-200 border border-blue-400/20 px-2 py-0.5 rounded";
+                sheetBadge.innerText = "FIELD LOG";
+                sheetBadge.className = "bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded font-bold";
+                sheetTitle.innerText = "FIELD BORELOG REPORT";
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
                 sptGraphBox.classList.remove('active-final-print');
@@ -988,6 +1051,9 @@
                 modeText.innerText = "Final Borelog";
                 modeBadge.innerText = "Final Mode";
                 modeBadge.className = "text-[11px] bg-amber-500/20 text-amber-200 border border-amber-400/20 px-2 py-0.5 rounded";
+                sheetBadge.innerText = "FINAL LOG";
+                sheetBadge.className = "bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded font-bold";
+                sheetTitle.innerText = "FINAL BORELOG REPORT";
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
                 sptGraphBox.classList.add('active-final-print');
@@ -1025,6 +1091,7 @@
             else { rockSection.classList.add('hidden'); }
         }
 
+        // Cumulative Effective Overburden & IS 2131 Calculation Engine
         function computeCalculatedFields(r, gwt, er, sortedRecords) {
             let current_sigma_v_top = 0.0;
             let current_depth = 0.0;
@@ -1068,12 +1135,19 @@
                 nValNumeric = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
             }
 
+            // 1. Energy correction: N60 = N_field * (Er / 60)
             const n60 = isRefusal ? 'R' : Math.round((er / 60.0) * nValNumeric);
+            const n60Num = isRefusal ? 0 : (typeof n60 === 'number' ? n60 : parseInt(n60) || 0);
+
+            // 2. Overburden pressure correction factor CN = 0.77 * log10(20 / sigma_0) where sigma_0 is in kg/cm2 (approx sigma_v_prime / 98.07)
             let sigma_0_kg_cm2 = sigma_v_prime / 98.0665;
             let Cn = 0.77 * Math.log10(20.0 / Math.max(0.05, sigma_0_kg_cm2));
             Cn = Math.max(0.40, Math.min(2.00, Cn));
 
+            // 3. N' (Corrected for overburden) = Cn * N_Field
             let nPrimeVal = Cn * nValNumeric;
+
+            // 4. Dilatancy correction (N''): If N' > 15 in fine sand/silt below water table -> 15 + 0.5(N' - 15)
             let nDoublePrimeVal = nPrimeVal;
             const isSubmergedFineSoil = midDepth > gwt && (/SAND|SILT/i.test(r.description));
             if (isSubmergedFineSoil && nPrimeVal > 15.0) {
@@ -1198,7 +1272,7 @@
             renderHeaderOutputs();
             renderRecordList();
             renderNCalcTables();
-            renderBorelogSheets();
+            renderBorelogTable();
             if (currentMode === 'final') { renderSptCanvasGraph(); }
             safeInitIcons();
         }
@@ -1310,34 +1384,33 @@
             safeInitIcons();
         }
 
-        function renderHeaderValues() {
-            const getVal = id => document.getElementById(id)?.value || '-';
-            return {
-                title: getVal('meta-project-title'),
-                code: getVal('meta-project-code'),
-                location: getVal('meta-location'),
-                bhNo: getVal('meta-bh-no'),
-                period: (getVal('meta-period-from') !== '-' && getVal('meta-period-to') !== '-') ? `${getVal('meta-period-from')} to ${getVal('meta-period-to')}` : '-',
-                gwt: `${getVal('meta-gwt')} m`,
-                cdLevel: getVal('meta-cd-level'),
-                proposedCoords: getVal('meta-proposed-coords'),
-                achievedCoords: getVal('meta-achieved-coords'),
-                rigType: getVal('meta-rig-type'),
-                boringDia: getVal('meta-boring-dia'),
-                loggedBy: getVal('meta-logged-by'),
-                checkedBy: getVal('meta-checked-by')
-            };
-        }
-
         function renderHeaderOutputs() {
-            // Updated dynamically inside page builder
+            const getVal = id => document.getElementById(id)?.value || '-';
+            const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+
+            setTxt('out-project-title', getVal('meta-project-title'));
+            setTxt('out-project-code', getVal('meta-project-code'));
+            setTxt('out-location', getVal('meta-location'));
+            setTxt('out-bh-no', getVal('meta-bh-no'));
+
+            const pFrom = getVal('meta-period-from');
+            const pTo = getVal('meta-period-to');
+            setTxt('out-period', (pFrom !== '-' && pTo !== '-') ? `${pFrom} to ${pTo}` : '-');
+
+            setTxt('out-gwt', `${getVal('meta-gwt')} m`);
+            setTxt('out-cd-level', getVal('meta-cd-level'));
+            setTxt('out-proposed-coords', getVal('meta-proposed-coords'));
+            setTxt('out-achieved-coords', getVal('meta-achieved-coords'));
+            setTxt('out-rig-type', getVal('meta-rig-type'));
+            setTxt('out-boring-dia', getVal('meta-boring-dia'));
+
+            setTxt('out-logged-by', getVal('meta-logged-by'));
+            setTxt('out-checked-by', getVal('meta-checked-by'));
         }
 
-        // Automatic Multi-Page Split Engine with optimized high capacity (30 rows per page) matching standard dense engineering logs
-        function renderBorelogSheets() {
-            const wrapper = document.getElementById('print-sheets-wrapper');
-            if (!wrapper) return;
-
+        function renderBorelogTable() {
+            const thead = document.getElementById('borelog-thead');
+            const tbody = document.getElementById('borelog-tbody');
             const showCD = document.getElementById('toggle-cd-level').checked;
             const showTV = document.getElementById('toggle-tv').checked;
             const showPP = document.getElementById('toggle-pp').checked;
@@ -1347,254 +1420,178 @@
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
-            const h = renderHeaderValues();
 
-            const pageSize = 30;
-            const pages = [];
-            if (sortedRecords.length === 0) {
-                pages.push([]);
+            const cdHeader = showCD ? `<th colspan="2" class="p-1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
+            const cdSubHeader = showCD ? `<th class="p-0.5 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.5 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
+
+            let optHeaders = '';
+            let optSubHeaders = '';
+
+            if (showTV) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TV (kPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
+            if (showPP) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PP (kPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
+            if (showPL) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">PL (MPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
+            if (showUCS) {
+                optHeaders += `<th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">UCS (MPa)</div></th>`;
+                optSubHeaders += `<th class="p-0.5 border border-slate-900">-</th>`;
+            }
+
+            if (currentMode === 'field') {
+                thead.innerHTML = `
+                    <tr class="text-slate-900 font-bold">
+                        <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                        ${cdHeader}
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
+                        <th colspan="4" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-7">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                        ${optHeaders}
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
+                    </tr>
+                    <tr class="bg-slate-200 text-[8px] text-slate-900 font-bold">
+                        <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
+                        ${cdSubHeader}
+                        <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
+                        <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th>
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                        ${optSubHeaders}
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                    </tr>
+                `;
             } else {
-                for (let i = 0; i < sortedRecords.length; i += pageSize) {
-                    pages.push(sortedRecords.slice(i, i + pageSize));
-                }
+                thead.innerHTML = `
+                    <tr class="text-slate-900 font-bold">
+                        <th colspan="2" class="p-1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                        ${cdHeader}
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Type</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample No</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
+                        <th colspan="5" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                        <th class="p-1 border border-slate-900 text-slate-900 w-7">Soil Log</th>
+                        <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                        ${optHeaders}
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
+                        <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
+                    </tr>
+                    <tr class="bg-slate-200 text-[8px] text-slate-900 font-bold">
+                        <th class="p-0.5 border border-slate-900">From</th><th class="p-0.5 border border-slate-900">To</th>
+                        ${cdSubHeader}
+                        <th class="p-0.5 border border-slate-900">Type</th><th class="p-0.5 border border-slate-900">No.</th><th class="p-0.5 border border-slate-900">%</th>
+                        <th class="p-0.5 border border-slate-900">15cm</th><th class="p-0.5 border border-slate-900">30cm</th><th class="p-0.5 border border-slate-900">45cm</th><th class="p-0.5 border border-slate-900 font-bold col-n-val">N</th><th class="p-0.5 border border-slate-900 font-bold bg-amber-100 col-n-val">Final N</th>
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                        ${optSubHeaders}
+                        <th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th><th class="p-0.5 border border-slate-900"></th>
+                    </tr>
+                `;
+            }
+
+            if (sortedRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="20" class="p-3 text-slate-500 italic">No strata records added yet.</td></tr>`;
+                return;
             }
 
             const tagMap = computeTypeTagMap();
-            const maxDepth = sortedRecords.length > 0 ? Math.max(...sortedRecords.map(r => r.depthTo)) : 0.0;
 
-            wrapper.innerHTML = pages.map((pageRecords, pageIdx) => {
-                const isLastPage = pageIdx === pages.length - 1;
+            const rowsHtml = sortedRecords.map((r) => {
+                const typeTag = tagMap[r.id];
+                const sNo = r.sampleNo || 1;
+                const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
+                const cdCell = showCD ? `<td class="p-0.5 border border-slate-800 text-[8px] text-slate-900 font-mono">${r.cdFrom || '-'}</td><td class="p-0.5 border border-slate-800 text-[8px] text-slate-900 font-mono">${r.cdTo || '-'}</td>` : '';
 
-                const cdHeader = showCD ? `<th colspan="2" class="p-0.1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
-                const cdSubHeader = showCD ? `<th class="p-0.05 border border-slate-900 text-slate-900 font-bold col-cd">From</th><th class="p-0.05 border border-slate-900 text-slate-900 font-bold col-cd">To</th>` : '';
+                let hType = (r.hatchType || 'SAND').toUpperCase();
+                if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
-                let optHeaders = '';
-                let optSubHeaders = '';
-
-                if (showTV) { optHeaders += `<th class="p-0.1 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">TV (kPa)</div></th>`; optSubHeaders += `<th class="p-0.05 border border-slate-900 col-opt">-</th>`; }
-                if (showPP) { optHeaders += `<th class="p-0.1 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">PP (kPa)</div></th>`; optSubHeaders += `<th class="p-0.05 border border-slate-900 col-opt">-</th>`; }
-                if (showPL) { optHeaders += `<th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">PL (MPa)</div></th>`; optSubHeaders += `<th class="p-0.05 border border-slate-900 col-rock">-</th>`; }
-                if (showUCS) { optHeaders += `<th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">UCS (MPa)</div></th>`; optSubHeaders += `<th class="p-0.05 border border-slate-900 col-rock">-</th>`; }
-
-                let theadHtml = '';
-                if (currentMode === 'field') {
-                    theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: auto !important;">
-                            <th colspan="2" class="p-0.1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
-                            ${cdHeader}
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="4" class="p-0.1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
-                            ${optHeaders}
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
-                        </tr>
-                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: auto !important;">
-                            <th class="p-0.05 border border-slate-900 col-depth">From</th><th class="p-0.05 border border-slate-900 col-depth">To</th>
-                            ${cdSubHeader}
-                            <th class="p-0.05 border border-slate-900 col-type">Type</th><th class="p-0.05 border border-slate-900 col-no">No.</th><th class="p-0.05 border border-slate-900 col-rec">%</th>
-                            <th class="p-0.05 border border-slate-900 col-spt-sm">15cm</th><th class="p-0.05 border border-slate-900 col-spt-sm">30cm</th><th class="p-0.05 border border-slate-900 col-spt-sm">45cm</th><th class="p-0.05 border border-slate-900 col-spt-n font-bold">N</th>
-                            <th class="p-0.05 border border-slate-900 col-soil-log"></th><th class="p-0.05 border border-slate-900 col-desc"></th>
-                            ${optSubHeaders}
-                            <th class="p-0.05 border border-slate-900 col-rock"></th><th class="p-0.05 border border-slate-900 col-rock"></th><th class="p-0.05 border border-slate-900 col-rock"></th>
-                        </tr>
-                    `;
-                } else {
-                    theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: auto !important;">
-                            <th colspan="2" class="p-0.1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
-                            ${cdHeader}
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="5" class="p-0.1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
-                            ${optHeaders}
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
-                        </tr>
-                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: auto !important;">
-                            <th class="p-0.05 border border-slate-900 col-depth">From</th><th class="p-0.05 border border-slate-900 col-depth">To</th>
-                            ${cdSubHeader}
-                            <th class="p-0.05 border border-slate-900 col-type">Type</th><th class="p-0.05 border border-slate-900 col-no">No.</th><th class="p-0.05 border border-slate-900 col-rec">%</th>
-                            <th class="p-0.05 border border-slate-900 col-spt-sm">15cm</th><th class="p-0.05 border border-slate-900 col-spt-sm">30cm</th><th class="p-0.05 border border-slate-900 col-spt-sm">45cm</th><th class="p-0.05 border border-slate-900 col-spt-n font-bold">N</th><th class="p-0.05 border border-slate-900 col-spt-n font-bold bg-amber-100">Final N</th>
-                            <th class="p-0.05 border border-slate-900 col-soil-log"></th><th class="p-0.05 border border-slate-900 col-desc"></th>
-                            ${optSubHeaders}
-                            <th class="p-0.05 border border-slate-900 col-rock"></th><th class="p-0.05 border border-slate-900 col-rock"></th><th class="p-0.05 border border-slate-900 col-rock"></th>
-                        </tr>
-                    `;
-                }
-
-                let rowsHtml = '';
-                if (pageRecords.length === 0) {
-                    rowsHtml = `<tr><td colspan="20" class="p-1 text-slate-500 italic">No strata records added yet.</td></tr>`;
-                } else {
-                    rowsHtml = pageRecords.map((r) => {
-                        const typeTag = tagMap[r.id];
-                        const sNo = r.sampleNo || 1;
-                        const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
-                        const cdCell = showCD ? `<td class="p-0.05 border border-slate-800 text-[6.5px] text-slate-900 font-mono col-cd">${r.cdFrom || '-'}</td><td class="p-0.05 border border-slate-800 text-[6.5px] text-slate-900 font-mono col-cd">${r.cdTo || '-'}</td>` : '';
-
-                        let hType = (r.hatchType || 'SAND').toUpperCase();
-                        if (hType === 'ROCK') hType = 'SOLID_ROCK';
-
-                        const hatchSvg = `
-                            <div class="cell-soil-log w-full h-full min-h-[10px] min-w-[24px] flex items-center justify-center p-0 m-0">
-                                <svg width="100%" height="100%" style="min-height: 10px; display: block;" preserveAspectRatio="none">
-                                    <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
-                                </svg>
-                            </div>
-                        `;
-
-                        let optDataCells = '';
-                        if (showTV) optDataCells += `<td class="p-0.05 border border-slate-800 font-mono text-cyan-900 font-semibold col-opt">${(showTV && r.tv) ? r.tv : '-'}</td>`;
-                        if (showPP) optDataCells += `<td class="p-0.05 border border-slate-800 font-mono text-cyan-900 font-semibold col-opt">${(showPP && r.pp) ? r.pp : '-'}</td>`;
-                        if (showPL) optDataCells += `<td class="p-0.05 border border-slate-800 font-mono text-purple-900 font-semibold col-rock">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
-                        if (showUCS) optDataCells += `<td class="p-0.05 border border-slate-800 font-mono text-purple-900 font-semibold col-rock">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
-
-                        if (currentMode === 'field') {
-                            return `
-                                <tr class="text-slate-900">
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
-                                    ${cdCell}
-                                    <td class="p-0.05 border border-slate-800 font-semibold text-slate-900 col-type">${typeTag}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono font-bold text-slate-900 col-no">${sNo}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rec">${calc.sampleRecPct}</td>
-                                    <td class="p-0.05 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                                    <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.1 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
-                                    ${optDataCells}
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
-                                </tr>
-                            `;
-                        } else {
-                            return `
-                                <tr class="text-slate-900">
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
-                                    ${cdCell}
-                                    <td class="p-0.05 border border-slate-800 font-semibold text-slate-900 col-type">${typeTag}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono font-bold text-slate-900 col-no">${sNo}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rec">${calc.sampleRecPct}</td>
-                                    <td class="p-0.05 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? calc.finalN : '-'}</td>
-                                    <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.1 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
-                                    ${optDataCells}
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
-                                    <td class="p-0.05 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
-                                </tr>
-                            `;
-                        }
-                    }).join('');
-                }
-
-                let extraColsCount = 0;
-                if (showTV) extraColsCount++;
-                if (showPP) extraColsCount++;
-                if (showPL) extraColsCount++;
-                if (showUCS) extraColsCount++;
-                const totalCols = (currentMode === 'field' ? 14 : 15) + extraColsCount + (showCD ? 2 : 0);
-
-                const terminationHtml = isLastPage ? `
-                    <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
-                        <td colspan="${totalCols}" class="p-0.05 text-center text-[7px] uppercase tracking-wider text-slate-900 bg-slate-200">
-                            *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
-                        </td>
-                    </tr>
-                ` : '';
-
-                return `
-                    <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-2 sm:p-2.5 print-sheet border border-slate-300">
-                        <!-- TOP SECTION: Document Header & Metadata -->
-                        <div class="border-2 border-slate-900">
-                            <div class="bg-slate-100 border-b-2 border-slate-900 p-0.5 text-center flex items-center justify-between">
-                                <div class="text-left">
-                                    <h2 class="text-[11px] font-extrabold uppercase tracking-wide text-slate-900">${currentMode === 'field' ? 'FIELD BORELOG REPORT' : 'FINAL BORELOG REPORT'}</h2>
-                                    <p class="text-[6px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
-                                </div>
-                                <div>
-                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-1 py-0.1 rounded text-[6.5px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
-                                </div>
-                            </div>
-
-                            <!-- Metadata Grid -->
-                            <div class="grid grid-cols-3 gap-0 text-[7px] border-collapse border-slate-900 text-slate-900">
-                                <div class="p-0.2 border-r border-b border-slate-900"><strong>Project Title:</strong> <span>${h.title}</span></div>
-                                <div class="p-0.2 border-r border-b border-slate-900"><strong>Project Code:</strong> <span class="font-mono">${h.code}</span></div>
-                                <div class="p-0.2 border-b border-slate-900"><strong>Location:</strong> <span>${h.location}</span></div>
-                                
-                                <div class="p-0.2 border-r border-b border-slate-900"><strong>Borehole No:</strong> <span class="font-mono font-bold text-blue-900">${h.bhNo}</span></div>
-                                <div class="p-0.2 border-r border-b border-slate-900"><strong>Drilling Period:</strong> <span>${h.period}</span></div>
-                                <div class="p-0.2 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span class="font-bold text-blue-800">${h.gwt}</span></div>
-                                
-                                <div class="p-0.2 border-r border-b border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
-                                <div class="p-0.2 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[6.5px]">${h.proposedCoords}</span></div>
-                                <div class="p-0.2 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[6.5px]">${h.achievedCoords}</span></div>
-                                
-                                <div class="p-0.2 border-r border-slate-900"><strong>Type of Rig:</strong> <span>${h.rigType || '-'}</span></div>
-                                <div class="p-0.2 col-span-2"><strong>Boring Diameter:</strong> <span>${h.boringDia}</span></div>
-                            </div>
-                        </div>
-
-                        <!-- MIDDLE SECTION: Data Table -->
-                        <div class="overflow-x-auto my-0.5 flex-1">
-                            <table class="w-full border-collapse border-2 border-slate-900 text-center text-[6.5px] text-slate-900">
-                                <thead class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
-                                    ${theadHtml}
-                                </thead>
-                                <tbody class="divide-y divide-slate-400">
-                                    ${rowsHtml}
-                                    ${terminationHtml}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- BOTTOM SECTION: Sub-Soil Legend & Signatures -->
-                        <div class="space-y-0.2 mt-auto pt-0.2">
-                            <div class="p-0.2 border border-slate-800 bg-slate-50 flex items-center justify-center gap-4 text-[6.5px] font-bold text-slate-800">
-                                <span class="text-slate-600">Sub-soil Legend:</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="5" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="5" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="5" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="5" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
-                            </div>
-
-                            <div class="border-2 border-slate-900 p-0.2 text-[7px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
-                                <div class="space-y-0.2">
-                                    <p><strong>Logged By:</strong> <span>${h.loggedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-24 mt-0.5"></div>
-                                </div>
-                                <div class="space-y-0.2 text-right">
-                                    <p><strong>Checked By:</strong> <span>${h.checkedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-24 ml-auto mt-0.5"></div>
-                                </div>
-                            </div>
-                        </div>
+                const hatchSvg = `
+                    <div class="cell-soil-log w-full h-full min-h-[26px] min-w-[28px] flex items-center justify-center p-0 m-0">
+                        <svg width="100%" height="26" viewBox="0 0 28 26" preserveAspectRatio="none" class="block" style="border:none;">
+                            <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
+                        </svg>
                     </div>
                 `;
-            }).join('');
-            safeInitIcons();
-        }
 
-        function renderBorelogTable() {
-            renderBorelogSheets();
+                let optDataCells = '';
+                if (showTV) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showTV && r.tv) ? r.tv : '-'}</td>`;
+                if (showPP) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-cyan-900 font-semibold">${(showPP && r.pp) ? r.pp : '-'}</td>`;
+                if (showPL) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
+                if (showUCS) optDataCells += `<td class="p-0.5 border border-slate-800 font-mono text-purple-900 font-semibold">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
+
+                if (currentMode === 'field') {
+                    return `
+                        <tr class="text-slate-900">
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
+                            ${cdCell}
+                            <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-n-val">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
+                            <td class="cell-soil-log border border-slate-800 w-7 p-0">${hatchSvg}</td>
+                            <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
+                            ${optDataCells}
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
+                        </tr>
+                    `;
+                } else {
+                    return `
+                        <tr class="text-slate-900">
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthFrom.toFixed(2)}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.depthTo.toFixed(2)}</td>
+                            ${cdCell}
+                            <td class="p-0.5 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${r.sampleType === 'SPT' ? calc.finalN : '-'}</td>
+                            <td class="cell-soil-log border border-slate-800 w-7 p-0">${hatchSvg}</td>
+                            <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
+                            ${optDataCells}
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
+                            <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
+                        </tr>
+                    `;
+                }
+            }).join('');
+
+            const maxDepth = Math.max(...records.map(r => r.depthTo));
+            let extraColsCount = 0;
+            if (showTV) extraColsCount++;
+            if (showPP) extraColsCount++;
+            if (showPL) extraColsCount++;
+            if (showUCS) extraColsCount++;
+
+            const totalCols = (currentMode === 'field' ? 14 : 15) + extraColsCount + (showCD ? 2 : 0);
+
+            const terminationHtml = `
+                <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900">
+                    <td colspan="${totalCols}" class="p-1.5 text-center text-[8.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
+                        *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
+                    </td>
+                </tr>
+            `;
+
+            tbody.innerHTML = rowsHtml + terminationHtml;
         }
 
         function renderSptCanvasGraph() {
@@ -1709,41 +1706,61 @@
                 corrPts.push({ x: xCorr, y: y });
             });
 
-            if (fieldPts.length === 0) return;
-
-            ctx.strokeStyle = '#2563eb';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(fieldPts[0].x, fieldPts[0].y);
-            for (let i = 1; i < fieldPts.length; i++) {
-                ctx.lineTo(fieldPts[i].x, fieldPts[i].y);
-            }
-            ctx.stroke();
-
-            fieldPts.forEach(p => {
-                ctx.fillStyle = '#2563eb';
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            if (corrPts.length > 0) {
-                ctx.strokeStyle = '#d97706';
+            if (fieldPts.length > 0) {
+                ctx.strokeStyle = '#3b82f6';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(corrPts[0].x, corrPts[0].y);
-                for (let i = 1; i < corrPts.length; i++) {
-                    ctx.lineTo(corrPts[i].x, corrPts[i].y);
-                }
+                ctx.moveTo(fieldPts[0].x, fieldPts[0].y);
+                for (let i = 1; i < fieldPts.length; i++) { ctx.lineTo(fieldPts[i].x, fieldPts[i].y); }
                 ctx.stroke();
 
-                corrPts.forEach(p => {
-                    ctx.fillStyle = '#d97706';
+                fieldPts.forEach(p => {
+                    ctx.fillStyle = '#3b82f6';
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
                     ctx.fill();
                 });
             }
+
+            if (corrPts.length > 0) {
+                ctx.strokeStyle = '#f97316';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(corrPts[0].x, corrPts[0].y);
+                for (let i = 1; i < corrPts.length; i++) { ctx.lineTo(corrPts[i].x, corrPts[i].y); }
+                ctx.stroke();
+
+                corrPts.forEach(p => {
+                    ctx.fillStyle = '#f97316';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            const legX = marginLeft + graphW - 150;
+            const legY = marginTop + 10;
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.fillRect(legX, legY, 140, 42);
+            ctx.strokeRect(legX, legY, 140, 42);
+
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath(); ctx.arc(legX + 15, legY + 14, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("SPT (N Field)", legX + 26, legY + 17);
+
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath(); ctx.arc(legX + 15, legY + 30, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("SPT (Final N)", legX + 26, legY + 33);
+
+            const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 13px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Borehole: ${bhNo}`, marginLeft + 15, marginTop + graphH - 20);
         }
     </script>
 </body>
