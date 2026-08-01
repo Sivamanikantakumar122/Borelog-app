@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v9.3</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v9.4</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,15 +32,15 @@
 
         /* Compact Table Layout & Absolute Row Height Enforcements */
         table { border-collapse: collapse; width: 100%; table-layout: fixed; height: auto; }
-        th, td { border: 1px solid #000; padding: 0.5px 1px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; }
+        th, td { border: 1px solid #000; padding: 0px 1px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; line-height: 1.1; }
 
-        /* Force tight professional half-height rows */
-        tr { height: 14px !important; min-height: 14px !important; max-height: 16px !important; }
+        /* Force ultra-compact rows matching professional engineering logs */
+        tr { height: 11px !important; min-height: 11px !important; max-height: 13px !important; }
 
-        /* Explicit Column Widths */
+        /* Explicit Column Widths matching target design */
         .col-depth { width: 30px; }
         .col-cd { width: 30px; }
-        .col-type { width: 32px; }
+        .col-type { width: 35px; }
         .col-no { width: 22px; }
         .col-rec { width: 26px; }
         .col-spt-sm { width: 18px; }
@@ -100,7 +100,7 @@
             }
 
             thead { display: table-header-group !important; }
-            tr { page-break-inside: avoid !important; page-break-after: auto !important; height: 14px !important; }
+            tr { page-break-inside: avoid !important; page-break-after: auto !important; height: 11px !important; }
             @page { size: A4 portrait; margin: 5mm; }
         }
 
@@ -182,7 +182,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.3 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.4 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -610,16 +610,28 @@
         let currentMode = 'field';
         let records = [
             {
-                id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-10.50', cdTo: '-11.00',
-                sampleType: 'SPT', sampleNo: 1, recoveryPct: 100,
-                n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 20.0,
+                id: '1', depthFrom: 0.0, depthTo: 0.50, cdFrom: '-9.20', cdTo: '-9.70',
+                sampleType: 'DS', sampleNo: 1, recoveryPct: 30,
+                n1: '-', n2: '-', n3: '-', nVal: '-', hatchType: 'SAND', unitWeight: 20.0,
                 description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
             },
             {
-                id: '2', depthFrom: 3.25, depthTo: 3.75, cdFrom: '-12.70', cdTo: '-13.20',
+                id: '2', depthFrom: 0.50, depthTo: 0.95, cdFrom: '-9.70', cdTo: '-10.15',
+                sampleType: 'SPT', sampleNo: 1, recoveryPct: 100,
+                n1: '1', n2: '1', n3: '1', nVal: '2', hatchType: 'SAND', unitWeight: 20.0,
+                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
+            },
+            {
+                id: '3', depthFrom: 1.50, depthTo: 2.50, cdFrom: '-10.70', cdTo: '-11.70',
+                sampleType: 'UDS', sampleNo: 1, recoveryPct: 54,
+                n1: '-', n2: '-', n3: '-', nVal: '-', hatchType: 'SAND', unitWeight: 20.0,
+                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
+            },
+            {
+                id: '4', depthFrom: 2.50, depthTo: 2.95, cdFrom: '-11.70', cdTo: '-12.15',
                 sampleType: 'SPT', sampleNo: 2, recoveryPct: 100,
-                n1: '1', n2: '2', n3: '2', nVal: '4', hatchType: 'SAND', unitWeight: 21.0,
-                description: 'Sand', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
+                n1: '3', n2: '3', n3: '4', nVal: '7', hatchType: 'SAND', unitWeight: 20.0,
+                description: 'Very Loose to Loose, dark greenish gray (GLEY2, 10G,4/1), fine silty SAND with traces of shell fragments.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: '', tv: '', pp: ''
             }
         ];
 
@@ -631,6 +643,18 @@
                 {
                     "Depth From (m)": 0.00,
                     "Depth To (m)": 0.50,
+                    "Sample Type": "DS-01",
+                    "Sample No": 1,
+                    "Sample Recovery (%)": 30,
+                    "15cm": "-",
+                    "30cm": "-",
+                    "45cm": "-",
+                    "N": "-",
+                    "Soil Description": "Sand"
+                },
+                {
+                    "Depth From (m)": 0.50,
+                    "Depth To (m)": 0.95,
                     "Sample Type": "SPT-01",
                     "Sample No": 1,
                     "Sample Recovery (%)": 100,
@@ -638,19 +662,7 @@
                     "30cm": 1,
                     "45cm": 1,
                     "N": 2,
-                    "Soil Description": "Sand"
-                },
-                {
-                    "Depth From (m)": 3.25,
-                    "Depth To (m)": 3.75,
-                    "Sample Type": "SPT-02",
-                    "Sample No": 2,
-                    "Sample Recovery (%)": 100,
-                    "15cm": 1,
-                    "30cm": 2,
-                    "45cm": 2,
-                    "N": 4,
-                    "Soil Description": "Sand"
+                    "Soil Description": "Very Loose to Loose, dark greenish gray, fine silty SAND."
                 }
             ];
 
@@ -783,10 +795,10 @@
                             recoveryVal = recCandidate;
                         }
 
-                        let n1 = String(row[colMap.n1 ?? 5] || row[5] || '1').trim();
-                        let n2 = String(row[colMap.n2 ?? 6] || row[6] || '1').trim();
-                        let n3 = String(row[colMap.n3 ?? 7] || row[7] || '1').trim();
-                        let nVal = String(row[colMap.nVal ?? 8] || row[8] || '2').trim();
+                        let n1 = String(row[colMap.n1 ?? 5] || row[5] || '-').trim();
+                        let n2 = String(row[colMap.n2 ?? 6] || row[6] || '-').trim();
+                        let n3 = String(row[colMap.n3 ?? 7] || row[7] || '-').trim();
+                        let nVal = String(row[colMap.nVal ?? 8] || row[8] || '-').trim();
 
                         if (sType === 'SPT' && (nVal === '-' || nVal === '') && !isNaN(parseInt(n2)) && !isNaN(parseInt(n3))) {
                             nVal = String(parseInt(n2) + parseInt(n3));
@@ -1324,7 +1336,7 @@
             // Updated dynamically inside page builder
         }
 
-        // Automatic Multi-Page Split Engine with optimized capacity (18 rows per page) to strictly prevent blank trailing pages
+        // Automatic Multi-Page Split Engine with optimized capacity (25 rows per page) for dense, professional logs
         function renderBorelogSheets() {
             const wrapper = document.getElementById('print-sheets-wrapper');
             if (!wrapper) return;
@@ -1340,7 +1352,7 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const h = renderHeaderValues();
 
-            const pageSize = 18;
+            const pageSize = 25;
             const pages = [];
             if (sortedRecords.length === 0) {
                 pages.push([]);
@@ -1357,67 +1369,67 @@
                 const isLastPage = pageIdx === pages.length - 1;
 
                 const cdHeader = showCD ? `<th colspan="2" class="p-0.5 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
-                const cdSubHeader = showCD ? `<th class="p-0.2 border border-slate-900 text-slate-900 font-bold col-cd">From</th><th class="p-0.2 border border-slate-900 text-slate-900 font-bold col-cd">To</th>` : '';
+                const cdSubHeader = showCD ? `<th class="p-0.1 border border-slate-900 text-slate-900 font-bold col-cd">From</th><th class="p-0.1 border border-slate-900 text-slate-900 font-bold col-cd">To</th>` : '';
 
                 let optHeaders = '';
                 let optSubHeaders = '';
 
-                if (showTV) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">TV (kPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900 col-opt">-</th>`; }
-                if (showPP) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">PP (kPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900 col-opt">-</th>`; }
-                if (showPL) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">PL (MPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900 col-rock">-</th>`; }
-                if (showUCS) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">UCS (MPa)</div></th>`; optSubHeaders += `<th class="p-0.2 border border-slate-900 col-rock">-</th>`; }
+                if (showTV) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">TV (kPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-opt">-</th>`; }
+                if (showPP) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">PP (kPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-opt">-</th>`; }
+                if (showPL) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">PL (MPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-rock">-</th>`; }
+                if (showUCS) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">UCS (MPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-rock">-</th>`; }
 
                 let theadHtml = '';
                 if (currentMode === 'field') {
                     theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 14px !important;">
-                            <th colspan="2" class="p-0.5 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 12px !important;">
+                            <th colspan="2" class="p-0.2 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="4" class="p-0.5 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
+                            <th colspan="4" class="p-0.2 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
                             ${optHeaders}
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold" style="height: 12px !important;">
-                            <th class="p-0.2 border border-slate-900 col-depth">From</th><th class="p-0.2 border border-slate-900 col-depth">To</th>
+                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold" style="height: 10px !important;">
+                            <th class="p-0.1 border border-slate-900 col-depth">From</th><th class="p-0.1 border border-slate-900 col-depth">To</th>
                             ${cdSubHeader}
-                            <th class="p-0.2 border border-slate-900 col-type">Type</th><th class="p-0.2 border border-slate-900 col-no">No.</th><th class="p-0.2 border border-slate-900 col-rec">%</th>
-                            <th class="p-0.2 border border-slate-900 col-spt-sm">15cm</th><th class="p-0.2 border border-slate-900 col-spt-sm">30cm</th><th class="p-0.2 border border-slate-900 col-spt-sm">45cm</th><th class="p-0.2 border border-slate-900 col-spt-n font-bold">N</th>
-                            <th class="p-0.2 border border-slate-900 col-soil-log"></th><th class="p-0.2 border border-slate-900 col-desc"></th>
+                            <th class="p-0.1 border border-slate-900 col-type">Type</th><th class="p-0.1 border border-slate-900 col-no">No.</th><th class="p-0.1 border border-slate-900 col-rec">%</th>
+                            <th class="p-0.1 border border-slate-900 col-spt-sm">15cm</th><th class="p-0.1 border border-slate-900 col-spt-sm">30cm</th><th class="p-0.1 border border-slate-900 col-spt-sm">45cm</th><th class="p-0.1 border border-slate-900 col-spt-n font-bold">N</th>
+                            <th class="p-0.1 border border-slate-900 col-soil-log"></th><th class="p-0.1 border border-slate-900 col-desc"></th>
                             ${optSubHeaders}
-                            <th class="p-0.2 border border-slate-900 col-rock"></th><th class="p-0.2 border border-slate-900 col-rock"></th><th class="p-0.2 border border-slate-900 col-rock"></th>
+                            <th class="p-0.1 border border-slate-900 col-rock"></th><th class="p-0.1 border border-slate-900 col-rock"></th><th class="p-0.1 border border-slate-900 col-rock"></th>
                         </tr>
                     `;
                 } else {
                     theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 14px !important;">
-                            <th colspan="2" class="p-0.5 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 12px !important;">
+                            <th colspan="2" class="p-0.2 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="5" class="p-0.5 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
+                            <th colspan="5" class="p-0.2 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
                             ${optHeaders}
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
+                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold" style="height: 12px !important;">
-                            <th class="p-0.2 border border-slate-900 col-depth">From</th><th class="p-0.2 border border-slate-900 col-depth">To</th>
+                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold" style="height: 10px !important;">
+                            <th class="p-0.1 border border-slate-900 col-depth">From</th><th class="p-0.1 border border-slate-900 col-depth">To</th>
                             ${cdSubHeader}
-                            <th class="p-0.2 border border-slate-900 col-type">Type</th><th class="p-0.2 border border-slate-900 col-no">No.</th><th class="p-0.2 border border-slate-900 col-rec">%</th>
-                            <th class="p-0.2 border border-slate-900 col-spt-sm">15cm</th><th class="p-0.2 border border-slate-900 col-spt-sm">30cm</th><th class="p-0.2 border border-slate-900 col-spt-sm">45cm</th><th class="p-0.2 border border-slate-900 col-spt-n font-bold">N</th><th class="p-0.2 border border-slate-900 col-spt-n font-bold bg-amber-100">Final N</th>
-                            <th class="p-0.2 border border-slate-900 col-soil-log"></th><th class="p-0.2 border border-slate-900 col-desc"></th>
+                            <th class="p-0.1 border border-slate-900 col-type">Type</th><th class="p-0.1 border border-slate-900 col-no">No.</th><th class="p-0.1 border border-slate-900 col-rec">%</th>
+                            <th class="p-0.1 border border-slate-900 col-spt-sm">15cm</th><th class="p-0.1 border border-slate-900 col-spt-sm">30cm</th><th class="p-0.1 border border-slate-900 col-spt-sm">45cm</th><th class="p-0.1 border border-slate-900 col-spt-n font-bold">N</th><th class="p-0.1 border border-slate-900 col-spt-n font-bold bg-amber-100">Final N</th>
+                            <th class="p-0.1 border border-slate-900 col-soil-log"></th><th class="p-0.1 border border-slate-900 col-desc"></th>
                             ${optSubHeaders}
-                            <th class="p-0.2 border border-slate-900 col-rock"></th><th class="p-0.2 border border-slate-900 col-rock"></th><th class="p-0.2 border border-slate-900 col-rock"></th>
+                            <th class="p-0.1 border border-slate-900 col-rock"></th><th class="p-0.1 border border-slate-900 col-rock"></th><th class="p-0.1 border border-slate-900 col-rock"></th>
                         </tr>
                     `;
                 }
@@ -1430,66 +1442,66 @@
                         const typeTag = tagMap[r.id];
                         const sNo = r.sampleNo || 1;
                         const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
-                        const cdCell = showCD ? `<td class="p-0.2 border border-slate-800 text-[7px] text-slate-900 font-mono col-cd">${r.cdFrom || '-'}</td><td class="p-0.2 border border-slate-800 text-[7px] text-slate-900 font-mono col-cd">${r.cdTo || '-'}</td>` : '';
+                        const cdCell = showCD ? `<td class="p-0.1 border border-slate-800 text-[7px] text-slate-900 font-mono col-cd">${r.cdFrom || '-'}</td><td class="p-0.1 border border-slate-800 text-[7px] text-slate-900 font-mono col-cd">${r.cdTo || '-'}</td>` : '';
 
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
                         const hatchSvg = `
-                            <div class="cell-soil-log w-full h-full min-h-[14px] min-w-[26px] flex items-center justify-center p-0 m-0">
-                                <svg width="100%" height="100%" style="min-height: 14px; display: block;" preserveAspectRatio="none">
+                            <div class="cell-soil-log w-full h-full min-h-[11px] min-w-[26px] flex items-center justify-center p-0 m-0">
+                                <svg width="100%" height="100%" style="min-height: 11px; display: block;" preserveAspectRatio="none">
                                     <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
                                 </svg>
                             </div>
                         `;
 
                         let optDataCells = '';
-                        if (showTV) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-cyan-900 font-semibold col-opt">${(showTV && r.tv) ? r.tv : '-'}</td>`;
-                        if (showPP) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-cyan-900 font-semibold col-opt">${(showPP && r.pp) ? r.pp : '-'}</td>`;
-                        if (showPL) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-purple-900 font-semibold col-rock">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
-                        if (showUCS) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-purple-900 font-semibold col-rock">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
+                        if (showTV) optDataCells += `<td class="p-0.1 border border-slate-800 font-mono text-cyan-900 font-semibold col-opt">${(showTV && r.tv) ? r.tv : '-'}</td>`;
+                        if (showPP) optDataCells += `<td class="p-0.1 border border-slate-800 font-mono text-cyan-900 font-semibold col-opt">${(showPP && r.pp) ? r.pp : '-'}</td>`;
+                        if (showPL) optDataCells += `<td class="p-0.1 border border-slate-800 font-mono text-purple-900 font-semibold col-rock">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
+                        if (showUCS) optDataCells += `<td class="p-0.1 border border-slate-800 font-mono text-purple-900 font-semibold col-rock">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
 
                         if (currentMode === 'field') {
                             return `
-                                <tr class="text-slate-900" style="height: 14px !important;">
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
+                                <tr class="text-slate-900" style="height: 11px !important;">
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
-                                    <td class="p-0.2 border border-slate-800 font-semibold text-slate-900 col-type">${typeTag}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono font-bold text-slate-900 col-no">${sNo}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rec">${calc.sampleRecPct}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-semibold text-slate-900 col-type">${typeTag}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono font-bold text-slate-900 col-no">${sNo}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rec">${calc.sampleRecPct}</td>
+                                    <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                                     <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900 col-desc">${r.description}</td>
+                                    <td class="p-0.2 border border-slate-800 text-left text-[7px] leading-tight text-slate-900 col-desc">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
                                 </tr>
                             `;
                         } else {
                             return `
-                                <tr class="text-slate-900" style="height: 14px !important;">
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
+                                <tr class="text-slate-900" style="height: 11px !important;">
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
-                                    <td class="p-0.2 border border-slate-800 font-semibold text-slate-900 col-type">${typeTag}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono font-bold text-slate-900 col-no">${sNo}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rec">${calc.sampleRecPct}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? calc.finalN : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-semibold text-slate-900 col-type">${typeTag}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono font-bold text-slate-900 col-no">${sNo}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rec">${calc.sampleRecPct}</td>
+                                    <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-bold text-blue-900 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? calc.finalN : '-'}</td>
                                     <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900 col-desc">${r.description}</td>
+                                    <td class="p-0.2 border border-slate-800 text-left text-[7px] leading-tight text-slate-900 col-desc">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
                                 </tr>
                             `;
                         }
@@ -1504,8 +1516,8 @@
                 const totalCols = (currentMode === 'field' ? 14 : 15) + extraColsCount + (showCD ? 2 : 0);
 
                 const terminationHtml = isLastPage ? `
-                    <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900" style="height: 14px !important;">
-                        <td colspan="${totalCols}" class="p-0.5 text-center text-[7.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
+                    <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900" style="height: 12px !important;">
+                        <td colspan="${totalCols}" class="p-0.2 text-center text-[7.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
                             *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
                         </td>
                     </tr>
