@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v11.4</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v11.5</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +31,7 @@
             vertical-align: middle;
         }
 
-        /* Seamless Soil Log Column Container with No Internal Row Padding Breaks */
+        /* Seamless Continuous Soil Log Column Style */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -43,7 +43,6 @@
             border-bottom: none !important;
             background-clip: padding-box;
             position: relative;
-            vertical-align: stretch !important;
         }
 
         .col-n-val {
@@ -137,7 +136,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.4 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.5 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -637,8 +636,10 @@
         function autoCalcCD() {
             const datumStr = document.getElementById('meta-cd-level').value;
             const datumVal = parseFloat(datumStr);
-            const dFrom = parseFloat(document.getElementById('input-depth-from').value) || 0;
-            const dTo = parseFloat(document.getElementById('input-depth-to').value) || 0;
+            let dFrom = parseFloat(document.getElementById('input-depth-from').value) || 0;
+            let dTo = parseFloat(document.getElementById('input-depth-to').value) || 0;
+
+            if (dFrom > dTo) { let temp = dFrom; dFrom = dTo; dTo = temp; }
 
             if (!isNaN(datumVal)) {
                 const cdFromVal = datumVal - dFrom;
@@ -734,6 +735,7 @@
 
                         let dFrom = parseFloat(row[colMap.depthFrom ?? 0]) || parseFloat(row[0]) || (idx * 1.5);
                         let dTo = parseFloat(row[colMap.depthTo ?? 1]) || parseFloat(row[1]) || (dFrom + 1.5);
+                        if (dFrom > dTo) { let temp = dFrom; dFrom = dTo; dTo = temp; }
                         if (dFrom === dTo) dTo = dFrom + 1.5;
 
                         let sType = 'SPT';
@@ -871,8 +873,9 @@
             lines.forEach((line, idx) => {
                 const depthMatch = line.match(/(\d+\.?\d*)\s*(?:-|to|\s+)\s*(\d+\.?\d*)/i);
                 if (depthMatch) {
-                    const dFrom = parseFloat(depthMatch[1]);
-                    const dTo = parseFloat(depthMatch[2]);
+                    let dFrom = parseFloat(depthMatch[1]);
+                    let dTo = parseFloat(depthMatch[2]);
+                    if (dFrom > dTo) { let temp = dFrom; dFrom = dTo; dTo = temp; }
                     if (!isNaN(dFrom) && !isNaN(dTo) && dTo > dFrom) {
                         let sType = 'SPT';
                         if (/DS/i.test(line) && !/UDS/i.test(line)) sType = 'DS';
@@ -1099,8 +1102,10 @@
         function saveSample(event) {
             event.preventDefault();
             const editId = document.getElementById('edit-id').value;
-            const depthFrom = parseFloat(document.getElementById('input-depth-from').value) || 0;
-            const depthTo = parseFloat(document.getElementById('input-depth-to').value) || 1;
+            let depthFrom = parseFloat(document.getElementById('input-depth-from').value) || 0;
+            let depthTo = parseFloat(document.getElementById('input-depth-to').value) || 1;
+            if (depthFrom > depthTo) { let temp = depthFrom; depthFrom = depthTo; depthTo = temp; }
+
             const sampleNo = parseInt(document.getElementById('input-sample-no').value) || (records.length + 1);
             const sampleType = document.getElementById('input-sample-type').value;
 
@@ -1483,7 +1488,7 @@
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
-                        // Continuous block fill with SVG background matching professional layouts
+                        // Solid SVG pattern data background fill mapping accurately to correct soil types without line breaking
                         const hatchDiv = `
                             <div class="cell-soil-log w-full h-full min-h-[18px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22><rect width=%2216%22 height=%2216%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-4 20L20-4M-4 4L20 28' : hType === 'SILT' ? 'M7 0v14' : hType === 'SOLID_ROCK' ? 'M0 0l16 16M16 0L0 16' : 'M4 4a1.8 1.8 0 110-0.1M12 12a1.8 1.8 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.5%22/></svg>'); background-repeat: repeat;">
                             </div>
