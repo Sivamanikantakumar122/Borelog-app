@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v11.2</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v11.3</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,7 +32,7 @@
             vertical-align: middle;
         }
 
-        /* Continuous Solid Vertical Soil Log Column Container */
+        /* Seamless Soil Log Column Container */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -54,7 +54,7 @@
         tr { height: 18px !important; max-height: 22px !important; }
         th, td { padding: 2px 3px !important; border: 1px solid #000 !important; font-size: 7.5px !important; vertical-align: middle !important; }
 
-        /* Print Media Styling: Seamless multi-page flow without blank vertical gaps */
+        /* Print Media Styling */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; width: 210mm !important; }
@@ -130,38 +130,31 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- SVG Standard Sub-Soil Bright High-Contrast Hatch Legend Definitions -->
+    <!-- Standard Sub-Soil Hatch Legend Definitions -->
     <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
         <defs>
-            <pattern id="hatch-SAND" width="12" height="12" patternUnits="userSpaceOnUse">
-                <rect width="12" height="12" fill="#fde047" />
-                <circle cx="3" cy="3" r="1.5" fill="#000000" />
-                <circle cx="9" cy="9" r="1.5" fill="#000000" />
+            <pattern id="hatch-SAND" width="16" height="16" patternUnits="userSpaceOnUse">
+                <rect width="16" height="16" fill="#fde047" />
+                <circle cx="4" cy="4" r="1.8" fill="#000000" />
+                <circle cx="12" cy="12" r="1.8" fill="#000000" />
             </pattern>
-            <pattern id="hatch-SILT" width="10" height="10" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="#cbd5e1" />
-                <line x1="5" y1="0" x2="5" y2="10" stroke="#000000" stroke-width="1.5" />
+            <pattern id="hatch-SILT" width="14" height="14" patternUnits="userSpaceOnUse">
+                <rect width="14" height="14" fill="#cbd5e1" />
+                <line x1="7" y1="0" x2="7" y2="14" stroke="#000000" stroke-width="1.8" />
             </pattern>
-            <pattern id="hatch-CLAY" width="12" height="12" patternUnits="userSpaceOnUse">
-                <rect width="12" height="12" fill="#4ade80" />
-                <line x1="0" y1="12" x2="12" y2="0" stroke="#000000" stroke-width="1.5" />
+            <pattern id="hatch-CLAY" width="16" height="16" patternUnits="userSpaceOnUse">
+                <rect width="16" height="16" fill="#4ade80" />
+                <line x1="-4" y1="20" x2="20" y2="-4" stroke="#000000" stroke-width="1.8" />
+                <line x1="-4" y1="4" x2="20" y2="28" stroke="#000000" stroke-width="1.8" />
             </pattern>
-            <pattern id="hatch-SOLID_ROCK" width="12" height="12" patternUnits="userSpaceOnUse">
-                <rect width="12" height="12" fill="#fb923c" />
-                <path d="M 0 0 L 12 12 M 12 0 L 0 12" stroke="#000000" stroke-width="1.2" />
+            <pattern id="hatch-SOLID_ROCK" width="16" height="16" patternUnits="userSpaceOnUse">
+                <rect width="16" height="16" fill="#fb923c" />
+                <path d="M 0 0 L 16 16 M 16 0 L 0 16" stroke="#000000" stroke-width="1.5" />
             </pattern>
-            <pattern id="hatch-ROCK" width="12" height="12" patternUnits="userSpaceOnUse">
-                <rect width="12" height="12" fill="#fb923c" />
-                <path d="M 0 0 L 12 12 M 12 0 L 0 12" stroke="#000000" stroke-width="1.2" />
-            </pattern>
-            <pattern id="hatch-GRAVEL" width="14" height="14" patternUnits="userSpaceOnUse">
-                <rect width="14" height="14" fill="#e2e8f0" />
-                <circle cx="4" cy="4" r="2.2" fill="none" stroke="#000000" stroke-width="1.2" />
-                <circle cx="11" cy="11" r="2.5" fill="none" stroke="#000000" stroke-width="1.2" />
-            </pattern>
-            <pattern id="hatch-WEATHERED_ROCK" width="10" height="10" patternUnits="userSpaceOnUse">
-                <rect width="10" height="10" fill="#94a3b8" />
-                <path d="M 0 0 L 10 10 M 10 0 L 0 10" stroke="#000000" stroke-width="1.0" />
+            <pattern id="hatch-GRAVEL" width="18" height="18" patternUnits="userSpaceOnUse">
+                <rect width="18" height="18" fill="#e2e8f0" />
+                <circle cx="5" cy="5" r="2.8" fill="none" stroke="#000000" stroke-width="1.5" />
+                <circle cx="13" cy="13" r="3.2" fill="none" stroke="#000000" stroke-width="1.5" />
             </pattern>
         </defs>
     </svg>
@@ -175,7 +168,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.2 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v11.3 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -410,7 +403,6 @@
                                 <option value="SILT">Silt (Grey + Vertical Lines)</option>
                                 <option value="SOLID_ROCK">Rock / Basalt (Bright Orange + Cross Hatch)</option>
                                 <option value="GRAVEL">Gravel (Pebbles)</option>
-                                <option value="WEATHERED_ROCK">Weathered Rock</option>
                             </select>
                         </div>
                         <div>
@@ -1519,9 +1511,9 @@
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
-                        // Single continuous background fill per row without individual SVG borders causing visual seams
+                        // Clean background fill using the SVG pattern URL definition
                         const hatchDiv = `
-                            <div class="cell-soil-log w-full h-full min-h-[18px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22><rect width=%2212%22 height=%2212%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/></svg>'); background-repeat: repeat;">
+                            <div class="cell-soil-log w-full h-full min-h-[18px] min-w-[28px] m-0" style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22><rect width=%2216%22 height=%2216%22 fill=%22${hType === 'CLAY' ? '%234ade80' : hType === 'SILT' ? '%23cbd5e1' : hType === 'SOLID_ROCK' ? '%23fb923c' : '%23fde047'}%22/><path d=%22${hType === 'CLAY' ? 'M-4 20L20-4M-4 4L20 28' : hType === 'SILT' ? 'M7 0v14' : hType === 'SOLID_ROCK' ? 'M0 0l16 16M16 0L0 16' : 'M4 4a1.8 1.8 0 110-0.1M12 12a1.8 1.8 0 110-0.1'}%22 stroke=%22%23000000%22 stroke-width=%221.5%22/></svg>'); background-repeat: repeat;">
                             </div>
                         `;
 
