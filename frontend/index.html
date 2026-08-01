@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v6.1</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v6.2</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +30,7 @@
             max-height: 60px;
         }
 
-        /* Continuous Hatch Cell Container - Seamless uniform block without grid breaks */
+        /* Continuous Hatch Cell Container */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
@@ -41,13 +41,36 @@
             border-bottom: none !important;
         }
 
-        /* Print Media Styling for Strict Single-Page A4 Portrait Layout */
+        /* Print Media Styling: Strict separation of Field Log, Final Log, and Graph Sheet */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
             .print-area { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
-            .print-sheet { border: 1.5px solid #000 !important; box-shadow: none !important; page-break-after: always; height: 275mm !important; max-height: 275mm !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; }
-            .graph-sheet { page-break-before: always; height: 275mm !important; display: flex !important; flex-direction: column !important; justify-content: flex-start !important; }
+            
+            /* Field Log or Final Log Table Sheet */
+            .print-sheet { 
+                border: 1.5px solid #000 !important; 
+                box-shadow: none !important; 
+                height: 275mm !important; 
+                max-height: 275mm !important; 
+                overflow: hidden !important; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                justify-content: space-between !important; 
+                page-break-after: always !important;
+            }
+            
+            /* Graph Sheet strictly starts on a fresh new page and ONLY prints in final mode */
+            .graph-sheet { 
+                page-break-before: always !important; 
+                page-break-after: avoid !important;
+                height: 275mm !important; 
+                max-height: 275mm !important; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                justify-content: flex-start !important; 
+            }
+
             table { font-size: 7.5px !important; }
             th, td { padding: 1px 1px !important; border: 1px solid #000 !important; }
             @page { size: A4 portrait; margin: 6mm; }
@@ -133,7 +156,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.1 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.2 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -353,6 +376,18 @@
                         <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Soft brown silty CLAY."></textarea>
                     </div>
 
+                    <!-- Optional Final Borelog Strength Parameters (Point Load & UCS) -->
+                    <div id="strength-inputs-section" class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 hidden">
+                        <div>
+                            <label class="block text-purple-300 text-[10px] mb-0.5">Point Load Strength Is(50) (MPa)</label>
+                            <input type="text" id="input-point-load" value="" placeholder="e.g. 2.4" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-purple-300 text-[10px] mb-0.5">Unconfined Compressive Strength UCS (MPa)</label>
+                            <input type="text" id="input-ucs" value="" placeholder="e.g. 45.0" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs">
+                        </div>
+                    </div>
+
                     <div class="flex items-center gap-2 pt-1">
                         <button type="submit" id="btn-submit-sample" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg shadow transition flex items-center justify-center gap-1.5 text-xs">
                             <i data-lucide="plus" class="w-4 h-4"></i> Add Record Row
@@ -468,18 +503,18 @@
 
             </div>
 
-            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH -->
+            <!-- FRESH SEPARATE A4 SHEET FOR FINAL CORRECTED SPT GRAPH (Professional Engineering Standard Styling) -->
             <div id="spt-graph-container" class="bg-white text-slate-900 rounded-2xl shadow-2xl p-5 graph-sheet border border-slate-300 space-y-4 hidden">
                 <div class="border-b-2 border-slate-900 pb-2 flex items-center justify-between">
                     <div>
                         <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase">SPT 'N' & Corrected 'N₁' Depth Profile</h3>
-                        <p class="text-[9px] text-slate-600">Continuous Depth vs Penetration Resistance Curves</p>
+                        <p class="text-[9px] text-slate-600">Continuous Depth vs Penetration Resistance Curves (Energy & Overburden Corrected)</p>
                     </div>
                     <span class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[9px] font-bold">FINAL GRAPH SHEET</span>
                 </div>
                 <!-- Canvas aligned to top -->
                 <div class="p-3 border-2 border-slate-900 bg-slate-50 flex items-start justify-center pt-2">
-                    <canvas id="sptCanvas" width="480" height="480" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
+                    <canvas id="sptCanvas" width="520" height="520" class="block mx-auto border border-slate-300 bg-white shadow-sm"></canvas>
                 </div>
             </div>
 
@@ -537,19 +572,19 @@
                 id: '1', depthFrom: 0.0, depthTo: 0.45, cdFrom: '-9.20', cdTo: '-9.65',
                 sampleType: 'SPT', sampleNo: 1, recoveredLength: 0.45,
                 n1: '2', n2: '4', n3: '6', nVal: '10', hatchType: 'SAND', unitWeight: 18.0,
-                description: 'Medium dense yellow coarse SAND.', coreRec: 0, solidCore: 0, rockPieces: ''
+                description: 'Medium dense yellow coarse SAND.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: ''
             },
             {
                 id: '2', depthFrom: 0.45, depthTo: 2.50, cdFrom: '-9.65', cdTo: '-11.70',
                 sampleType: 'SPT', sampleNo: 2, recoveredLength: 0.45,
                 n1: '4', n2: '8', n3: '12', nVal: '20', hatchType: 'CLAY', unitWeight: 18.5,
-                description: 'Soft to stiff brown silty CLAY.', coreRec: 0, solidCore: 0, rockPieces: ''
+                description: 'Soft to stiff brown silty CLAY.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '', ucs: ''
             },
             {
                 id: '3', depthFrom: 2.50, depthTo: 3.00, cdFrom: '-11.70', cdTo: '-12.20',
                 sampleType: 'SPT', sampleNo: 3, recoveredLength: 0.45,
                 n1: '15', n2: '30', n3: 'R', nVal: 'R', hatchType: 'SILT', unitWeight: 19.5,
-                description: 'Refusal encountered at 3.0m depth in dense grey SILT stratum.', coreRec: 0, solidCore: 0, rockPieces: ''
+                description: 'Refusal encountered at 3.0m depth in dense grey SILT stratum.', coreRec: 0, solidCore: 0, rockPieces: '', pointLoad: '2.5', ucs: '48.0'
             }
         ];
 
@@ -675,7 +710,9 @@
                             recoveredLength: (dTo - dFrom),
                             n1: n1Str, n2: n2Str, n3: n3Str, nVal: nValFinal,
                             hatchType: hatch, unitWeight: 18.0,
-                            description: desc, coreRec: 0, solidCore: 0, rockPieces: ''
+                            description: desc, coreRec: 0, solidCore: 0, rockPieces: '',
+                            pointLoad: String(findVal(['pointload', 'is50']) || ''),
+                            ucs: String(findVal(['ucs', 'unconfined']) || '')
                         });
                     });
 
@@ -780,7 +817,8 @@
                             n1: n1, n2: n2, n3: n3, nVal: nVal,
                             hatchType: hatch, unitWeight: 18.0,
                             description: line.trim() || 'Scanned stratum',
-                            coreRec: 0, solidCore: 0, rockPieces: ''
+                            coreRec: 0, solidCore: 0, rockPieces: '',
+                            pointLoad: '', ucs: ''
                         });
                     }
                 }
@@ -806,6 +844,7 @@
             const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
+            const strengthInputs = document.getElementById('strength-inputs-section');
 
             if (mode === 'field') {
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-blue-600 text-white shadow";
@@ -818,6 +857,7 @@
                 sheetTitle.innerText = "FIELD BORELOG REPORT";
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
+                strengthInputs.classList.add('hidden');
             } else {
                 btnFinal.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow";
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white";
@@ -829,6 +869,7 @@
                 sheetTitle.innerText = "FINAL BORELOG REPORT";
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
+                strengthInputs.classList.remove('hidden');
             }
 
             updateAll();
@@ -863,7 +904,6 @@
             else { rockSection.classList.add('hidden'); }
         }
 
-        // Local live JavaScript calculation mirroring backend logic for instant table UI preview
         function computeCalculatedFields(r, gwt, er) {
             const interval = Math.max(0.01, r.depthTo - r.depthFrom);
             const sampleRecPct = Math.round(Math.min(100, (r.recoveredLength / interval) * 100));
@@ -936,7 +976,9 @@
                 description: document.getElementById('input-description').value,
                 coreRec: parseFloat(document.getElementById('input-core-rec').value) || 0,
                 solidCore: parseFloat(document.getElementById('input-solid-core').value) || 0,
-                rockPieces: document.getElementById('input-rock-pieces').value
+                rockPieces: document.getElementById('input-rock-pieces').value,
+                pointLoad: document.getElementById('input-point-load').value.trim(),
+                ucs: document.getElementById('input-ucs').value.trim()
             };
 
             if (editId) {
@@ -973,6 +1015,8 @@
             document.getElementById('input-core-rec').value = r.coreRec || 0;
             document.getElementById('input-solid-core').value = r.solidCore || 0;
             document.getElementById('input-rock-pieces').value = r.rockPieces || '';
+            document.getElementById('input-point-load').value = r.pointLoad || '';
+            document.getElementById('input-ucs').value = r.ucs || '';
 
             toggleRockFields();
             safeInitIcons();
@@ -1115,7 +1159,7 @@
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">Sample Recovery</div></th>
                         <th colspan="5" class="p-1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
                         <th class="p-1 border border-slate-900 text-slate-900 w-16">Soil Log</th>
-                        <th class="p-1 border border-slate-900 text-slate-900">Strata Description</th>
+                        <th class="p-1 border border-slate-900 text-slate-900">Strata Description & Strength</th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">TCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">SCR (%)</div></th>
                         <th class="p-1 border border-slate-900 text-slate-900"><div class="th-rotate">RQD (%)</div></th>
@@ -1155,6 +1199,15 @@
                     </div>
                 `;
 
+                // If Final Mode, append optional point load / UCS strength parameters if present
+                let descText = r.description;
+                if (currentMode === 'final' && (r.pointLoad || r.ucs)) {
+                    let strengthStr = [];
+                    if (r.pointLoad) strengthStr.push(`Is(50)=${r.pointLoad}MPa`);
+                    if (r.ucs) strengthStr.push(`UCS=${r.ucs}MPa`);
+                    descText += ` [${strengthStr.join(', ')}]`;
+                }
+
                 if (currentMode === 'field') {
                     return `
                         <tr class="text-slate-900">
@@ -1169,7 +1222,7 @@
                             <td class="p-0.5 border border-slate-800 text-slate-700 font-mono">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="cell-soil-log border border-slate-800 w-16 p-0">${hatchSvg}</td>
-                            <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
+                            <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${descText}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
@@ -1190,7 +1243,7 @@
                             <td class="p-0.5 border border-slate-800 font-bold text-blue-900 font-mono">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono">${r.sampleType === 'SPT' ? calc.n60 : '-'}</td>
                             <td class="cell-soil-log border border-slate-800 w-16 p-0">${hatchSvg}</td>
-                            <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${r.description}</td>
+                            <td class="p-1 border border-slate-800 text-left text-[8px] leading-tight text-slate-900">${descText}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
                             <td class="p-0.5 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? calc.rqd : '-'}</td>
@@ -1213,6 +1266,7 @@
             tbody.innerHTML = rowsHtml + terminationHtml;
         }
 
+        // Render Professional Engineering Standard Chart for Final Mode Graph Sheet
         function renderSptCanvasGraph() {
             const canvas = document.getElementById('sptCanvas');
             if (!canvas) return;
@@ -1224,42 +1278,45 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, W, H);
 
-            const marginLeft = 55;
-            const marginTop = 35;
-            const marginRight = 25;
-            const marginBottom = 30;
+            const marginLeft = 65;
+            const marginTop = 45;
+            const marginRight = 35;
+            const marginBottom = 45;
 
             const graphW = W - marginLeft - marginRight;
             const graphH = H - marginTop - marginBottom;
 
             const maxN = 100;
-            const maxDepth = 25;
+            const maxDepth = 30;
 
-            ctx.strokeStyle = '#f1f5f9';
+            // Professional crisp grid styling
+            ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 1;
-            ctx.setLineDash([3, 3]);
+            ctx.setLineDash([2, 2]);
 
-            for (let n = 0; n <= maxN; n += 20) {
+            for (let n = 0; n <= maxN; n += 10) {
                 const x = marginLeft + (n / maxN) * graphW;
                 ctx.beginPath();
                 ctx.moveTo(x, marginTop);
                 ctx.lineTo(x, marginTop + graphH);
                 ctx.stroke();
 
-                ctx.fillStyle = '#0f172a';
-                ctx.font = '9px Inter, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(n.toString(), x, marginTop - 6);
+                if (n % 20 === 0) {
+                    ctx.fillStyle = '#334155';
+                    ctx.font = '10px Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(n.toString(), x, marginTop - 10);
+                }
             }
 
             ctx.setLineDash([]);
             ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 9.5px Inter, sans-serif';
+            ctx.font = 'bold 11px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText("SPT 'N' & Corrected 'N₁' Value", marginLeft + graphW / 2, 12);
+            ctx.fillText("Penetration Resistance, SPT 'N' & Corrected 'N₁' (Blows / 30cm)", marginLeft + graphW / 2, 18);
 
-            ctx.strokeStyle = '#f1f5f9';
-            ctx.setLineDash([3, 3]);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.setLineDash([2, 2]);
             for (let d = 0; d <= maxDepth; d += 5) {
                 const y = marginTop + (d / maxDepth) * graphH;
                 ctx.beginPath();
@@ -1267,23 +1324,24 @@
                 ctx.lineTo(marginLeft + graphW, y);
                 ctx.stroke();
 
-                ctx.fillStyle = '#0f172a';
-                ctx.font = '9px Inter, sans-serif';
+                ctx.fillStyle = '#334155';
+                ctx.font = '10px Inter, sans-serif';
                 ctx.textAlign = 'right';
-                ctx.fillText(d.toString(), marginLeft - 6, y + 3);
+                ctx.fillText(d.toString(), marginLeft - 10, y + 4);
             }
 
             ctx.save();
-            ctx.translate(12, marginTop + graphH / 2);
+            ctx.translate(16, marginTop + graphH / 2);
             ctx.rotate(-Math.PI / 2);
             ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 9.5px Inter, sans-serif';
+            ctx.font = 'bold 11px Inter, sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText("Depth below Ground Level (m)", 0, 0);
             ctx.restore();
 
+            // Outer Solid Engineering Border Box
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = 1.5;
             ctx.setLineDash([]);
             ctx.strokeRect(marginLeft, marginTop, graphW, graphH);
 
@@ -1303,7 +1361,7 @@
                 let rawNValNum = 10;
                 const uVal = String(r.nVal).trim().toUpperCase();
                 if (uVal === 'R' || uVal === 'REFUSAL') {
-                    rawNValNum = 100; // Graph mapping value for Refusal
+                    rawNValNum = 100;
                 } else {
                     rawNValNum = parseInt(r.nVal) || (parseInt(r.n2) || 0) + (parseInt(r.n3) || 0);
                 }
@@ -1324,64 +1382,70 @@
                 corrPts.push({ x: xCorr, y: y });
             });
 
-            // Draw continuous line for Field N Value (Blue)
+            // Draw professional smooth/continuous engineering curve for Field N Value (Royal Blue)
             if (fieldPts.length > 0) {
-                ctx.strokeStyle = '#2563eb';
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#1d4ed8';
+                ctx.lineWidth = 2.5;
                 ctx.beginPath();
                 ctx.moveTo(fieldPts[0].x, fieldPts[0].y);
                 for (let i = 1; i < fieldPts.length; i++) { ctx.lineTo(fieldPts[i].x, fieldPts[i].y); }
                 ctx.stroke();
 
                 fieldPts.forEach(p => {
-                    ctx.fillStyle = '#2563eb';
+                    ctx.fillStyle = '#1d4ed8';
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1.5;
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+                    ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.stroke();
                 });
             }
 
-            // Draw continuous line for Corrected N1 Value (Orange)
+            // Draw professional smooth/continuous engineering curve for Corrected N1 Value (Amber / Orange)
             if (corrPts.length > 0) {
-                ctx.strokeStyle = '#d97706';
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 2.5;
                 ctx.beginPath();
                 ctx.moveTo(corrPts[0].x, corrPts[0].y);
                 for (let i = 1; i < corrPts.length; i++) { ctx.lineTo(corrPts[i].x, corrPts[i].y); }
                 ctx.stroke();
 
                 corrPts.forEach(p => {
-                    ctx.fillStyle = '#d97706';
+                    ctx.fillStyle = '#b45309';
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1.5;
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+                    ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.stroke();
                 });
             }
 
-            // Legend on Graph
-            const legX = marginLeft + graphW - 130;
-            const legY = marginTop + 10;
+            // Professional Legend Box inside Top Right of Graph
+            const legX = marginLeft + graphW - 150;
+            const legY = marginTop + 12;
             ctx.fillStyle = '#ffffff';
-            ctx.strokeStyle = '#cbd5e1';
+            ctx.strokeStyle = '#94a3b8';
             ctx.lineWidth = 1;
-            ctx.fillRect(legX, legY, 120, 36);
-            ctx.strokeRect(legX, legY, 120, 36);
+            ctx.fillRect(legX, legY, 138, 44);
+            ctx.strokeRect(legX, legY, 138, 44);
 
-            ctx.fillStyle = '#2563eb';
-            ctx.beginPath(); ctx.arc(legX + 12, legY + 12, 3.5, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#0f172a'; ctx.font = '8.5px Inter, sans-serif'; ctx.textAlign = 'left';
-            ctx.fillText("SPT N Value", legX + 22, legY + 15);
+            ctx.fillStyle = '#1d4ed8';
+            ctx.beginPath(); ctx.arc(legX + 14, legY + 15, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("Field SPT (N Value)", legX + 26, legY + 18);
 
-            ctx.fillStyle = '#d97706';
-            ctx.beginPath(); ctx.arc(legX + 12, legY + 26, 3.5, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#0f172a'; ctx.font = '8.5px Inter, sans-serif'; ctx.textAlign = 'left';
-            ctx.fillText("Corrected N₁ Value", legX + 22, legY + 29);
+            ctx.fillStyle = '#b45309';
+            ctx.beginPath(); ctx.arc(legX + 14, legY + 31, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText("Corrected SPT (N₁ Value)", legX + 26, legY + 34);
 
             const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
             ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 10px Inter, sans-serif';
+            ctx.font = 'bold 11px Inter, sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText(`Borehole: ${bhNo} (Continuous N & N₁ Profiles)`, marginLeft + 10, marginTop + graphH - 12);
+            ctx.fillText(`Borehole: ${bhNo} (Continuous N & N₁ Profile)`, marginLeft + 12, marginTop + graphH - 14);
         }
     </script>
 </body>
