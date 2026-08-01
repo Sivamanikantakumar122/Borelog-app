@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v9.4</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v9.5</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,37 +25,37 @@
             writing-mode: vertical-rl;
             transform: rotate(180deg);
             white-space: nowrap;
-            padding: 2px 1px;
-            font-size: 7px;
-            max-height: 42px;
+            padding: 1px 0px;
+            font-size: 6.5px;
+            max-height: 38px;
         }
 
-        /* Compact Table Layout & Absolute Row Height Enforcements */
+        /* Compact Table Layout & Absolute Tight Row Height Enforcements */
         table { border-collapse: collapse; width: 100%; table-layout: fixed; height: auto; }
-        th, td { border: 1px solid #000; padding: 0px 1px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; line-height: 1.1; }
+        th, td { border: 1px solid #000; padding: 0px 1px; text-align: center; font-size: 7px; overflow: hidden; word-break: break-word; line-height: 1.0; }
 
-        /* Force ultra-compact rows matching professional engineering logs */
-        tr { height: 11px !important; min-height: 11px !important; max-height: 13px !important; }
+        /* Force ultra-compact rows matching professional engineering logs exactly */
+        tr { height: 10px !important; min-height: 10px !important; max-height: 12px !important; }
 
         /* Explicit Column Widths matching target design */
-        .col-depth { width: 30px; }
-        .col-cd { width: 30px; }
-        .col-type { width: 35px; }
-        .col-no { width: 22px; }
-        .col-rec { width: 26px; }
-        .col-spt-sm { width: 18px; }
-        .col-spt-n { width: 22px; }
-        .col-soil-log { width: 26px; min-width: 26px; max-width: 26px; padding: 0 !important; }
-        .col-desc { width: 140px; text-align: left !important; }
-        .col-opt { width: 24px; }
-        .col-rock { width: 24px; }
+        .col-depth { width: 28px; }
+        .col-cd { width: 28px; }
+        .col-type { width: 32px; }
+        .col-no { width: 20px; }
+        .col-rec { width: 24px; }
+        .col-spt-sm { width: 16px; }
+        .col-spt-n { width: 20px; }
+        .col-soil-log { width: 24px; min-width: 24px; max-width: 24px; padding: 0 !important; }
+        .col-desc { width: 145px; text-align: left !important; }
+        .col-opt { width: 22px; }
+        .col-rock { width: 22px; }
 
         /* Continuous Hatch Cell Container */
         .cell-soil-log {
             padding: 0 !important;
             margin: 0 !important;
             height: 100% !important;
-            width: 26px !important;
+            width: 24px !important;
             border-left: 1.5px solid #000 !important;
             border-right: 1.5px solid #000 !important;
             border-top: none !important;
@@ -100,7 +100,7 @@
             }
 
             thead { display: table-header-group !important; }
-            tr { page-break-inside: avoid !important; page-break-after: auto !important; height: 11px !important; }
+            tr { page-break-inside: avoid !important; page-break-after: auto !important; height: 10px !important; }
             @page { size: A4 portrait; margin: 5mm; }
         }
 
@@ -112,7 +112,7 @@
             margin: 0 auto;
             background: white;
             box-sizing: border-box;
-            padding: 10mm;
+            padding: 8mm;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -182,7 +182,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.4 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v9.5 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -1336,7 +1336,7 @@
             // Updated dynamically inside page builder
         }
 
-        // Automatic Multi-Page Split Engine with optimized capacity (25 rows per page) for dense, professional logs
+        // Automatic Multi-Page Split Engine with optimized high capacity (30 rows per page) matching standard dense engineering logs
         function renderBorelogSheets() {
             const wrapper = document.getElementById('print-sheets-wrapper');
             if (!wrapper) return;
@@ -1352,7 +1352,7 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const h = renderHeaderValues();
 
-            const pageSize = 25;
+            const pageSize = 30;
             const pages = [];
             if (sortedRecords.length === 0) {
                 pages.push([]);
@@ -1368,35 +1368,35 @@
             wrapper.innerHTML = pages.map((pageRecords, pageIdx) => {
                 const isLastPage = pageIdx === pages.length - 1;
 
-                const cdHeader = showCD ? `<th colspan="2" class="p-0.5 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
+                const cdHeader = showCD ? `<th colspan="2" class="p-0.2 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
                 const cdSubHeader = showCD ? `<th class="p-0.1 border border-slate-900 text-slate-900 font-bold col-cd">From</th><th class="p-0.1 border border-slate-900 text-slate-900 font-bold col-cd">To</th>` : '';
 
                 let optHeaders = '';
                 let optSubHeaders = '';
 
-                if (showTV) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">TV (kPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-opt">-</th>`; }
-                if (showPP) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">PP (kPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-opt">-</th>`; }
-                if (showPL) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">PL (MPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-rock">-</th>`; }
-                if (showUCS) { optHeaders += `<th class="p-0.5 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">UCS (MPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-rock">-</th>`; }
+                if (showTV) { optHeaders += `<th class="p-0.2 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">TV (kPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-opt">-</th>`; }
+                if (showPP) { optHeaders += `<th class="p-0.2 border border-slate-900 text-slate-900 col-opt"><div class="th-rotate">PP (kPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-opt">-</th>`; }
+                if (showPL) { optHeaders += `<th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">PL (MPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-rock">-</th>`; }
+                if (showUCS) { optHeaders += `<th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">UCS (MPa)</div></th>`; optSubHeaders += `<th class="p-0.1 border border-slate-900 col-rock">-</th>`; }
 
                 let theadHtml = '';
                 if (currentMode === 'field') {
                     theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 12px !important;">
-                            <th colspan="2" class="p-0.2 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 10px !important;">
+                            <th colspan="2" class="p-0.1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="4" class="p-0.2 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
+                            <th colspan="4" class="p-0.1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
                             ${optHeaders}
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold" style="height: 10px !important;">
+                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: 8px !important;">
                             <th class="p-0.1 border border-slate-900 col-depth">From</th><th class="p-0.1 border border-slate-900 col-depth">To</th>
                             ${cdSubHeader}
                             <th class="p-0.1 border border-slate-900 col-type">Type</th><th class="p-0.1 border border-slate-900 col-no">No.</th><th class="p-0.1 border border-slate-900 col-rec">%</th>
@@ -1408,21 +1408,21 @@
                     `;
                 } else {
                     theadHtml = `
-                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 12px !important;">
-                            <th colspan="2" class="p-0.2 border border-slate-900 text-slate-900">Sample Depth (m)</th>
+                        <tr class="text-slate-900 font-bold bg-slate-100" style="height: 10px !important;">
+                            <th colspan="2" class="p-0.1 border border-slate-900 text-slate-900">Sample Depth (m)</th>
                             ${cdHeader}
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
-                            <th colspan="5" class="p-0.2 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-type"><div class="th-rotate">Sample Type</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-no"><div class="th-rotate">Sample No</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rec"><div class="th-rotate">Sample Recovery</div></th>
+                            <th colspan="5" class="p-0.1 border border-slate-900 text-slate-900">Standard Penetration Test (SPT)</th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-soil-log">Soil Log</th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-desc">Strata Description</th>
                             ${optHeaders}
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
-                            <th class="p-0.2 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">TCR (%)</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">SCR (%)</div></th>
+                            <th class="p-0.1 border border-slate-900 text-slate-900 col-rock"><div class="th-rotate">RQD (%)</div></th>
                         </tr>
-                        <tr class="bg-slate-200 text-[6.5px] text-slate-900 font-bold" style="height: 10px !important;">
+                        <tr class="bg-slate-200 text-[6px] text-slate-900 font-bold" style="height: 8px !important;">
                             <th class="p-0.1 border border-slate-900 col-depth">From</th><th class="p-0.1 border border-slate-900 col-depth">To</th>
                             ${cdSubHeader}
                             <th class="p-0.1 border border-slate-900 col-type">Type</th><th class="p-0.1 border border-slate-900 col-no">No.</th><th class="p-0.1 border border-slate-900 col-rec">%</th>
@@ -1442,14 +1442,14 @@
                         const typeTag = tagMap[r.id];
                         const sNo = r.sampleNo || 1;
                         const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
-                        const cdCell = showCD ? `<td class="p-0.1 border border-slate-800 text-[7px] text-slate-900 font-mono col-cd">${r.cdFrom || '-'}</td><td class="p-0.1 border border-slate-800 text-[7px] text-slate-900 font-mono col-cd">${r.cdTo || '-'}</td>` : '';
+                        const cdCell = showCD ? `<td class="p-0.1 border border-slate-800 text-[6.5px] text-slate-900 font-mono col-cd">${r.cdFrom || '-'}</td><td class="p-0.1 border border-slate-800 text-[6.5px] text-slate-900 font-mono col-cd">${r.cdTo || '-'}</td>` : '';
 
                         let hType = (r.hatchType || 'SAND').toUpperCase();
                         if (hType === 'ROCK') hType = 'SOLID_ROCK';
 
                         const hatchSvg = `
-                            <div class="cell-soil-log w-full h-full min-h-[11px] min-w-[26px] flex items-center justify-center p-0 m-0">
-                                <svg width="100%" height="100%" style="min-height: 11px; display: block;" preserveAspectRatio="none">
+                            <div class="cell-soil-log w-full h-full min-h-[10px] min-w-[24px] flex items-center justify-center p-0 m-0">
+                                <svg width="100%" height="100%" style="min-height: 10px; display: block;" preserveAspectRatio="none">
                                     <rect width="100%" height="100%" fill="url(#hatch-${hType})" />
                                 </svg>
                             </div>
@@ -1463,7 +1463,7 @@
 
                         if (currentMode === 'field') {
                             return `
-                                <tr class="text-slate-900" style="height: 11px !important;">
+                                <tr class="text-slate-900" style="height: 10px !important;">
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
@@ -1475,7 +1475,7 @@
                                     <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                                     <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.2 border border-slate-800 text-left text-[7px] leading-tight text-slate-900 col-desc">${r.description}</td>
+                                    <td class="p-0.2 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
                                     ${optDataCells}
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1484,7 +1484,7 @@
                             `;
                         } else {
                             return `
-                                <tr class="text-slate-900" style="height: 11px !important;">
+                                <tr class="text-slate-900" style="height: 10px !important;">
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthFrom.toFixed(2)}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-depth">${r.depthTo.toFixed(2)}</td>
                                     ${cdCell}
@@ -1494,10 +1494,10 @@
                                     <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n1 : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n2 : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 text-slate-700 font-mono col-spt-sm">${r.sampleType === 'SPT' ? r.n3 : '-'}</td>
-                                    <td class="p-0.1 border border-slate-800 font-bold text-blue-900 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
+                                    <td class="p-0.1 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? r.nVal : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-spt-n">${r.sampleType === 'SPT' ? calc.finalN : '-'}</td>
                                     <td class="cell-soil-log border border-slate-800 col-soil-log p-0">${hatchSvg}</td>
-                                    <td class="p-0.2 border border-slate-800 text-left text-[7px] leading-tight text-slate-900 col-desc">${r.description}</td>
+                                    <td class="p-0.2 border border-slate-800 text-left text-[6.5px] leading-tight text-slate-900 col-desc">${r.description}</td>
                                     ${optDataCells}
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.tcr : '-'}</td>
                                     <td class="p-0.1 border border-slate-800 font-mono text-slate-900 col-rock">${r.sampleType === 'CR' ? calc.scr : '-'}</td>
@@ -1516,29 +1516,29 @@
                 const totalCols = (currentMode === 'field' ? 14 : 15) + extraColsCount + (showCD ? 2 : 0);
 
                 const terminationHtml = isLastPage ? `
-                    <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900" style="height: 12px !important;">
-                        <td colspan="${totalCols}" class="p-0.2 text-center text-[7.5px] uppercase tracking-wider text-slate-900 bg-slate-200">
+                    <tr class="bg-slate-100 text-slate-900 font-bold border-t-2 border-slate-900" style="height: 10px !important;">
+                        <td colspan="${totalCols}" class="p-0.1 text-center text-[7px] uppercase tracking-wider text-slate-900 bg-slate-200">
                             *** The borehole is terminated at a depth of ${maxDepth.toFixed(2)} m below ground level ***
                         </td>
                     </tr>
                 ` : '';
 
                 return `
-                    <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-3 sm:p-4 print-sheet border border-slate-300">
+                    <div class="bg-white text-slate-900 rounded-2xl shadow-2xl p-2.5 sm:p-3 print-sheet border border-slate-300">
                         <!-- TOP SECTION: Document Header & Metadata -->
                         <div class="border-2 border-slate-900">
-                            <div class="bg-slate-100 border-b-2 border-slate-900 p-1 text-center flex items-center justify-between">
+                            <div class="bg-slate-100 border-b-2 border-slate-900 p-0.5 text-center flex items-center justify-between">
                                 <div class="text-left">
-                                    <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-slate-900">${currentMode === 'field' ? 'FIELD BORELOG REPORT' : 'FINAL BORELOG REPORT'}</h2>
-                                    <p class="text-[7px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
+                                    <h2 class="text-xs font-extrabold uppercase tracking-wide text-slate-900">${currentMode === 'field' ? 'FIELD BORELOG REPORT' : 'FINAL BORELOG REPORT'}</h2>
+                                    <p class="text-[6.5px] text-slate-600">Geotechnical Subsurface Investigation (Page ${pageIdx + 1} of ${pages.length})</p>
                                 </div>
                                 <div>
-                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-1.5 py-0.2 rounded text-[7.5px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
+                                    <span class="bg-blue-100 text-blue-900 border border-blue-300 px-1 py-0.1 rounded text-[7px] font-bold">${currentMode === 'field' ? 'FIELD LOG' : 'FINAL LOG'}</span>
                                 </div>
                             </div>
 
                             <!-- Metadata Grid -->
-                            <div class="grid grid-cols-3 gap-0 text-[7.5px] border-collapse border-slate-900 text-slate-900">
+                            <div class="grid grid-cols-3 gap-0 text-[7px] border-collapse border-slate-900 text-slate-900">
                                 <div class="p-0.5 border-r border-b border-slate-900"><strong>Project Title:</strong> <span>${h.title}</span></div>
                                 <div class="p-0.5 border-r border-b border-slate-900"><strong>Project Code:</strong> <span class="font-mono">${h.code}</span></div>
                                 <div class="p-0.5 border-b border-slate-900"><strong>Location:</strong> <span>${h.location}</span></div>
@@ -1548,8 +1548,8 @@
                                 <div class="p-0.5 border-b border-slate-900"><strong>Water Table (GWL):</strong> <span class="font-bold text-blue-800">${h.gwt}</span></div>
                                 
                                 <div class="p-0.5 border-r border-b border-slate-900"><strong>CD Level:</strong> <span>${h.cdLevel}</span></div>
-                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[7px]">${h.proposedCoords}</span></div>
-                                <div class="p-0.5 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[7px]">${h.achievedCoords}</span></div>
+                                <div class="p-0.5 border-r border-b border-slate-900"><strong>Proposed Coords:</strong> <span class="font-mono text-[6.5px]">${h.proposedCoords}</span></div>
+                                <div class="p-0.5 border-b border-slate-900"><strong>Achieved Coords:</strong> <span class="font-mono text-[6.5px]">${h.achievedCoords}</span></div>
                                 
                                 <div class="p-0.5 border-r border-slate-900"><strong>Type of Rig:</strong> <span>${h.rigType || '-'}</span></div>
                                 <div class="p-0.5 col-span-2"><strong>Boring Diameter:</strong> <span>${h.boringDia}</span></div>
@@ -1557,8 +1557,8 @@
                         </div>
 
                         <!-- MIDDLE SECTION: Data Table -->
-                        <div class="overflow-x-auto my-1 flex-1">
-                            <table class="w-full border-collapse border-2 border-slate-900 text-center text-[7px] text-slate-900">
+                        <div class="overflow-x-auto my-0.5 flex-1">
+                            <table class="w-full border-collapse border-2 border-slate-900 text-center text-[6.5px] text-slate-900">
                                 <thead class="bg-slate-100 text-slate-900 font-bold border-b-2 border-slate-900">
                                     ${theadHtml}
                                 </thead>
@@ -1573,20 +1573,20 @@
                         <div class="space-y-0.5 mt-auto pt-0.5">
                             <div class="p-0.5 border border-slate-800 bg-slate-50 flex items-center justify-center gap-4 text-[7px] font-bold text-slate-800">
                                 <span class="text-slate-600">Sub-soil Legend:</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="7" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="7" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="7" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
-                                <span class="flex items-center gap-1"><svg width="10" height="7" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
+                                <span class="flex items-center gap-1"><svg width="10" height="6" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SAND)" /></svg> SAND</span>
+                                <span class="flex items-center gap-1"><svg width="10" height="6" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SILT)" /></svg> SILT</span>
+                                <span class="flex items-center gap-1"><svg width="10" height="6" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-CLAY)" /></svg> CLAY</span>
+                                <span class="flex items-center gap-1"><svg width="10" height="6" class="border border-slate-900"><rect width="100%" height="100%" fill="url(#hatch-SOLID_ROCK)" /></svg> ROCK</span>
                             </div>
 
-                            <div class="border-2 border-slate-900 p-0.5 text-[7.5px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
-                                <div class="space-y-1">
+                            <div class="border-2 border-slate-900 p-0.5 text-[7px] grid grid-cols-2 gap-4 bg-slate-50 text-slate-900">
+                                <div class="space-y-0.5">
                                     <p><strong>Logged By:</strong> <span>${h.loggedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-24 mt-1"></div>
+                                    <div class="border-b border-slate-400 w-24 mt-0.5"></div>
                                 </div>
-                                <div class="space-y-1 text-right">
+                                <div class="space-y-0.5 text-right">
                                     <p><strong>Checked By:</strong> <span>${h.checkedBy}</span></p>
-                                    <div class="border-b border-slate-400 w-24 ml-auto mt-1"></div>
+                                    <div class="border-b border-slate-400 w-24 ml-auto mt-0.5"></div>
                                 </div>
                             </div>
                         </div>
@@ -1759,7 +1759,7 @@
 
             ctx.fillStyle = '#f97316';
             ctx.beginPath(); ctx.arc(legX + 15, legY + 30, 4, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign = 'left';
+            ctx.fillStyle = '#0f172a'; ctx.font = '9.5px Inter, sans-serif'; ctx.textAlign, 'left';
             ctx.fillText("SPT (Final N)", legX + 26, legY + 33);
 
             const bhNo = document.getElementById('meta-bh-no').value || 'BH-01';
