@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v10.5</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v10.6</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,6 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- SheetJS for Excel Import & Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Tesseract.js for Image OCR Scan -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; margin: 0; padding: 0; }
@@ -178,7 +180,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.5 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v10.6 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -196,7 +198,7 @@
 
             <div class="flex items-center space-x-2 text-sm">
                 <button onclick="openImportModal()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-medium rounded-lg shadow transition flex items-center gap-1.5 text-xs">
-                    <i data-lucide="file-up" class="w-3.5 h-3.5"></i> Import Excel
+                    <i data-lucide="file-up" class="w-3.5 h-3.5"></i> Import Excel / Photo
                 </button>
                 <button onclick="window.print()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow transition flex items-center gap-1.5 text-xs">
                     <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Portrait A4
@@ -316,7 +318,7 @@
 
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
                 <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Add SPT Strata Record
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Add Sample & Strata Record
                 </h2>
 
                 <form id="sample-form" onsubmit="saveSample(event)" class="space-y-3 text-xs">
@@ -341,9 +343,18 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-3 gap-2">
                         <div>
-                            <label class="block text-slate-400 mb-0.5">Sample No (SPT)</label>
+                            <label class="block text-slate-400 mb-0.5">Type of Test</label>
+                            <select id="input-sample-type" onchange="toggleRockFields(); autoSuggestSampleNo();" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-semibold">
+                                <option value="SPT">SPT (Standard Penetration)</option>
+                                <option value="DS">DS (Disturbed Sample)</option>
+                                <option value="UDS">UDS (Undisturbed Sample)</option>
+                                <option value="CR">CR (Core Run / Rock)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-0.5">Sample No</label>
                             <input type="number" id="input-sample-no" value="1" min="1" step="1" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-bold">
                         </div>
                         <div>
@@ -390,6 +401,25 @@
                         </div>
                     </div>
 
+                    <!-- Rock Core Section -->
+                    <div id="rock-core-section" class="bg-slate-950 p-3 rounded-xl border border-purple-500/30 space-y-2 hidden">
+                        <div class="text-purple-300 font-semibold text-[11px]">Rock Core Parameters</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-slate-400 text-[10px] mb-0.5">Core Recovered (m)</label>
+                                <input type="number" step="0.01" id="input-core-rec" value="3.80" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 text-[10px] mb-0.5">Solid Core Intact (m)</label>
+                                <input type="number" step="0.01" id="input-solid-core" value="3.20" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white text-xs">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 text-[10px] mb-0.5">Rock Pieces >10cm (m) (comma separated)</label>
+                            <input type="text" id="input-rock-pieces" value="0.15, 0.22, 0.35, 0.40, 0.18, 0.25" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white font-mono text-xs">
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-slate-400 mb-0.5">Strata Description</label>
                         <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Very Loose to Loose, fine silty SAND or Sandstone."></textarea>
@@ -417,7 +447,7 @@
 
                     <div class="flex items-center gap-2 pt-1">
                         <button type="submit" id="btn-submit-sample" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg shadow transition flex items-center justify-center gap-1.5 text-xs">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Add SPT Record Row
+                            <i data-lucide="plus" class="w-4 h-4"></i> Add Record Row
                         </button>
                         <button type="button" onclick="clearSampleForm()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg text-xs">
                             Reset
@@ -520,13 +550,13 @@
 
     </main>
 
-    <!-- MODAL WINDOW FOR EXCEL IMPORT -->
+    <!-- MODAL WINDOW FOR EXCEL & PHOTO SCAN IMPORT -->
     <div id="import-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
                     <i data-lucide="upload-cloud" class="w-5 h-5 text-amber-400"></i>
-                    Import Excel Borehole Log
+                    Import Excel Sheet or Photo Borelog
                 </h3>
                 <button onclick="closeImportModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
@@ -544,10 +574,28 @@
 
             <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
                 <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Upload Excel File (.xlsx, .xls, .csv)
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i> Option 1: Upload Excel File (.xlsx, .xls, .csv)
                 </div>
-                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app extracts exact sample recoveries and SPT blow counts.</p>
+                <p class="text-[11px] text-slate-400">Upload your borehole log Excel file. The app extracts exact sample recoveries, test types, and blow counts.</p>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
+            </div>
+
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <i data-lucide="camera" class="w-4 h-4 text-blue-400"></i> Option 2: Scan Photo of Borelog Sheet (.png, .jpg)
+                </div>
+                <p class="text-[11px] text-slate-400">Upload or snap a photo of a printed borelog sheet. Tesseract OCR scanner will parse tabular entries.</p>
+                <input type="file" id="image-file-input" accept="image/*" onchange="handleImageScan(event)" class="block w-full text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
+            </div>
+
+            <div id="ocr-status-box" class="hidden bg-slate-950 p-3 rounded-lg border border-blue-500/30 text-xs space-y-1">
+                <div class="flex items-center justify-between text-blue-300 font-medium">
+                    <span id="ocr-status-text">Scanning borelog image...</span>
+                    <span id="ocr-percentage" class="font-mono font-bold">0%</span>
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                    <div id="ocr-progress-bar" class="bg-blue-500 h-1.5 transition-all duration-200" style="width: 0%"></div>
+                </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
@@ -606,14 +654,16 @@
 
             const worksheet = XLSX.utils.json_to_sheet(sampleTemplateData);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "SPT_Borehole_Template");
-            XLSX.writeFile(workbook, "SPT_Borelog_Template.xlsx");
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Borehole_Template");
+            XLSX.writeFile(workbook, "Borelog_Sample_Template.xlsx");
         }
 
         function computeTypeTagMap() {
+            const counts = {};
             const tagMap = {};
-            records.forEach((r, idx) => {
-                tagMap[r.id] = `SPT-${String(idx + 1).padStart(2, '0')}`;
+            records.forEach(r => {
+                counts[r.sampleType] = (counts[r.sampleType] || 0) + 1;
+                tagMap[r.id] = `${r.sampleType}-${String(counts[r.sampleType]).padStart(2, '0')}`;
             });
             return tagMap;
         }
@@ -644,6 +694,7 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             safeInitIcons();
+            toggleRockFields();
             updateAll();
         });
 
@@ -680,6 +731,7 @@
                                 let val = String(cell).toLowerCase().trim().replace(/[^a-z0-9]/g, '');
                                 if (val.includes('depthfrom') || val === 'from') colMap.depthFrom = cIdx;
                                 if (val.includes('depthto') || val === 'to') colMap.depthTo = cIdx;
+                                if (val.includes('sampletype') || val === 'type') colMap.sampleType = cIdx;
                                 if (val.includes('sampleno') || val === 'no') colMap.sampleNo = cIdx;
                                 if (val.includes('recovery') || val.includes('%')) colMap.recovery = cIdx;
                                 if (val.includes('15cm') || val === 'n1') colMap.n1 = cIdx;
@@ -705,20 +757,34 @@
                         let dTo = parseFloat(row[colMap.depthTo ?? 1]) || parseFloat(row[1]) || (dFrom + 1.5);
                         if (dFrom === dTo) dTo = dFrom + 1.5;
 
+                        let sType = 'SPT';
                         let sNo = idx + 1;
-                        let numCandidate = parseInt(row[colMap.sampleNo ?? 3] || row[3]);
-                        if (!isNaN(numCandidate)) sNo = numCandidate;
+                        let typeCell = String(row[colMap.sampleType ?? 2] || row[2] || '').trim().toUpperCase();
+                        
+                        if (typeCell.includes('DS') && !typeCell.includes('UDS')) sType = 'DS';
+                        else if (typeCell.includes('UDS')) sType = 'UDS';
+                        else if (typeCell.includes('SPT')) sType = 'SPT';
+                        else if (typeCell.includes('CR') || typeCell.includes('CORE')) sType = 'CR';
+
+                        if (typeCell.includes('-')) {
+                            let parts = typeCell.split('-');
+                            sType = parts[0].trim();
+                            if (parts[1] && !isNaN(parts[1])) sNo = parseInt(parts[1]);
+                        } else {
+                            let numCandidate = parseInt(row[colMap.sampleNo ?? 3] || row[3]);
+                            if (!isNaN(numCandidate)) sNo = numCandidate;
+                        }
 
                         let recoveryVal = 100;
                         let recCandidate = parseFloat(row[colMap.recovery ?? 4] || row[4]);
                         if (!isNaN(recCandidate)) recoveryVal = recCandidate;
 
-                        let n1 = String(row[colMap.n1 ?? 5] || row[5] || '1').trim();
-                        let n2 = String(row[colMap.n2 ?? 6] || row[6] || '1').trim();
-                        let n3 = String(row[colMap.n3 ?? 7] || row[7] || '1').trim();
-                        let nVal = String(row[colMap.nVal ?? 8] || row[8] || '2').trim();
+                        let n1 = sType === 'SPT' ? String(row[colMap.n1 ?? 5] || row[5] || '1').trim() : '-';
+                        let n2 = sType === 'SPT' ? String(row[colMap.n2 ?? 6] || row[6] || '1').trim() : '-';
+                        let n3 = sType === 'SPT' ? String(row[colMap.n3 ?? 7] || row[7] || '1').trim() : '-';
+                        let nVal = sType === 'SPT' ? String(row[colMap.nVal ?? 8] || row[8] || '2').trim() : '-';
 
-                        if ((nVal === '-' || nVal === '') && !isNaN(parseInt(n2)) && !isNaN(parseInt(n3))) {
+                        if (sType === 'SPT' && (nVal === '-' || nVal === '') && !isNaN(parseInt(n2)) && !isNaN(parseInt(n3))) {
                             nVal = String(parseInt(n2) + parseInt(n3));
                         }
 
@@ -751,7 +817,7 @@
                             depthTo: dTo,
                             cdFrom: cdFromStr, 
                             cdTo: cdToStr,
-                            sampleType: 'SPT', 
+                            sampleType: sType, 
                             sampleNo: sNo,
                             recoveryPct: recoveryVal,
                             n1: n1, n2: n2, n3: n3, nVal: nVal,
@@ -768,7 +834,7 @@
                         records.sort((a, b) => a.depthFrom - b.depthFrom);
                         updateAll();
                         closeImportModal();
-                        alert(`Successfully imported ${importedRecords.length} SPT records!`);
+                        alert(`Successfully imported ${importedRecords.length} records!`);
                     }
                 } catch(err) {
                     console.error("Excel import failed:", err);
@@ -776,6 +842,112 @@
                 }
             };
             reader.readAsArrayBuffer(file);
+        }
+
+        function handleImageScan(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusBox = document.getElementById('ocr-status-box');
+            const statusText = document.getElementById('ocr-status-text');
+            const percentageText = document.getElementById('ocr-percentage');
+            const progressBar = document.getElementById('ocr-progress-bar');
+
+            statusBox.classList.remove('hidden');
+
+            Tesseract.recognize(
+                file, 'eng',
+                {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.round(m.progress * 100);
+                            statusText.innerText = 'Scanning borelog photo...';
+                            percentageText.innerText = `${pct}%`;
+                            progressBar.style.width = `${pct}%`;
+                        } else {
+                            statusText.innerText = m.status;
+                        }
+                    }
+                }
+            ).then(({ data: { text } }) => {
+                statusBox.classList.add('hidden');
+                parseOCRText(text);
+                closeImportModal();
+            }).catch(err => {
+                statusBox.classList.add('hidden');
+                alert("OCR scan failed. Try uploading a clearer image.");
+            });
+        }
+
+        function parseOCRText(rawText) {
+            const lines = rawText.split('\n');
+            const newRecords = [];
+            const datumVal = parseFloat(document.getElementById('meta-cd-level').value);
+
+            lines.forEach((line, idx) => {
+                const depthMatch = line.match(/(\d+\.?\d*)\s*(?:-|to|\s+)\s*(\d+\.?\d*)/i);
+                if (depthMatch) {
+                    const dFrom = parseFloat(depthMatch[1]);
+                    const dTo = parseFloat(depthMatch[2]);
+                    if (!isNaN(dFrom) && !isNaN(dTo) && dTo > dFrom) {
+                        let sType = 'SPT';
+                        if (/DS/i.test(line) && !/UDS/i.test(line)) sType = 'DS';
+                        else if (/UDS/i.test(line)) sType = 'UDS';
+                        else if (/CR|CORE/i.test(line)) sType = 'CR';
+
+                        let n1 = '1', n2 = '1', n3 = '1', nVal = '2';
+                        if (sType !== 'SPT') {
+                            n1 = '-'; n2 = '-'; n3 = '-'; nVal = '-';
+                        } else if (/R|REFUSAL/i.test(line)) {
+                            n2 = '15'; n3 = 'R'; nVal = 'R';
+                        } else {
+                            const numbers = line.match(/\b\d+\b/g) || [];
+                            if (numbers.length >= 3) {
+                                n1 = numbers[numbers.length - 3];
+                                n2 = numbers[numbers.length - 2];
+                                n3 = numbers[numbers.length - 1];
+                                nVal = String((parseInt(n2) || 0) + (parseInt(n3) || 0));
+                            }
+                        }
+
+                        let hatch = 'SAND';
+                        let desc = 'Sand';
+                        let descUp = line.toUpperCase();
+                        if (descUp.includes('CLAY')) { hatch = 'CLAY'; desc = 'Clay'; }
+                        else if (descUp.includes('ROCK') || descUp.includes('SANDSTONE') || descUp.includes('BASALT') || descUp.includes('GRANITE')) { hatch = 'SOLID_ROCK'; desc = 'Sandstone'; }
+
+                        let cdFromStr = '', cdToStr = '';
+                        if (!isNaN(datumVal)) {
+                            const cF = datumVal - dFrom;
+                            const cT = datumVal - dTo;
+                            cdFromStr = cF >= 0 ? `+${cF.toFixed(2)}` : cF.toFixed(2);
+                            cdToStr = cT >= 0 ? `+${cT.toFixed(2)}` : cT.toFixed(2);
+                        }
+
+                        newRecords.push({
+                            id: Date.now().toString() + '_' + idx,
+                            depthFrom: dFrom, depthTo: dTo,
+                            cdFrom: cdFromStr, cdTo: cdToStr,
+                            sampleType: sType, sampleNo: newRecords.length + 1,
+                            recoveryPct: 100,
+                            n1: n1, n2: n2, n3: n3, nVal: nVal,
+                            hatchType: hatch, unitWeight: 20.0,
+                            description: desc,
+                            coreRec: 0, solidCore: 0, rockPieces: '',
+                            pointLoad: '', ucs: '', tv: '', pp: ''
+                        });
+                    }
+                }
+            });
+
+            if (newRecords.length > 0) {
+                records = newRecords;
+                records.sort((a, b) => a.depthFrom - b.depthFrom);
+                updateAll();
+                alert(`Scanned ${newRecords.length} records successfully!`);
+            } else {
+                alert("Could not detect depth records from photo.");
+            }
         }
 
         function setLogMode(mode) {
@@ -817,6 +989,11 @@
         }
 
         function calcNValue() {
+            const sampleType = document.getElementById('input-sample-type').value;
+            if (sampleType !== 'SPT') {
+                document.getElementById('input-n-val').value = '-';
+                return;
+            }
             const n2Str = document.getElementById('input-n2').value.trim();
             const n3Str = document.getElementById('input-n3').value.trim();
             
@@ -833,10 +1010,25 @@
         }
 
         function toggleRockFields() {
-            // Maintained for compatibility
+            const sampleType = document.getElementById('input-sample-type').value;
+            const rockSection = document.getElementById('rock-core-section');
+            if (sampleType === 'CR') { rockSection.classList.remove('hidden'); }
+            else { rockSection.classList.add('hidden'); }
+
+            if (sampleType !== 'SPT') {
+                document.getElementById('input-n1').value = '-';
+                document.getElementById('input-n2').value = '-';
+                document.getElementById('input-n3').value = '-';
+                document.getElementById('input-n-val').value = '-';
+            } else {
+                document.getElementById('input-n1').value = '1';
+                document.getElementById('input-n2').value = '1';
+                document.getElementById('input-n3').value = '1';
+                document.getElementById('input-n-val').value = '2';
+            }
         }
 
-        // IS 2131 Calculation Engine (SPT Only)
+        // IS 2131 Calculation Engine (Strictly SPT Only for Corrections Table)
         function computeCalculatedFields(r, gwt, er, sortedRecords) {
             let current_sigma_v_top = 0.0;
             let current_depth = 0.0;
@@ -867,6 +1059,21 @@
             }
 
             const sampleRecPct = r.recoveryPct !== undefined ? r.recoveryPct : 100;
+
+            if (r.sampleType !== 'SPT') {
+                return {
+                    sampleRecPct,
+                    nField: '-',
+                    n60: '-',
+                    bulkDensity: r.unitWeight,
+                    effStress: '-',
+                    Cn: '-',
+                    nPrime: '-',
+                    nDoublePrime: '-',
+                    finalN: '-'
+                };
+            }
+
             let nValNumeric = 2;
             const uVal = String(r.nVal).trim().toUpperCase();
             const isRefusal = uVal === 'R' || uVal === 'REFUSAL' || String(r.n2).toUpperCase() === 'R' || String(r.n3).toUpperCase() === 'R';
@@ -911,6 +1118,7 @@
             const depthFrom = parseFloat(document.getElementById('input-depth-from').value) || 0;
             const depthTo = parseFloat(document.getElementById('input-depth-to').value) || 1;
             const sampleNo = parseInt(document.getElementById('input-sample-no').value) || (records.length + 1);
+            const sampleType = document.getElementById('input-sample-type').value;
 
             const descText = document.getElementById('input-description').value;
             let hatch = document.getElementById('input-hatch-type').value;
@@ -925,18 +1133,23 @@
                 depthFrom, depthTo,
                 cdFrom: document.getElementById('input-cd-from').value,
                 cdTo: document.getElementById('input-cd-to').value,
-                sampleType: 'SPT',
+                sampleType: sampleType,
                 sampleNo,
                 recoveryPct: parseFloat(document.getElementById('input-recovery-pct').value) || 100,
-                n1: document.getElementById('input-n1').value.trim(),
-                n2: document.getElementById('input-n2').value.trim(),
-                n3: document.getElementById('input-n3').value.trim(),
-                nVal: document.getElementById('input-n-val').value.trim(),
+                n1: sampleType === 'SPT' ? document.getElementById('input-n1').value.trim() : '-',
+                n2: sampleType === 'SPT' ? document.getElementById('input-n2').value.trim() : '-',
+                n3: sampleType === 'SPT' ? document.getElementById('input-n3').value.trim() : '-',
+                nVal: sampleType === 'SPT' ? document.getElementById('input-n-val').value.trim() : '-',
                 hatchType: hatch,
                 unitWeight: parseFloat(document.getElementById('input-unit-weight').value) || 20.0,
                 description: descText,
-                coreRec: 0, solidCore: 0, rockPieces: '',
-                pointLoad: '', ucs: '', tv: '', pp: ''
+                coreRec: parseFloat(document.getElementById('input-core-rec').value) || 0,
+                solidCore: parseFloat(document.getElementById('input-solid-core').value) || 0,
+                rockPieces: document.getElementById('input-rock-pieces').value,
+                pointLoad: document.getElementById('input-point-load').value.trim(),
+                ucs: document.getElementById('input-ucs').value.trim(),
+                tv: document.getElementById('input-tv').value.trim(),
+                pp: document.getElementById('input-pp').value.trim()
             };
 
             if (editId) {
@@ -959,16 +1172,26 @@
             document.getElementById('input-depth-to').value = r.depthTo;
             document.getElementById('input-cd-from').value = r.cdFrom || '';
             document.getElementById('input-cd-to').value = r.cdTo || '';
+            document.getElementById('input-sample-type').value = r.sampleType;
             document.getElementById('input-sample-no').value = r.sampleNo;
             document.getElementById('input-recovery-pct').value = r.recoveryPct !== undefined ? r.recoveryPct : 100;
-            document.getElementById('input-n1').value = r.n1 || '1';
-            document.getElementById('input-n2').value = r.n2 || '1';
-            document.getElementById('input-n3').value = r.n3 || '1';
-            document.getElementById('input-n-val').value = r.nVal || '2';
+            document.getElementById('input-n1').value = r.n1 || '-';
+            document.getElementById('input-n2').value = r.n2 || '-';
+            document.getElementById('input-n3').value = r.n3 || '-';
+            document.getElementById('input-n-val').value = r.nVal || '-';
             document.getElementById('input-hatch-type').value = r.hatchType || 'SAND';
             document.getElementById('input-unit-weight').value = r.unitWeight || 20.0;
             document.getElementById('input-description').value = r.description || '';
 
+            document.getElementById('input-core-rec').value = r.coreRec || 0;
+            document.getElementById('input-solid-core').value = r.solidCore || 0;
+            document.getElementById('input-rock-pieces').value = r.rockPieces || '';
+            document.getElementById('input-point-load').value = r.pointLoad || '';
+            document.getElementById('input-ucs').value = r.ucs || '';
+            document.getElementById('input-tv').value = r.tv || '';
+            document.getElementById('input-pp').value = r.pp || '';
+
+            toggleRockFields();
             safeInitIcons();
         }
 
@@ -988,7 +1211,7 @@
 
         function clearSampleForm() {
             document.getElementById('edit-id').value = '';
-            document.getElementById('btn-submit-sample').innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i> Add SPT Record Row';
+            document.getElementById('btn-submit-sample').innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i> Add Record Row';
             const lastTo = records.length > 0 ? records[records.length - 1].depthTo : 0.0;
             document.getElementById('input-depth-from').value = lastTo.toFixed(2);
             document.getElementById('input-depth-to').value = (lastTo + 0.5).toFixed(2);
@@ -1014,13 +1237,16 @@
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
             const tagMap = computeTypeTagMap();
 
-            if (sortedRecords.length === 0) {
-                if (panelTbody) panelTbody.innerHTML = `<tr><td colspan="11" class="p-3 text-slate-500 italic">No records added.</td></tr>`;
+            // Filter strictly for SPT records in the summary calculation table
+            const sptRecords = sortedRecords.filter(r => r.sampleType === 'SPT');
+
+            if (sptRecords.length === 0) {
+                if (panelTbody) panelTbody.innerHTML = `<tr><td colspan="11" class="p-3 text-slate-500 italic">No SPT records added for corrections.</td></tr>`;
                 return;
             }
 
             let panelHtml = '';
-            sortedRecords.forEach((r) => {
+            sptRecords.forEach((r) => {
                 const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
                 const tag = tagMap[r.id];
                 const midD = ((r.depthFrom + r.depthTo) / 2.0).toFixed(1);
@@ -1049,14 +1275,15 @@
             const er = parseFloat(document.getElementById('meta-energy-efficiency').value) || 60;
             const gwt = parseFloat(document.getElementById('meta-gwt').value) || 2.5;
             const sortedRecords = [...records].sort((a, b) => a.depthFrom - b.depthFrom);
+            const sptRecords = sortedRecords.filter(r => r.sampleType === 'SPT');
 
-            if (sortedRecords.length === 0) {
-                alert("No data available to export.");
+            if (sptRecords.length === 0) {
+                alert("No SPT data available to export.");
                 return;
             }
 
             const tagMap = computeTypeTagMap();
-            const exportData = sortedRecords.map(r => {
+            const exportData = sptRecords.map(r => {
                 const calc = computeCalculatedFields(r, gwt, er, sortedRecords);
                 return {
                     "Sample Type": tagMap[r.id],
@@ -1262,6 +1489,13 @@
                         if (showPL) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-purple-900 font-semibold">${(showPL && r.pointLoad) ? r.pointLoad : '-'}</td>`;
                         if (showUCS) optDataCells += `<td class="p-0.2 border border-slate-800 font-mono text-purple-900 font-semibold">${(showUCS && r.ucs) ? r.ucs : '-'}</td>`;
 
+                        const isSpt = r.sampleType === 'SPT';
+                        const colN1 = isSpt ? r.n1 : '-';
+                        const colN2 = isSpt ? r.n2 : '-';
+                        const colN3 = isSpt ? r.n3 : '-';
+                        const colNVal = isSpt ? r.nVal : '-';
+                        const colFinalN = isSpt ? calc.finalN : '-';
+
                         if (currentMode === 'field') {
                             return `
                                 <tr class="text-slate-900">
@@ -1271,16 +1505,16 @@
                                     <td class="p-0.2 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
                                     <td class="p-0.2 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
                                     <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n1}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n2}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n3}</td>
-                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-n-val">${r.nVal}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${colN1}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${colN2}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${colN3}</td>
+                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 bg-blue-50 font-mono col-n-val">${colNVal}</td>
                                     <td class="cell-soil-log border-x border-slate-800 border-t border-b-0 w-6 p-0" style="border-bottom: none !important;">${hatchSvg}</td>
                                     <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.tcr || '-') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.scr || '-') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.rqd || '-') : '-'}</td>
                                 </tr>
                             `;
                         } else {
@@ -1292,17 +1526,17 @@
                                     <td class="p-0.2 border border-slate-800 font-semibold text-slate-900">${typeTag}</td>
                                     <td class="p-0.2 border border-slate-800 font-mono font-bold text-slate-900">${sNo}</td>
                                     <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${calc.sampleRecPct}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n1}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n2}</td>
-                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${r.n3}</td>
-                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${r.nVal}</td>
-                                    <td class="p-0.2 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${calc.finalN}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${colN1}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${colN2}</td>
+                                    <td class="p-0.2 border border-slate-800 text-slate-700 font-mono">${colN3}</td>
+                                    <td class="p-0.2 border border-slate-800 font-bold text-blue-900 font-mono col-n-val">${colNVal}</td>
+                                    <td class="p-0.2 border border-slate-800 font-bold text-amber-900 bg-amber-50 font-mono col-n-val">${colFinalN}</td>
                                     <td class="cell-soil-log border-x border-slate-800 border-t border-b-0 w-6 p-0" style="border-bottom: none !important;">${hatchSvg}</td>
                                     <td class="p-0.5 border border-slate-800 text-left text-[7px] leading-tight text-slate-900">${r.description}</td>
                                     ${optDataCells}
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
-                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">-</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.tcr || '-') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.scr || '-') : '-'}</td>
+                                    <td class="p-0.2 border border-slate-800 font-mono text-slate-900">${r.sampleType === 'CR' ? (r.rqd || '-') : '-'}</td>
                                 </tr>
                             `;
                         }
