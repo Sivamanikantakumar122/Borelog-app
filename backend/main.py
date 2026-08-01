@@ -13,11 +13,11 @@ from scipy.interpolate import make_interp_spline
 
 app = FastAPI(
     title="Geotechnical Borelog Calculation & Graph Engine API",
-    description="Calculates SPT corrections (N60, Overburden, Dilatancy), Rock Core Recoveries (TCR, SCR, RQD), and generates SPT Depth Profile Plots.",
-    version="1.0.0"
+    description="Calculates IS 2131 SPT corrections (N' / N60, Overburden Cn, Dilatancy, Final N''), Rock Core Recoveries, and generates SPT Depth Profile Plots.",
+    version="1.2.0"
 )
 
-# Enable CORS for Vercel Frontend Connection
+# Enable CORS for Frontend Connection
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -64,34 +64,31 @@ class CalculatedRecordResponse(BaseModel):
     rqdPct: float
     effectiveOverburdenStress: float
     Cn: Optional[float] = None
-    N1_E: Optional[str] = None
-    N1_final_dilatancy: Optional[str] = None
+    N_prime: Optional[str] = None         # N' (Energy corrected)
+    N_double_prime: Optional[str] = None  # N'' (Final Overburden & Dilatancy Corrected N1)
 
 @app.post("/api/calculate", response_model=List[CalculatedRecordResponse])
 def calculate_borelog(request: BorelogCalculationRequest):
     """
-    Computes all geotechnical parameters with cumulative overburden stress:
-    - Cumulative effective overburden stress sigma_v' summed down through all preceding strata layers.
-    - SPT Corrections (N60, Cn, N1_E, Dilatancy N1'') applied ONLY to SPT samples.
-    - Handles 'R' / 'Refusal' by setting N'' as 'Refusal' and using 100 as the final output value for graphs/computations.
-    - Non-SPT samples (DS, UDS, CR) contribute to overburden stress accumulation but ignore SPT corrections.
+    Computes geotechnical parameters with cumulative effective overburden stress:
+    - Sums effective overburden stress down through preceding layers.
+    - Applies Energy Correction (N60 / N'), Overburden Factor (Cn), and Dilatancy Correction (N'').
     """
     Er = min(request.energyEfficiency, 90.0)
     Pa = 101.30269  # Atmospheric Pressure in kPa
     gwt = request.waterTableDepth
 
-    # Sort records by depthFrom to ensure sequential stress accumulation from top to bottom
+    # Sort records sequentially by depth
     sorted_records = sorted(request.records, key=lambda x: x.depthFrom)
 
     current_depth = 0.0
     current_sigma_v_top = 0.0
-
     calc_map = {}
 
     for r in sorted_records:
         interval = max(0.01, r.depthTo - r.depthFrom)
         
-        # 1. Fill gap if depthFrom > current_depth
+        # Fill gap if depthFrom > current tracked depth
         if r.depthFrom > current_depth:
             gap = r.depthFrom - current_depth
             gap_mid = current_depth + gap / 2.0
@@ -99,7 +96,6 @@ def calculate_borelog(request: BorelogCalculationRequest):
             current_sigma_v_top += max(0.1, gap_gamma) * gap
             current_depth = r.depthFrom
 
-        # 2. Cumulative Effective Overburden Stress at Midpoint & Bottom of current layer
         half_interval = interval / 2.0
         mid_depth = r.depthFrom + half_interval
 
@@ -111,20 +107,16 @@ def calculate_borelog(request: BorelogCalculationRequest):
         sigma_v_prime_mid = current_sigma_v_top + eff_gamma * half_interval
         sigma_v_prime_bottom = current_sigma_v_top + eff_gamma * interval
 
-        # Advance top stress for next layer
         current_sigma_v_top = sigma_v_prime_bottom
         current_depth = r.depthTo
 
-        # Ensure positive stress for log calculation
         sigma_v_prime = max(1.0, sigma_v_prime_mid)
 
-        # 3. Sample Recovery
+        # Sample Recovery
         sample_rec_pct = min(100.0, (r.recoveredLength / interval) * 100.0)
 
-        # 4. Rock Core Recoveries
-        tcr_pct = 0.0
-        scr_pct = 0.0
-        rqd_pct = 0.0
+        # Rock Core Recoveries
+        tcr_pct, scr_pct, rqd_pct = 0.0, 0.0, 0.0
         if r.sampleType == 'CR':
             tcr_pct = min(100.0, (r.coreRec / interval) * 100.0)
             raw_scr = (r.solidCore / interval) * 100.0
@@ -141,12 +133,12 @@ def calculate_borelog(request: BorelogCalculationRequest):
                         pass
             rqd_pct = min(100.0, (sum_pieces / interval) * 100.0)
 
-        # 5. SPT Corrections (ONLY for SPT samples)
+        # SPT Corrections (ONLY for SPT samples)
         n_val_str = "0"
         n60_str = None
         Cn = None
-        N1_E_str = None
-        N1_final_str = None
+        n_prime_str = None
+        n_double_prime_str = None
 
         if r.sampleType == 'SPT':
             n2_str = str(r.n2).strip()
@@ -157,32 +149,36 @@ def calculate_borelog(request: BorelogCalculationRequest):
             if is_refusal:
                 n_val_str = "R"
                 n60_str = "R"
-                N1_E_str = "Refusal"
-                N1_final_str = "Refusal"
+                n_prime_str = "Refusal"
+                n_double_prime_str = "Refusal"
             else:
                 try:
-                    val2 = int(n2_str) if n2_str else 0
-                    val3 = int(n3_str) if n3_str else 0
+                    val2 = int(n2_str) if n2_str.isdigit() else 0
+                    val3 = int(n3_str) if n3_str.isdigit() else 0
                     n_num = val2 + val3
                 except ValueError:
                     n_num = int(r.nVal) if r.nVal and str(r.nVal).isdigit() else 0
 
                 n_val_str = str(n_num)
-                n60_val = round((Er / 60.0) * n_num)
+                
+                # 1. Energy correction: N' (N60) = N * (Er / 60)
+                n60_val = round((min(Er, 90.0) / 60.0) * n_num)
                 n60_str = str(n60_val)
+                n_prime_str = str(n60_val)
 
+                # 2. Overburden pressure correction factor Cn = 0.77 * log10(20 * Pa / sigma_v')
                 Cn_raw = 0.77 * math.log10((20.0 * Pa) / sigma_v_prime)
                 Cn = max(0.40, min(2.00, Cn_raw))
 
-                N1_E_raw = Cn * n60_val
-                N1_E_str = str(round(N1_E_raw, 1))
+                # 3. Dilatancy check (IS 2131): if N' > 15 in fine sand/silt below water table
+                n_base_for_overburden = float(n60_val)
+                is_submerged_fine_soil = mid_depth > gwt and ('SAND' in str(r.description).upper() or 'SILT' in str(r.description).upper())
+                if is_submerged_fine_soil and n60_val > 15:
+                    n_base_for_overburden = 15.0 + 0.5 * (n60_val - 15.0)
 
-                if N1_E_raw <= 15.0:
-                    N1_final_raw = N1_E_raw
-                else:
-                    N1_final_raw = 15.0 + 0.5 * (N1_E_raw - 15.0)
-
-                N1_final_str = str(round(N1_final_raw, 1))
+                # 4. Final Corrected N'' = Cn * N_base
+                n_double_prime_val = Cn * n_base_for_overburden
+                n_double_prime_str = str(round(n_double_prime_val, 1))
 
         calc_map[r.id] = CalculatedRecordResponse(
             id=r.id,
@@ -195,21 +191,16 @@ def calculate_borelog(request: BorelogCalculationRequest):
             rqdPct=round(rqd_pct, 1),
             effectiveOverburdenStress=round(sigma_v_prime, 2),
             Cn=round(Cn, 3) if Cn is not None else None,
-            N1_E=N1_E_str,
-            N1_final_dilatancy=N1_final_str
+            N_prime=n_prime_str,
+            N_double_prime=n_double_prime_str
         )
 
-    # Return results in the original request order
     return [calc_map[r.id] for r in request.records]
 
 @app.post("/api/spt-graph")
 def generate_spt_graph(request: BorelogCalculationRequest):
     """
-    Generates a high-resolution Matplotlib SPT Depth Profile Graph matching
-    the exact visual styling of reference image:
-    - Top X-axis labeled 'SPT 'N' & Corrected 'N₁' Value' (0 to 100)
-    - Inverted Y-axis labeled 'Depth below Ground Level (m)' (0 to 25m)
-    - Handles 'Refusal' (R) by mapping value to 100 for graph plotting.
+    Generates a Matplotlib SPT Depth Profile Graph with field N and final corrected N'' profiles.
     """
     calcs = calculate_borelog(request)
     
@@ -222,7 +213,6 @@ def generate_spt_graph(request: BorelogCalculationRequest):
             mid_d = (r.depthFrom + r.depthTo) / 2.0
             depths.append(mid_d)
             
-            # Field N value parsing with Refusal check
             n2_s = str(r.n2).strip().upper()
             n3_s = str(r.n3).strip().upper()
             if n2_s in ['R', 'REFUSAL'] or n3_s in ['R', 'REFUSAL'] or str(r.nVal).strip().upper() in ['R', 'REFUSAL']:
@@ -233,8 +223,7 @@ def generate_spt_graph(request: BorelogCalculationRequest):
                 except ValueError:
                     n_field.append(float(r.nVal) if str(r.nVal).replace('.','',1).isdigit() else 50.0)
 
-            # Corrected N value parsing with Refusal check
-            corr_str = str(calcs[idx].N1_final_dilatancy).strip().upper()
+            corr_str = str(calcs[idx].N_double_prime).strip().upper()
             if corr_str in ['REFUSAL', 'R']:
                 n_corrected.append(100.0)
             else:
@@ -260,31 +249,28 @@ def generate_spt_graph(request: BorelogCalculationRequest):
             n_corr_smooth = spl_corr(depths_smooth)
 
             ax.plot(n_field_smooth, depths_smooth, color='#2563eb', linestyle='-', linewidth=2.0, label='SPT N Value')
-            ax.plot(n_corr_smooth, depths_smooth, color='#d97706', linestyle='-', linewidth=2.0, label='Corrected N₁ Value')
+            ax.plot(n_corr_smooth, depths_smooth, color='#d97706', linestyle='-', linewidth=2.0, label="Corrected N'' Value")
         except Exception:
             ax.plot(n_field, depths, color='#2563eb', linestyle='-', label='SPT N Value')
-            ax.plot(n_corrected, depths, color='#d97706', linestyle='-', label='Corrected N₁ Value')
+            ax.plot(n_corrected, depths, color='#d97706', linestyle='-', label="Corrected N'' Value")
 
     ax.scatter(n_field, depths, color='#2563eb', s=35, zorder=5)
     ax.scatter(n_corrected, depths, color='#d97706', s=35, zorder=5)
 
-    # Invert Y-axis & set bounds
     ax.set_ylim(25, 0)
     ax.set_xlim(0, 100)
 
-    # Move X-axis to top
     ax.xaxis.tick_top()
     ax.xaxis.set_label_position('top')
 
-    ax.set_xlabel("SPT 'N' & Corrected 'N₁' Value", fontsize=11, fontweight='bold', family='serif', labelpad=10)
+    ax.set_xlabel("SPT 'N' & Corrected 'N'' Value", fontsize=11, fontweight='bold', family='serif', labelpad=10)
     ax.set_ylabel("Depth below Ground Level (m)", fontsize=10, family='serif', labelpad=8)
     
     ax.grid(True, linestyle='--', color='#e2e8f0', alpha=0.8)
     ax.legend(loc='upper right', fontsize=9, frameon=True, facecolor='white', edgecolor='#cbd5e1')
 
-    # Add Borehole ID at bottom left inside plot
     bh_no = request.boreholeNo or 'BH-01'
-    ax.text(0.08, 0.08, f"Borehole: {bh_no} (Continuous N & N₁ Profiles)", transform=ax.transAxes, fontsize=11, fontweight='bold', family='serif')
+    ax.text(0.08, 0.08, f"Borehole: {bh_no} (Continuous N & N'' Profiles)", transform=ax.transAxes, fontsize=11, fontweight='bold', family='serif')
 
     plt.tight_layout()
     
