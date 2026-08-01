@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geotechnical Borelog Studio - Portrait Pro v6.9</title>
+    <title>Geotechnical Borelog Studio - Portrait Pro v7.0</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -158,7 +158,7 @@
                 <div>
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
                         Geotech Borelog Studio
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v6.9 Pro</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full font-mono">v7.0 Pro</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">Developed by <span class="text-blue-400 font-medium">Siva Manikanta Kumar</span></p>
                 </div>
@@ -266,31 +266,6 @@
                         </label>
                         <input type="number" id="meta-energy-efficiency" min="10" max="90" value="60" oninput="validateEnergyEfficiency(); updateAll()" class="w-full bg-slate-900 border border-amber-500/40 rounded-lg p-2 text-amber-100 font-bold outline-none">
                     </div>
-                </div>
-            </div>
-
-            <!-- Optional Columns Checkboxes (PL, UCS, TV, PP) -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                    <i data-lucide="check-square" class="w-4 h-4 text-amber-400"></i> Optional Strength Test Columns
-                </h2>
-                <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
-                        <input type="checkbox" id="toggle-tv" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
-                        <span>Torvane (TV)</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700">
-                        <input type="checkbox" id="toggle-pp" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
-                        <span>Pocket Pen. (PP)</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-only hidden">
-                        <input type="checkbox" id="toggle-pl" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
-                        <span>Point Load (PL)</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2 rounded-lg border border-slate-800 hover:border-slate-700 final-mode-only hidden">
-                        <input type="checkbox" id="toggle-ucs" onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
-                        <span>UCS (MPa)</span>
-                    </label>
                 </div>
             </div>
 
@@ -403,22 +378,34 @@
                         <textarea id="input-description" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="e.g. Soft brown silty CLAY."></textarea>
                     </div>
 
-                    <!-- Strength Input Fields -->
-                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                    <!-- Strength Input Fields with Checkbox Toggles -->
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-xs">
                         <div>
-                            <label class="block text-cyan-300 text-[10px] mb-0.5">Torvane TV (kPa)</label>
+                            <label class="block text-cyan-300 text-[10px] mb-1 flex items-center justify-between">
+                                <span>Torvane TV (kPa)</span>
+                                <input type="checkbox" id="toggle-tv" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                            </label>
                             <input type="text" id="input-tv" value="" placeholder="e.g. 45" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div>
-                            <label class="block text-cyan-300 text-[10px] mb-0.5">Pocket Pen. PP (kPa)</label>
+                            <label class="block text-cyan-300 text-[10px] mb-1 flex items-center justify-between">
+                                <span>Pocket Pen. PP (kPa)</span>
+                                <input type="checkbox" id="toggle-pp" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-blue-600">
+                            </label>
                             <input type="text" id="input-pp" value="" placeholder="e.g. 100" class="w-full bg-slate-950 border border-cyan-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div class="final-mode-only hidden">
-                            <label class="block text-purple-300 text-[10px] mb-0.5">Point Load Is(50) (MPa)</label>
+                            <label class="block text-purple-300 text-[10px] mb-1 flex items-center justify-between">
+                                <span>Point Load Is(50) (MPa)</span>
+                                <input type="checkbox" id="toggle-pl" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                            </label>
                             <input type="text" id="input-point-load" value="" placeholder="e.g. 2.4" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                         <div class="final-mode-only hidden">
-                            <label class="block text-purple-300 text-[10px] mb-0.5">UCS (MPa)</label>
+                            <label class="block text-purple-300 text-[10px] mb-1 flex items-center justify-between">
+                                <span>UCS (MPa)</span>
+                                <input type="checkbox" id="toggle-ucs" checked onchange="updateAll()" class="rounded bg-slate-900 border-slate-700 text-amber-600">
+                            </label>
                             <input type="text" id="input-ucs" value="" placeholder="e.g. 45.0" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-1.5 text-white text-xs font-mono">
                         </div>
                     </div>
@@ -927,7 +914,7 @@
             const sheetTitle = document.getElementById('sheet-title-display');
             const finalSettings = document.getElementById('final-borelog-settings');
             const sptGraphBox = document.getElementById('spt-graph-container');
-            const finalModeInputs = document.querySelectorAll('.final-mode-only');
+            const finalModeElements = document.querySelectorAll('.final-mode-only');
 
             if (mode === 'field') {
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-blue-600 text-white shadow";
@@ -941,7 +928,7 @@
                 finalSettings.classList.add('hidden');
                 sptGraphBox.classList.add('hidden');
                 sptGraphBox.classList.remove('active-final-print');
-                finalModeInputs.forEach(el => el.classList.add('hidden'));
+                finalModeElements.forEach(el => el.classList.add('hidden'));
             } else {
                 btnFinal.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow";
                 btnField.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white";
@@ -954,7 +941,7 @@
                 finalSettings.classList.remove('hidden');
                 sptGraphBox.classList.remove('hidden');
                 sptGraphBox.classList.add('active-final-print');
-                finalModeInputs.forEach(el => el.classList.remove('hidden'));
+                finalModeElements.forEach(el => el.classList.remove('hidden'));
             }
 
             updateAll();
@@ -1219,7 +1206,6 @@
             const cdHeader = showCD ? `<th colspan="2" class="p-1 border border-slate-900 text-slate-900 font-bold">CD level (m)</th>` : '';
             const cdSubHeader = showCD ? `<th class="p-0.5 border border-slate-900 text-slate-900 font-bold">From</th><th class="p-0.5 border border-slate-900 text-slate-900 font-bold">To</th>` : '';
 
-            // Optional dynamic columns based on checkbox toggles
             let optHeaders = '';
             let optSubHeaders = '';
 
